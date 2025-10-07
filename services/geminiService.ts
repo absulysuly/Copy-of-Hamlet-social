@@ -1,47 +1,36 @@
 
-import { GoogleGenAI } from "@google/genai";
-
 // --- SECURITY WARNING ---
-// Exposing an API key on the client-side is a significant security risk.
-// This key can be easily stolen and used maliciously, leading to unexpected charges.
-// For a production application, this entire service should be moved to a backend server.
-// Create a secure API endpoint on your server (e.g., /api/generate-suggestion)
-// that calls the Gemini API. The client should then call your secure endpoint.
-// See the README.md for more details.
+// The original implementation exposed an API key on the client-side.
+// This has been updated to proxy requests through a secure backend endpoint.
+// The client now calls our own backend (e.g., /api/gemini), which then securely
+// calls the Google Gemini API.
 // --------------------
 
-// Ensure the API key is available in the environment variables
-const apiKey = process.env.API_KEY;
-
-let ai: GoogleGenAI | null = null;
-if (apiKey) {
-    ai = new GoogleGenAI({ apiKey: apiKey });
-} else {
-    console.error("API_KEY environment variable not set. Gemini features will be disabled.");
-}
-
-
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
-    if (!ai) {
-        return "API key not configured. Please check your environment variables.";
-    }
+    // TODO: This function now calls a backend proxy.
+    // Ensure the Windsurf backend has a '/api/gemini' endpoint
+    // that accepts a POST request with a JSON body like { "topic": "..." }
+    // and returns a JSON response like { "suggestion": "..." }.
     
     try {
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Generate a short, engaging, and bilingual (English and Arabic) social media post for an Iraqi political candidate about: "${topic}". The tone should be positive, civic-minded, and inspiring. Include relevant hashtags.`,
-            config: {
-                systemInstruction: "You are a helpful assistant for a political campaign in Iraq, creating social media content.",
-                // Fix: `temperature` should be a number (e.g. 0.7), not a float.
-                temperature: 0.7,
-                topP: 1,
-                topK: 32,
-            }
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ topic }),
         });
+
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error("Gemini proxy server error:", errorData);
+            throw new Error(`API returned status ${response.status}`);
+        }
         
-        return response.text;
+        const data = await response.json();
+        return data.suggestion || "No suggestion received from the server.";
     } catch (error) {
-        console.error("Error generating content with Gemini API:", error);
-        return "Failed to generate content. Please try again later.";
+        console.error("Error generating content via proxy:", error);
+        return "Failed to generate content. Please check the connection and try again.";
     }
 };

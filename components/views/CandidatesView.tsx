@@ -1,23 +1,42 @@
+
 // Fix: Populating components/views/CandidatesView.tsx with a list of candidates.
-import React, { useState } from 'react';
-import { MOCK_USERS } from '../../constants.ts';
+import React, { useState, useEffect } from 'react';
 import { Governorate, User, UserRole, GOVERNORATES } from '../../types.ts';
 import CandidatePill from '../CandidatePill.tsx';
 import { ChevronDownIcon } from '../icons/Icons.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface CandidatesViewProps {
     selectedGovernorate: Governorate | 'All';
     onSelectCandidate: (candidate: User) => void;
+    user: User | null;
+    requestLogin: () => void;
 }
 
-const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, onSelectCandidate }) => {
+const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, onSelectCandidate, user, requestLogin }) => {
     const [filterGovernorate, setFilterGovernorate] = useState<Governorate | 'All'>(selectedGovernorate);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const [candidates, setCandidates] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const candidates = MOCK_USERS.filter(user => 
-        user.role === UserRole.Candidate &&
-        (filterGovernorate === 'All' || user.governorate === filterGovernorate)
-    );
+    useEffect(() => {
+        const fetchCandidates = async () => {
+            setIsLoading(true);
+            try {
+                const users = await api.getUsers({
+                    role: UserRole.Candidate,
+                    governorate: filterGovernorate,
+                });
+                setCandidates(users);
+            } catch (error) {
+                console.error("Failed to fetch candidates:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchCandidates();
+    }, [filterGovernorate]);
+
 
     return (
         <div className="p-4 sm:p-6">
@@ -38,16 +57,25 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, on
                     )}
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {candidates.length > 0 ? (
-                    candidates.map(candidate => (
-                        <CandidatePill key={candidate.id} candidate={candidate} onSelect={onSelectCandidate} />
-                    ))
-                ) : (
-                     <p className="text-gray-500 col-span-full text-center mt-8">No candidates found for {filterGovernorate}.</p>
-                )}
-            </div>
+             {isLoading ? (
+                <p className="text-gray-500 col-span-full text-center mt-8">Loading candidates...</p>
+             ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {candidates.length > 0 ? (
+                        candidates.map(candidate => (
+                            <CandidatePill 
+                                key={candidate.id} 
+                                candidate={candidate} 
+                                onSelect={onSelectCandidate} 
+                                user={user}
+                                requestLogin={requestLogin}
+                            />
+                        ))
+                    ) : (
+                        <p className="text-gray-500 col-span-full text-center mt-8">No candidates found for {filterGovernorate}.</p>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

@@ -2,9 +2,10 @@
 // Fix: Populating constants.ts with mock data for the application.
 
 // --- IMPORTANT ---
-// This file contains mock data for development and prototyping purposes only.
-// In a production environment, this data should be fetched from a live backend API.
-// See the README.md for guidance on integrating a real backend.
+// This file contains mock data for development and prototyping purposes.
+// It is used by the `apiService.ts` to simulate a backend.
+// Components should NOT import from this file directly. Instead, they should
+// use the functions provided in `apiService.ts`.
 // ---------------
 
 import { User, UserRole, Post, Event, Debate, Article } from './types.ts';

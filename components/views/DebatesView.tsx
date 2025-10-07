@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { MOCK_DEBATES, MOCK_USERS } from '../../constants.ts';
-import { Governorate, Debate, UserRole } from '../../types.ts';
-import { DebateIcon, CalendarIcon, ChevronDownIcon, XMarkIcon } from '../icons/Icons.tsx';
+
+import React, { useState, useEffect } from 'react';
+import { Governorate, Debate, UserRole, User } from '../../types.ts';
+import { DebateIcon, CalendarIcon, ChevronDownIcon } from '../icons/Icons.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface DebatesViewProps {
     selectedGovernorate: Governorate | 'All';
@@ -54,8 +55,32 @@ const DebateCard: React.FC<{ debate: Debate }> = ({ debate }) => {
 const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate }) => {
     const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    
+    const [allCandidates, setAllCandidates] = useState<User[]>([]);
+    const [filteredDebates, setFilteredDebates] = useState<Debate[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const allCandidates = useMemo(() => MOCK_USERS.filter(u => u.role === UserRole.Candidate), []);
+    useEffect(() => {
+        api.getUsers({ role: UserRole.Candidate }).then(setAllCandidates);
+    }, []);
+
+    useEffect(() => {
+        const fetchDebates = async () => {
+            setIsLoading(true);
+            try {
+                const debates = await api.getDebates({
+                    governorate: selectedGovernorate,
+                    participantIds: selectedCandidateIds,
+                });
+                setFilteredDebates(debates);
+            } catch (error) {
+                console.error("Failed to fetch debates:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchDebates();
+    }, [selectedGovernorate, selectedCandidateIds]);
     
     const handleCandidateSelection = (candidateId: string) => {
         setSelectedCandidateIds(prev =>
@@ -64,26 +89,6 @@ const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate }) => {
                 : [...prev, candidateId]
         );
     };
-
-    const filteredDebates = useMemo(() => {
-        let debates = MOCK_DEBATES;
-
-        // Filter by governorate first
-        if (selectedGovernorate !== 'All') {
-            debates = debates.filter(debate =>
-                debate.participants.some(p => p.governorate === selectedGovernorate)
-            );
-        }
-
-        // Then filter by selected candidates
-        if (selectedCandidateIds.length > 0) {
-            debates = debates.filter(debate =>
-                debate.participants.some(p => selectedCandidateIds.includes(p.id))
-            );
-        }
-
-        return debates;
-    }, [selectedGovernorate, selectedCandidateIds]);
 
     const selectedCandidates = allCandidates.filter(c => selectedCandidateIds.includes(c.id));
 
@@ -130,15 +135,19 @@ const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredDebates.length > 0 ? (
-                    filteredDebates.map(debate => <DebateCard key={debate.id} debate={debate} />)
-                ) : (
-                    <p className="text-gray-500 col-span-full text-center mt-8">
-                        No debates found for the selected filters.
-                    </p>
-                )}
-            </div>
+            {isLoading ? (
+                <p className="text-gray-500 col-span-full text-center mt-8">Loading debates...</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {filteredDebates.length > 0 ? (
+                        filteredDebates.map(debate => <DebateCard key={debate.id} debate={debate} />)
+                    ) : (
+                        <p className="text-gray-500 col-span-full text-center mt-8">
+                            No debates found for the selected filters.
+                        </p>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

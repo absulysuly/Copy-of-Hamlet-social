@@ -1,9 +1,10 @@
+
 // Fix: Populating components/views/CandidateProfileView.tsx with a public candidate profile.
-import React from 'react';
-import { User, UserRole } from '../../types.ts';
-import { MOCK_POSTS } from '../../constants.ts';
+import React, { useState, useEffect } from 'react';
+import { User, UserRole, Post } from '../../types.ts';
 import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon } from '../icons/Icons.tsx';
 import PostCard from '../PostCard.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface CandidateProfileViewProps {
     candidate: User;
@@ -12,17 +13,36 @@ interface CandidateProfileViewProps {
 }
 
 const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, user, requestLogin }) => {
+    const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (candidate.role !== UserRole.Candidate) return;
+
+        const fetchPosts = async () => {
+            setIsLoading(true);
+            try {
+                const posts = await api.getPosts({ authorId: candidate.id });
+                setCandidatePosts(posts);
+            } catch (error) {
+                console.error("Failed to fetch candidate posts:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchPosts();
+    }, [candidate.id, candidate.role]);
+
     if (candidate.role !== UserRole.Candidate) {
-        return <p>This profile is not a candidate.</p>;
+        return <p className="p-6 text-center">This profile is not a candidate.</p>;
     }
-    
-    const candidatePosts = MOCK_POSTS.filter(post => post.author.id === candidate.id);
     
     const handleInteraction = (e: React.MouseEvent) => {
         if (!user) {
             e.preventDefault();
             requestLogin();
         }
+        // TODO: Wire up contact actions to backend
     };
 
     return (
@@ -51,7 +71,9 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
 
             <div>
                 <h3 className="text-xl font-bold mb-4">Posts by {candidate.name}</h3>
-                {candidatePosts.length > 0 ? (
+                {isLoading ? (
+                    <p className="text-center py-10 text-neutral-gray-dark">Loading posts...</p>
+                ) : candidatePosts.length > 0 ? (
                     candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} />)
                 ) : (
                     <p className="text-center py-10 text-neutral-gray-dark">This candidate has not posted yet.</p>

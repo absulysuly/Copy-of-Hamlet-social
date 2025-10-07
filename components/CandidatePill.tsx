@@ -1,14 +1,33 @@
+
 // Fix: Populating components/CandidatePill.tsx with a reusable candidate component.
 import React from 'react';
 import { User } from '../types.ts';
 import { VerifiedIcon, PlusIcon } from './icons/Icons.tsx';
+import * as api from '../services/apiService.ts';
 
 interface CandidatePillProps {
     candidate: User;
     onSelect: (candidate: User) => void;
+    user: User | null;
+    requestLogin: () => void;
 }
 
-const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect }) => {
+const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user, requestLogin }) => {
+
+    const handleFollow = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent card click-through to profile
+        if (!user) {
+            requestLogin();
+        } else {
+            // TODO: Add UI feedback (e.g., change button text to "Following")
+            api.followCandidate(candidate.id).then(response => {
+                if (response.success) {
+                    console.log(`Followed ${candidate.name}`);
+                }
+            });
+        }
+    };
+
     return (
         <div 
             onClick={() => onSelect(candidate)}
@@ -24,7 +43,10 @@ const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect }) =>
                     <p className="text-sm text-neutral-gray-dark dark:text-gray-400">{candidate.party}</p>
                 </div>
             </div>
-            <button className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-action-blue rounded-full hover:bg-blue-700">
+            <button 
+                onClick={handleFollow}
+                className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-action-blue rounded-full hover:bg-blue-700"
+            >
                 <PlusIcon className="w-3 h-3"/>
                 <span>Follow</span>
             </button>

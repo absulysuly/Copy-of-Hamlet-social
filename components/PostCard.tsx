@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { Post, User } from '../types.ts';
 import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, DonateIcon, MoreIcon } from './icons/Icons.tsx';
+import * as api from '../services/apiService.ts';
 
 interface PostCardProps {
     post: Post;
@@ -11,14 +13,21 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin }) => {
     const [isMenuOpen, setMenuOpen] = useState(false);
 
-    const handleInteraction = (e: React.MouseEvent) => {
+    const handleInteraction = (e: React.MouseEvent, action: () => void) => {
         if (!user) {
             e.preventDefault();
             requestLogin();
+        } else {
+            action();
         }
-        // Else, proceed with default action (e.g., like, comment)
     };
     
+    // TODO: Add UI feedback (e.g., loading spinners, success states) for these actions.
+    const handleLike = () => api.likePost(post.id).then(() => console.log('Liked post'));
+    const handleComment = () => console.log('Comment action placeholder');
+    const handleShare = () => console.log('Share action placeholder');
+    const handleDonate = () => console.log('Donate action placeholder');
+
     const handleReport = () => {
         if (!user) {
             requestLogin();
@@ -82,19 +91,19 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin }) => {
                 <div className="border-t border-neutral-gray-light dark:border-gray-700 my-2"></div>
 
                 <div className="flex justify-around items-center">
-                    <button onClick={handleInteraction} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors">
+                    <button onClick={(e) => handleInteraction(e, handleLike)} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors">
                         <HeartIcon className="w-6 h-6" />
                         <span className="font-semibold text-sm">Like</span>
                     </button>
-                     <button onClick={handleInteraction} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors">
+                     <button onClick={(e) => handleInteraction(e, handleComment)} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors">
                         <CommentIcon className="w-6 h-6" />
                         <span className="font-semibold text-sm">Comment</span>
                     </button>
-                     <button onClick={handleInteraction} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors">
+                     <button onClick={(e) => handleInteraction(e, handleShare)} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors">
                         <ShareIcon className="w-6 h-6" />
                         <span className="font-semibold text-sm">Share</span>
                     </button>
-                    <button onClick={handleInteraction} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-flag-green/10 text-flag-green transition-colors">
+                    <button onClick={(e) => handleInteraction(e, handleDonate)} className="flex items-center space-x-2 py-2 px-4 rounded-lg w-full justify-center hover:bg-flag-green/10 text-flag-green transition-colors">
                         <DonateIcon className="w-6 h-6" />
                         <span className="font-semibold text-sm">Donate</span>
                     </button>

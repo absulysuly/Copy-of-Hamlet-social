@@ -1,17 +1,14 @@
 
-import React from 'react';
-// Fix: added .ts extension to constants import
-import { MOCK_ARTICLES } from '../../constants.ts';
-// Fix: added .ts extension to types import
-import { Governorate } from '../../types.ts';
-// Fix: added .tsx extension to Icons import
+import React, { useState, useEffect } from 'react';
+import { Governorate, Article } from '../../types.ts';
 import { LinkIcon } from '../icons/Icons.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface SeriousnessViewProps {
     selectedGovernorate: Governorate | 'All';
 }
 
-const ArticleCard: React.FC<{ article: typeof MOCK_ARTICLES[0] }> = ({ article }) => {
+const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
     return (
         <div className="bg-mocha-white dark:bg-gray-800 rounded-lg shadow-sm border border-neutral-gray-medium dark:border-gray-700 p-5 flex flex-col h-full">
             <div className="flex-grow">
@@ -36,15 +33,31 @@ const ArticleCard: React.FC<{ article: typeof MOCK_ARTICLES[0] }> = ({ article }
 }
 
 const SeriousnessView: React.FC<SeriousnessViewProps> = ({ selectedGovernorate }) => {
-    const filteredArticles = MOCK_ARTICLES.filter(article =>
-        selectedGovernorate === 'All' || article.governorates.includes(selectedGovernorate)
-    );
+    const [articles, setArticles] = useState<Article[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchArticles = async () => {
+            setIsLoading(true);
+            try {
+                const data = await api.getArticles({ governorate: selectedGovernorate });
+                setArticles(data);
+            } catch (error) {
+                console.error("Failed to fetch articles:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchArticles();
+    }, [selectedGovernorate]);
 
     return (
         <div>
-            {filteredArticles.length > 0 ? (
+            {isLoading ? (
+                 <p className="text-gray-500 col-span-full text-center mt-8">Loading articles...</p>
+            ) : articles.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {filteredArticles.map(article => <ArticleCard key={article.id} article={article} />)}
+                    {articles.map(article => <ArticleCard key={article.id} article={article} />)}
                 </div>
             ) : (
                 <p className="text-gray-500 col-span-full text-center mt-8">No articles found for {selectedGovernorate}.</p>

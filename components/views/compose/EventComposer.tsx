@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User } from '../../../types.ts';
 import { CalendarIcon } from '../../icons/Icons.tsx';
@@ -14,6 +15,7 @@ const EventComposer: React.FC<EventComposerProps> = ({ user, onCreateEvent }) =>
 
     const handleSubmit = () => {
         if (title.trim() && date && location.trim()) {
+            // The `onCreateEvent` prop is connected to the apiService in HomeView.
             onCreateEvent({ title, date, location });
             setTitle('');
             setDate('');

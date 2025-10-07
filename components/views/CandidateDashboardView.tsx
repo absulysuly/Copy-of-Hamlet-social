@@ -1,18 +1,37 @@
-import React from 'react';
-import { User, UserRole } from '../../types.ts';
-import { MOCK_POSTS } from '../../constants.ts';
+
+import React, { useState, useEffect } from 'react';
+import { User, UserRole, Post } from '../../types.ts';
 import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, TikTokIcon, InstagramIcon, FacebookIcon, XIcon, YouTubeIcon, LinkIcon } from '../icons/Icons.tsx';
 import PostCard from '../PostCard.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface CandidateDashboardViewProps {
     user: User;
 }
 
 const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user }) => {
+    const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    
     // Ensure this view is only for candidates
     if (user.role !== UserRole.Candidate) {
         return <p>Access Denied. This page is for candidates only.</p>;
     }
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            setIsLoading(true);
+            try {
+                const posts = await api.getPosts({ authorId: user.id });
+                setCandidatePosts(posts);
+            } catch (error) {
+                console.error("Failed to fetch candidate posts:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchPosts();
+    }, [user.id]);
 
     const socialPlatforms = [
         { name: 'TikTok', icon: <TikTokIcon className="w-6 h-6" />, linked: true },
@@ -22,10 +41,8 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user })
         { name: 'YouTube', icon: <YouTubeIcon className="w-6 h-6" />, linked: false },
     ];
     
-    const candidatePosts = MOCK_POSTS.filter(post => post.author.id === user.id);
-
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6">
             <div className="bg-mocha-white dark:bg-gray-800 rounded-lg shadow-sm border border-neutral-gray-medium dark:border-gray-700 overflow-hidden mb-6">
                 <div className="p-6">
                     <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
@@ -72,10 +89,12 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user })
 
             <div>
                 <h3 className="text-xl font-bold mb-4">My Posts</h3>
-                {candidatePosts.length > 0 ? (
-                    candidatePosts.map(post => <PostCard key={post.id} post={post} />)
+                {isLoading ? (
+                    <p className="text-center py-10 text-neutral-gray-dark">Loading posts...</p>
+                ) : candidatePosts.length > 0 ? (
+                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} />)
                 ) : (
-                    <p className="text-center py-10 text-neutral-gray-dark">This candidate has not posted yet.</p>
+                    <p className="text-center py-10 text-neutral-gray-dark">You have not posted yet.</p>
                 )}
             </div>
         </div>

@@ -1,10 +1,8 @@
-import React from 'react';
-// Fix: added .ts extension to constants import
-import { MOCK_EVENTS } from '../../constants.ts';
-// Fix: added .ts extension to types import
+
+import React, { useState, useEffect } from 'react';
 import { Governorate, Event } from '../../types.ts';
-// Fix: added .tsx extension to Icons import
 import { CalendarIcon, LocationIcon, ShareIcon } from '../icons/Icons.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface EventsViewProps {
     selectedGovernorate: Governorate | 'All';
@@ -46,20 +44,39 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
 };
 
 const EventsView: React.FC<EventsViewProps> = ({ selectedGovernorate }) => {
-    const filteredEvents = MOCK_EVENTS.filter(event =>
-        selectedGovernorate === 'All' || event.governorate === selectedGovernorate
-    );
+    const [events, setEvents] = useState<Event[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            setIsLoading(true);
+            try {
+                const data = await api.getEvents({ governorate: selectedGovernorate });
+                setEvents(data);
+            } catch (error) {
+                console.error("Failed to fetch events:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchEvents();
+    }, [selectedGovernorate]);
+
 
     return (
         <div className="p-4 sm:p-6">
             <h2 className="text-2xl font-bold mb-4">Upcoming Events</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredEvents.length > 0 ? (
-                    filteredEvents.map(event => <EventCard key={event.id} event={event} />)
-                ) : (
-                    <p className="text-gray-500 col-span-full text-center mt-8">No events scheduled in {selectedGovernorate}.</p>
-                )}
-            </div>
+            {isLoading ? (
+                 <p className="text-gray-500 col-span-full text-center mt-8">Loading events...</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {events.length > 0 ? (
+                        events.map(event => <EventCard key={event.id} event={event} />)
+                    ) : (
+                        <p className="text-gray-500 col-span-full text-center mt-8">No events scheduled in {selectedGovernorate}.</p>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User } from '../../../types.ts';
 import { VideoIcon } from '../../icons/Icons.tsx';
@@ -15,11 +16,13 @@ const ReelComposer: React.FC<ReelComposerProps> = ({ user, onCreateReel }) => {
         if (event.target.files && event.target.files.length > 0) {
             setFileName(event.target.files[0].name);
             // In a real app, you would handle the file object itself, e.g., by setting it to state.
+            // TODO: Add file handling logic to pass the file to the apiService.
         }
     };
     
     const handleSubmit = () => {
         if (caption.trim()) {
+            // The `onCreateReel` prop is connected to the apiService in HomeView.
             onCreateReel({ caption });
             setCaption('');
             setFileName('');

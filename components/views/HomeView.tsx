@@ -1,9 +1,9 @@
 
 // Fix: Populating components/views/HomeView.tsx with the main feed view.
-import React, { useState } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types.ts';
-import { MOCK_POSTS, MOCK_USERS } from '../../constants.ts';
+import React, { useState, useEffect } from 'react';
+import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, Event } from '../../types.ts';
 import { UI_TEXT } from '../../translations.ts';
+import * as api from '../../services/apiService.ts';
 
 import HeroSection from '../HeroSection.tsx';
 import Stories from '../Stories.tsx';
@@ -36,54 +36,71 @@ type HomeTab = 'Social' | 'Serious';
 const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onSelectCandidate, onSelectReel, language, onLanguageChange }) => {
     const [socialTab, setSocialTab] = useState<HomeTab>('Social');
     const [mainTab, setMainTab] = useState<MainContentTab>(AppTab.Posts);
+    
+    // --- STATE FOR ASYNC DATA ---
+    const [socialPosts, setSocialPosts] = useState<Post[]>([]);
+    const [candidates, setCandidates] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // --- MOCK DATA HANDLERS ---
-    // TODO: Replace these console.log statements with API calls to your backend to create new content.
+    // --- DATA FETCHING ---
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const postsPromise = api.getPosts({ type: 'Post', governorate: selectedGovernorate });
+                const candidatesPromise = api.getUsers({ role: UserRole.Candidate, governorate: selectedGovernorate });
+                const [postsData, candidatesData] = await Promise.all([postsPromise, candidatesPromise]);
+                setSocialPosts(postsData);
+                setCandidates(candidatesData);
+            } catch (error) {
+                console.error("Failed to fetch home view data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [selectedGovernorate]);
+
+    // --- API HANDLERS ---
     const handlePost = (content: string) => {
-        console.log("New post created from HomeView:", content);
-        // Example: apiService.createPost({ content }).then(() => { /* refresh feed */ });
+        if (!user) return;
+        // TODO: Add UI feedback for post creation
+        api.createPost(content, user).then(newPost => {
+            // Optimistically add the new post to the top of the feed
+            setSocialPosts(prevPosts => [newPost, ...prevPosts]);
+        });
     };
     
     const handleCreateReel = (details: { caption: string }) => {
-        console.log("New reel created:", details);
+        if (!user) return;
+        api.createReel(details, user).then(newReel => {
+            console.log("New reel created:", newReel);
+            // TODO: In a real app, you would likely navigate to the reels tab
+            // or show a success message, and the reels view would re-fetch.
+        });
     };
 
     const handleCreateEvent = (details: { title: string, date: string, location: string }) => {
-        console.log("New event created:", details);
+        if (!user) return;
+        api.createEvent(details, user).then(newEvent => {
+            console.log("New event created:", newEvent);
+             // TODO: Similar to reels, show success and let the events view re-fetch.
+        });
     };
 
-    const handleFollow = (e: React.MouseEvent) => {
+    const handleFollow = (e: React.MouseEvent, candidateId: string) => {
         if (!user) {
             e.preventDefault();
             requestLogin();
+        } else {
+            api.followCandidate(candidateId);
+            // TODO: Add UI feedback for follow action
         }
-        // TODO: Add API call to follow a user.
     };
 
-    // --- DATA FILTERING ---
-    // TODO: Replace these mock data filters with API calls.
-    // Use a useEffect hook to fetch data when the `selectedGovernorate` changes.
-    // Example:
-    // const [socialPosts, setSocialPosts] = useState([]);
-    // useEffect(() => {
-    //   apiService.getPosts(selectedGovernorate).then(setSocialPosts);
-    // }, [selectedGovernorate]);
-
-    const socialPosts = MOCK_POSTS.filter(post => 
-        post.type === 'Post' &&
-        (selectedGovernorate === 'All' || post.governorates.includes(selectedGovernorate))
-    );
-    
-    const candidatesForStories = MOCK_USERS.filter(u => 
-        u.role === UserRole.Candidate &&
-        (selectedGovernorate === 'All' || u.governorate === selectedGovernorate)
-    );
-    
-    const candidatesToFollow = MOCK_USERS.filter(u => 
-        u.role === UserRole.Candidate && 
-        u.id !== user?.id &&
-        (selectedGovernorate === 'All' || u.governorate === selectedGovernorate)
-    ).slice(0, 3);
+    // --- DERIVED DATA ---
+    const candidatesToFollow = candidates.filter(c => c.id !== user?.id).slice(0, 3);
 
     // --- LOCALIZATION ---
     const texts = UI_TEXT[language];
@@ -111,13 +128,20 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
     };
 
     const renderMainContent = () => {
+        if (isLoading) {
+            return <div className="text-center py-10">Loading...</div>;
+        }
+
         switch (mainTab) {
             case AppTab.Posts:
                 return (
                      <div className="mt-4">
                         {socialTab === 'Social' ? (
                             <div>
-                                {socialPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} />)}
+                                {socialPosts.length > 0 
+                                    ? socialPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} />)
+                                    : <p className="text-center py-10 text-neutral-gray-dark">No posts found for this area.</p>
+                                }
                             </div>
                         ) : (
                             <SeriousnessView selectedGovernorate={selectedGovernorate} />
@@ -127,7 +151,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
             case AppTab.Reels:
                 return <ReelsView selectedGovernorate={selectedGovernorate} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} />;
             case AppTab.Candidates:
-                return <CandidatesView selectedGovernorate={selectedGovernorate} onSelectCandidate={onSelectCandidate} />;
+                return <CandidatesView selectedGovernorate={selectedGovernorate} onSelectCandidate={onSelectCandidate} user={user} requestLogin={requestLogin} />;
             case AppTab.Debates:
                 return <DebatesView selectedGovernorate={selectedGovernorate} />;
             case AppTab.Events:
@@ -151,7 +175,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                     />
                 </div>
                 <div className="mt-2">
-                    <Stories users={candidatesForStories} />
+                    <Stories users={candidates} />
                 </div>
                 
                 <div className="mt-2 sticky top-16 bg-neutral-gray-light dark:bg-gray-900 z-20 py-2 -my-2">
@@ -184,7 +208,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                                         <p className="text-xs text-neutral-gray-dark dark:text-gray-400">{candidate.party}</p>
                                     </div>
                                 </div>
-                                <button onClick={handleFollow} className="px-3 py-1 text-xs font-semibold text-white bg-action-blue rounded-full hover:bg-blue-700">Follow</button>
+                                <button onClick={(e) => handleFollow(e, candidate.id)} className="px-3 py-1 text-xs font-semibold text-white bg-action-blue rounded-full hover:bg-blue-700">Follow</button>
                             </div>
                         )) : <p className="text-xs text-neutral-gray-dark dark:text-gray-400">No candidates to show for this governorate.</p>}
                     </div>

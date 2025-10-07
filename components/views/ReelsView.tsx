@@ -1,7 +1,8 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Governorate, Post, User } from '../../types.ts';
-import { MOCK_POSTS } from '../../constants.ts';
 import { PlayIcon } from '../icons/Icons.tsx';
+import * as api from '../../services/apiService.ts';
 
 interface ReelsViewProps {
   selectedGovernorate: Governorate | 'All';
@@ -11,10 +12,24 @@ interface ReelsViewProps {
 }
 
 const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, onSelectReel, user, requestLogin }) => {
-  const reelPosts = MOCK_POSTS.filter(post => 
-    post.type === 'Reel' && 
-    (selectedGovernorate === 'All' || post.governorates.includes(selectedGovernorate))
-  );
+  const [reelPosts, setReelPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReels = async () => {
+      setIsLoading(true);
+      try {
+        const reels = await api.getPosts({ type: 'Reel', governorate: selectedGovernorate });
+        setReelPosts(reels);
+      } catch (error) {
+        console.error("Failed to fetch reels:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchReels();
+  }, [selectedGovernorate]);
+
 
   const handleClick = (post: Post) => {
     if (!user) {
@@ -23,6 +38,10 @@ const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, onSelectReel
         onSelectReel(post);
     }
   };
+
+  if (isLoading) {
+    return <div className="text-center py-16">Loading Reels...</div>
+  }
 
   return (
     <div className="p-4 sm:p-6">

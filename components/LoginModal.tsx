@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { User, UserRole, Language } from '../types.ts';
-import { MOCK_USERS } from '../constants.ts';
 import { EditIcon, XMarkIcon } from './icons/Icons.tsx';
 import LanguageSwitcher from './LanguageSwitcher.tsx';
 import { UI_TEXT } from '../translations.ts';
+import * as api from '../services/apiService.ts';
 
 interface LoginModalProps {
     onLogin: (user: User) => void;
@@ -14,13 +14,16 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose, language, onLanguageChange }) => {
-    const handleSelectRole = (role: UserRole) => {
-        // TODO: Replace this with a real authentication API call.
-        // This function should send a request to your backend's /login or /register endpoint.
-        // The backend should return a user object and a session token.
-        const userToLogin = MOCK_USERS.find(user => user.role === role);
+    const handleSelectRole = async (role: UserRole) => {
+        // TODO: This now uses the apiService, which simulates a backend call.
+        // Once the backend is live, this will handle real authentication.
+        const userToLogin = await api.login(role);
         if (userToLogin) {
             onLogin(userToLogin);
+        } else {
+            // TODO: Display a user-friendly error message on failed login
+            console.error(`Login failed for role: ${role}. User not found.`);
+            alert(`Could not log in as ${role}. Please try again.`);
         }
     };
     
