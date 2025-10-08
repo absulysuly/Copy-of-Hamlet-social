@@ -20,9 +20,9 @@ const FormalHeader: React.FC = () => (
 );
 
 const StatCard: React.FC<{ title: string; value: string; icon: React.ReactNode; }> = ({ title, value, icon }) => (
-    <div className="formal-stats p-4 rounded-lg">
+    <div className="management-glass-card p-4 rounded-lg">
         <div className="flex items-center">
-            <div className="p-3 bg-formal-primary-500 rounded-full text-white mr-4">
+            <div className="p-3 bg-formal-primary-500/20 rounded-full text-formal-primary-600 mr-4">
                 {icon}
             </div>
             <div>
@@ -86,8 +86,8 @@ const GovernorateTable: React.FC<{ data: any[] }> = ({ data }) => {
 
     return (
         <div className="overflow-x-auto">
-            <table className="min-w-full bg-white text-right">
-                <thead className="bg-official-200">
+            <table className="min-w-full bg-transparent text-right">
+                <thead className="bg-official-800/5">
                     <tr>
                         <th className="p-3 text-sm font-semibold tracking-wide">
                              <button onClick={() => requestSort('governorateName')} className="flex items-center gap-1">المحافظة {getSortIcon('governorateName')}</button>
@@ -98,9 +98,9 @@ const GovernorateTable: React.FC<{ data: any[] }> = ({ data }) => {
                         <th className="p-3 text-sm font-semibold tracking-wide">الحالة</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-official-300">
+                <tbody className="divide-y divide-official-300/50">
                     {items.map(gov => (
-                        <tr key={gov.governorateId} className="hover:bg-official-100">
+                        <tr key={gov.governorateId} className="hover:bg-official-800/5">
                             <td className="p-3 text-sm text-official-800 font-bold">{gov.governorateName}</td>
                             <td className="p-3 text-sm text-official-800">{gov.estimatedTurnout}%</td>
                             <td className="p-3">
@@ -141,11 +141,11 @@ const DashboardPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 formal-card p-6">
+        <div className="lg:col-span-2 management-glass-card p-6">
              <h2 className="text-xl font-bold text-official-900 mb-4">Governorate Statistics</h2>
              <GovernorateTable data={participation} />
         </div>
-        <div className="formal-card p-6">
+        <div className="management-glass-card p-6">
             <h2 className="text-xl font-bold text-official-900 mb-4">Election Timeline</h2>
             <div className="space-y-4">
                 <TimelineItem date="August 1, 2024" title="Voter Registration Opens" isComplete={true} />

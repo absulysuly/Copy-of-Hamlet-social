@@ -14,7 +14,7 @@ const PortalCard: React.FC<{
     description: string;
     onClick: () => void;
 }> = ({ icon, title, description, onClick }) => (
-    <div className="formal-card rounded-lg p-6 text-right flex flex-col items-center text-center">
+    <div className="management-glass-card rounded-lg p-6 text-right flex flex-col items-center text-center">
         <div className="text-5xl text-official-800 mb-3">{icon}</div>
         <h2 className="text-2xl font-bold text-official-900">{title}</h2>
         <p className="text-official-700 mt-1 mb-4 flex-grow">{description}</p>
@@ -37,7 +37,7 @@ const FeatureCard: React.FC<{
 }> = ({ icon, title, description, color, onClick }) => (
     <button
         onClick={onClick}
-        className="formal-card rounded-lg p-4 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center border-t-4 aspect-square"
+        className="management-glass-card rounded-lg p-4 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center border-t-4 aspect-square"
         style={{ borderTopColor: color }}
     >
         <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: `${color}20` }}>

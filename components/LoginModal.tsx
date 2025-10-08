@@ -28,17 +28,23 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose, language, onL
     };
     
     const texts = UI_TEXT[language];
-    const textColor = isElectionMode ? 'text-election-dark-text' : 'text-white';
-    const secondaryTextColor = isElectionMode ? 'text-gray-600' : 'text-slate-300';
-    const iconColor = isElectionMode ? 'text-gray-800' : 'text-white';
+    const modalClasses = isElectionMode
+        ? 'management-glass-card rounded-lg shadow-xl w-full max-w-sm p-6 text-center relative'
+        : 'glass-card rounded-lg shadow-xl w-full max-w-sm p-6 text-center relative';
+    const textColor = isElectionMode ? 'text-official-900' : 'text-white';
+    const secondaryTextColor = isElectionMode ? 'text-official-700' : 'text-slate-300';
+    const iconColor = isElectionMode ? 'text-official-800' : 'text-white';
+    const buttonClasses = isElectionMode
+        ? 'w-full text-left p-4 border border-official-300 rounded-lg hover:bg-official-200/50 transition-colors'
+        : 'w-full text-left p-4 border border-white/20 rounded-lg hover:bg-white/10 transition-colors';
 
     return (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center backdrop-blur-sm p-4" onClick={onClose}>
             <div 
-                className="glass-card rounded-lg shadow-xl w-full max-w-sm p-6 text-center relative"
+                className={modalClasses}
                 onClick={(e) => e.stopPropagation()}
             >
-                <button onClick={onClose} className="absolute top-2 right-2 p-2 rounded-full hover:bg-white/10">
+                <button onClick={onClose} className="absolute top-2 right-2 p-2 rounded-full hover:bg-black/10">
                     <XMarkIcon className={`w-6 h-6 ${iconColor}`} />
                 </button>
 
@@ -50,20 +56,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose, language, onL
                 <div className="space-y-4">
                     <button 
                         onClick={() => handleSelectRole(UserRole.Voter)}
-                        className="w-full text-left p-4 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
+                        className={buttonClasses}
                     >
                         <h3 className={`font-bold text-md ${textColor}`}>{texts.iAmVoter}</h3>
-                        <p className={`text-sm ${isElectionMode ? 'text-gray-500' : 'text-slate-400'}`}>{texts.voterDescription}</p>
+                        <p className={`text-sm ${secondaryTextColor}`}>{texts.voterDescription}</p>
                     </button>
                     <button 
                         onClick={() => handleSelectRole(UserRole.Candidate)}
-                        className="w-full text-left p-4 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
+                        className={buttonClasses}
                     >
                         <h3 className={`font-bold text-md flex items-center ${textColor}`}>
                             {texts.iAmCandidate}
-                            <EditIcon className="w-4 h-4 ml-2 text-brand-hot-pink" />
+                            <EditIcon className="w-4 h-4 ml-2 text-formal-primary-500" />
                         </h3>
-                        <p className={`text-sm ${isElectionMode ? 'text-gray-500' : 'text-slate-400'}`}>{texts.candidateDescription}</p>
+                        <p className={`text-sm ${secondaryTextColor}`}>{texts.candidateDescription}</p>
                     </button>
                 </div>
             </div>

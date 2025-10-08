@@ -51,6 +51,9 @@
       }
     </script>
     <style>
+      body, #root > div {
+        transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+      }
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -70,7 +73,7 @@
       }
 
       .theme-election {
-        background-color: #f7fafc; /* official-100 */
+        background: linear-gradient(180deg, #f7fafc 0%, #eaf2f8 100%);
         color: #1a202c; /* official-900 */
       }
 
@@ -95,9 +98,12 @@
         background-size: 50px 50px;
       }
 
-      /* --- START FORMAL ELECTION THEME --- */
+      /* --- START FORMAL ELECTION THEME (with Glassmorphism) --- */
       .formal-header {
-        background: linear-gradient(to right, #2d3748, #1a202c);
+        background: rgba(45, 55, 72, 0.7); /* official-800 with transparency */
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
       .formal-card {
         background-color: #ffffff;
@@ -106,7 +112,10 @@
         color: #1a202c; /* official-900 */
       }
       .formal-button {
-        background-color: #2b6cb0; /* formal-primary-600 */
+        background-color: rgba(43, 108, 176, 0.8); /* formal-primary-600 glass */
+        border: 1px solid rgba(43, 108, 176, 1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
         color: #ffffff;
         font-weight: bold;
         padding: 0.75rem 1.5rem;
@@ -114,7 +123,7 @@
         transition: background-color 0.2s;
       }
       .formal-button:hover {
-        background-color: #2c5282; /* formal-primary-700 */
+        background-color: rgba(44, 82, 130, 0.9); /* formal-primary-700 glass */
       }
       .formal-stats {
         background-color: #ebf8ff; /* formal-primary-100 */
@@ -133,26 +142,32 @@
         color: #4a5568;
       }
       .management-glass-card {
-        background: rgba(237, 242, 247, 0.8); /* official-200 */
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
         color: #1a202c;
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .management-glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
       }
 
       /* Override social styles for election theme */
       .theme-election .glass-card, .theme-election .formal-card {
-        background: #FFFFFF;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
         color: #1a202c;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
         text-shadow: none; /* Reset text shadow for formal theme */
       }
       .theme-election .glass-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
       }
       .theme-election .text-white { color: #1a202c !important; }
       .theme-election .text-slate-200, .theme-election .text-slate-300, .theme-election .text-slate-400 { color: #4a5568 !important; }
