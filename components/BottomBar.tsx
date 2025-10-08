@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppTab, User, Language } from '../types.ts';
-import { HomeIcon, DebateIcon, MapIcon, UsersIcon } from './icons/Icons.tsx';
+import { TeaHouseIcon, UsersIcon } from './icons/Icons.tsx';
 import { UI_TEXT } from '../translations.ts';
 
 interface BottomBarProps {
@@ -8,30 +8,21 @@ interface BottomBarProps {
     activeTab: AppTab;
     onNavigate: (tab: AppTab) => void;
     language: Language;
-    isElectionMode: boolean;
 }
 
-const BottomBar: React.FC<BottomBarProps> = ({ user, activeTab, onNavigate, language, isElectionMode }) => {
+const BottomBar: React.FC<BottomBarProps> = ({ user, activeTab, onNavigate, language }) => {
     const texts = UI_TEXT[language];
 
     const navItems = [
-        { label: texts.appName, icon: HomeIcon, tab: AppTab.Home, enabled: true },
-        { label: AppTab.Debates, icon: DebateIcon, tab: AppTab.Debates, enabled: true },
-        { label: AppTab.AskNeighbor, icon: MapIcon, tab: AppTab.AskNeighbor, enabled: true },
+        { label: texts.teaHouse, icon: TeaHouseIcon, tab: AppTab.TeaHouse, enabled: true },
         { label: AppTab.UserProfile, icon: UsersIcon, tab: AppTab.UserProfile, enabled: user != null },
     ];
     
-    const barClasses = isElectionMode
-        ? 'bg-election-card-bg border-t border-neutral-gray-medium'
-        : 'bg-black/20 backdrop-blur-lg border-t border-white/20';
+    const barClasses = 'bg-[var(--color-glass-bg)] backdrop-blur-lg border-t border-[var(--color-glass-border)]';
 
     const getItemClasses = (tab: AppTab) => {
         const isActive = activeTab === tab;
-        if (isElectionMode) {
-            return isActive ? 'text-election-green' : 'text-gray-500';
-        } else {
-            return isActive ? 'text-brand-hot-pink' : 'text-slate-400';
-        }
+        return isActive ? 'text-primary' : 'text-theme-text-muted';
     };
 
     // Determine the number of visible items for grid layout
@@ -45,10 +36,10 @@ const BottomBar: React.FC<BottomBarProps> = ({ user, activeTab, onNavigate, lang
                         key={item.tab}
                         onClick={() => onNavigate(item.tab)}
                         type="button"
-                        className={`inline-flex flex-col items-center justify-center px-2 group ${isElectionMode ? 'hover:bg-neutral-gray-light' : 'hover:bg-white/10'} ${getItemClasses(item.tab)}`}
+                        className={`inline-flex flex-col items-center justify-center px-2 group hover:bg-primary/10 ${getItemClasses(item.tab)}`}
                     >
                         <item.icon className="w-6 h-6 mb-1" />
-                        <span className="text-xs font-arabic">{item.label}</span>
+                        <span className="text-[10px] leading-tight text-center font-arabic">{item.label}</span>
                     </button>
                 ))}
             </div>

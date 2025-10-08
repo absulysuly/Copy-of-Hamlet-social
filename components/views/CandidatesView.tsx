@@ -1,8 +1,10 @@
 // Fix: Populating components/views/CandidatesView.tsx with a list of candidates.
 import React, { useState, useEffect } from 'react';
-import { Governorate, User, UserRole, GOVERNORATES, GOVERNORATE_AR_MAP } from '../../types.ts';
+import { Governorate, User, UserRole } from '../../types.ts';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
 import CandidatePill from '../CandidatePill.tsx';
 import * as api from '../../services/apiService.ts';
+import { ResponsiveGrid } from '../UI/Responsive.tsx';
 
 interface CandidatesViewProps {
     selectedGovernorate: Governorate | 'All';
@@ -85,7 +87,7 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, se
              {isLoading ? (
                 <p className="text-slate-300 col-span-full text-center mt-8">Loading candidates...</p>
              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <ResponsiveGrid>
                     {candidates.length > 0 ? (
                         candidates.map(candidate => (
                             <CandidatePill 
@@ -99,7 +101,7 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, se
                     ) : (
                         <p className="text-slate-300 col-span-full text-center mt-8">لم يتم العثور على مرشحين للفلاتر المحددة.</p>
                     )}
-                </div>
+                </ResponsiveGrid>
             )}
         </div>
     );

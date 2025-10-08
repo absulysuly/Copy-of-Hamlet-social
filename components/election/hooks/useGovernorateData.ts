@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IRAQ_GOVERNORATES } from '../constants.ts';
+import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
 import { Candidate, NewsArticle } from '../types.ts';
 
 const generateMockCandidates = (count: number): Candidate[] => {
@@ -31,7 +31,7 @@ export const useGovernorateData = (name: string | undefined) => {
     useEffect(() => {
         setIsLoading(true);
         const timer = setTimeout(() => {
-            const governorate = IRAQ_GOVERNORATES.find(g => g.enName.toLowerCase() === name?.toLowerCase());
+            const governorate = IRAQI_GOVERNORATES_INFO.find(g => g.enName.toLowerCase() === name?.toLowerCase());
 
             if (governorate) {
                 setData({

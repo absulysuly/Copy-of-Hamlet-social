@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole, Post, Language } from '../../types.ts';
-import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, TikTokIcon, InstagramIcon, FacebookIcon, XIcon, YouTubeIcon, LinkIcon } from '../icons/Icons.tsx';
+import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, TikTokIcon, InstagramIcon, FacebookIcon, XIcon, YouTubeIcon, LinkIcon, DownloadIcon } from '../icons/Icons.tsx';
 import PostCard from '../PostCard.tsx';
 import * as api from '../../services/apiService.ts';
 import QRCodeDisplay from '../QRCodeDisplay.tsx';
@@ -9,11 +9,19 @@ interface CandidateDashboardViewProps {
     user: User;
     language: Language;
     onSelectProfile: (profile: User) => void;
+    onSelectPost: (post: Post) => void;
 }
 
-const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, language, onSelectProfile }) => {
+const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, language, onSelectProfile, onSelectPost }) => {
     const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [socialPlatforms, setSocialPlatforms] = useState([
+        { name: 'TikTok', icon: <TikTokIcon className="w-6 h-6" />, linked: true },
+        { name: 'Instagram', icon: <InstagramIcon className="w-6 h-6" />, linked: true },
+        { name: 'Facebook', icon: <FacebookIcon className="w-6 h-6" />, linked: false },
+        { name: 'X', icon: <XIcon className="w-6 h-6" />, linked: true },
+        { name: 'YouTube', icon: <YouTubeIcon className="w-6 h-6" />, linked: false },
+    ]);
     
     // Ensure this view is only for candidates
     if (user.role !== UserRole.Candidate) {
@@ -35,15 +43,37 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
         fetchPosts();
     }, [user.id]);
 
-    const socialPlatforms = [
-        { name: 'TikTok', icon: <TikTokIcon className="w-6 h-6" />, linked: true },
-        { name: 'Instagram', icon: <InstagramIcon className="w-6 h-6" />, linked: true },
-        { name: 'Facebook', icon: <FacebookIcon className="w-6 h-6" />, linked: false },
-        { name: 'X', icon: <XIcon className="w-6 h-6" />, linked: true },
-        { name: 'YouTube', icon: <YouTubeIcon className="w-6 h-6" />, linked: false },
-    ];
+    const handleLinkToggle = (platformName: string) => {
+        setSocialPlatforms(prevPlatforms =>
+            prevPlatforms.map(p =>
+                p.name === platformName ? { ...p, linked: !p.linked } : p
+            )
+        );
+        // In a real app, an API call would be made here to update the user's settings.
+    };
     
-    const qrUrl = `https://civic-social.yoursite.web.app/discover?party=${user.partySlug}&gov=${user.governorateSlug}`;
+    const qrUrl = `https://civic-social.yoursite.web.app/discover?party=${user.partySlug}&gov=${user.governorateSlug}&candidate=${user.id}`;
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrUrl)}`;
+
+    const handleDownloadQr = async () => {
+        try {
+            const response = await fetch(qrImageUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `qr-code-${user.partySlug}-${user.governorateSlug}.png`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Failed to download QR code:', error);
+            alert('Could not download QR code. Please try again.');
+        }
+    };
+
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6">
@@ -69,9 +99,21 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
 
                  <div className="border-t border-white/20 p-6">
                     <h3 className="text-lg font-semibold text-white">Promotional Tools</h3>
-                    <p className="text-sm text-slate-400 mb-4">Use this QR code on posters and flyers to direct voters to a page with all of your party's candidates in this governorate.</p>
-                    <div className="bg-white p-4 rounded-lg inline-block">
-                       <QRCodeDisplay url={qrUrl} />
+                    <p className="text-sm text-slate-400 mb-4 font-arabic">استخدم رمز الاستجابة السريعة هذا على الملصقات والنشرات لتوجيه الناخبين إلى صفحة بها جميع مرشحي حزبك في هذه المحافظة.</p>
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
+                        <div className="bg-white p-4 rounded-lg inline-block">
+                           <QRCodeDisplay url={qrUrl} />
+                        </div>
+                        <div className="text-center sm:text-left">
+                            <p className="font-bold font-arabic text-lg">اسكن QR لرؤية مرشحي حزبك!</p>
+                             <button
+                                onClick={handleDownloadQr}
+                                className="mt-4 flex items-center justify-center space-x-2 px-4 py-2 text-sm font-semibold bg-primary text-on-primary rounded-full transition-all hover:brightness-110"
+                            >
+                                <DownloadIcon className="w-4 h-4" />
+                                <span className="font-arabic">تحميل QR كود</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -86,9 +128,9 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
                                     <span className="font-medium">{platform.name}</span>
                                 </div>
                                 {platform.linked ? (
-                                    <button className="text-xs font-semibold text-flag-red hover:underline">Unlink</button>
+                                    <button onClick={() => handleLinkToggle(platform.name)} className="text-xs font-semibold text-flag-red hover:underline">Unlink</button>
                                 ) : (
-                                    <button className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110">
+                                    <button onClick={() => handleLinkToggle(platform.name)} className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110">
                                         <LinkIcon className="w-3 h-3"/>
                                         <span>Link</span>
                                     </button>
@@ -104,7 +146,7 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
                 {isLoading ? (
                     <p className="text-center py-10 text-slate-400">Loading posts...</p>
                 ) : candidatePosts.length > 0 ? (
-                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} />)
+                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
                 ) : (
                     <p className="text-center py-10 text-slate-400">You have not posted yet.</p>
                 )}

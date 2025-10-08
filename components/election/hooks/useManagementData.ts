@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { IRAQ_GOVERNORATES } from '../constants.ts';
+// Fix: Corrected import path and variable name to use IRAQI_GOVERNORATES_INFO from the root constants file.
+import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
 
 // --- MOCK DATA ---
 const MOCK_API_CONFIG = [
@@ -42,17 +43,18 @@ const MOCK_ENRICHMENT_DATA = {
 
 const MOCK_ANALYTICS = {
     overallQuality: { verified: 72, pending: 18, invalid: 10 },
-    qualityByGov: IRAQ_GOVERNORATES.map(g => ({ name: g.name.substring(0, 6), quality: Math.floor(Math.random() * (95 - 70 + 1) + 70) })),
+    // Fix: Use the correctly imported IRAQI_GOVERNORATES_INFO.
+    qualityByGov: IRAQI_GOVERNORATES_INFO.map(g => ({ name: g.name.substring(0, 6), quality: Math.floor(Math.random() * (95 - 70 + 1) + 70) })),
 };
 
 
 // --- HOOKS ---
 const useMockData = (data: any, delay = 500) => {
-    const [state, setState] = useState({ data: null, isLoading: true });
+    const [state, setState] = useState<{ data: any, isLoading: boolean }>({ data: null, isLoading: true });
     useEffect(() => {
         const timer = setTimeout(() => setState({ data, isLoading: false }), delay);
         return () => clearTimeout(timer);
-    }, []);
+    }, [data]);
     return state;
 };
 

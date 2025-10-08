@@ -1,18 +1,27 @@
 import { User, UserRole, Post, Event, Article, Debate, Governorate } from '../types.ts';
 import { MOCK_USERS, MOCK_POSTS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES } from '../constants.ts';
 
-// --- SIMULATE API LATENCY ---
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+// --- MOCK API Service ---
+// This service simulates a backend API by returning mock data.
+// It uses setTimeout to mimic network latency.
 
-// --- API FUNCTIONS ---
+const MOCK_LATENCY = 300; // ms
 
-export const getParties = async (): Promise<string[]> => {
-    await delay(100);
-    return [...new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate && u.party !== 'Independent').map(u => u.party))];
+const simulateFetch = <T>(data: T): Promise<T> => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            // Deep copy to prevent mutation issues with original mock data
+            resolve(JSON.parse(JSON.stringify(data)));
+        }, MOCK_LATENCY);
+    });
 };
 
-export const getUsers = async (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', partySlug?: string, governorateSlug?: string }): Promise<User[]> => {
-    await delay(300);
+export const getParties = (): Promise<string[]> => {
+    const parties = [...new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate && u.party).map(u => u.party))];
+    return simulateFetch(parties);
+};
+
+export const getUsers = (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', authorId?: string, partySlug?: string, governorateSlug?: string }): Promise<User[]> => {
     let users = MOCK_USERS;
 
     if (filters.role) {
@@ -24,6 +33,9 @@ export const getUsers = async (filters: { role?: UserRole, governorate?: Governo
     if (filters.party && filters.party !== 'All') {
         users = users.filter(u => u.party === filters.party);
     }
+    if (filters.authorId) {
+        users = users.filter(u => u.id === filters.authorId);
+    }
     if (filters.partySlug) {
         users = users.filter(u => u.partySlug === filters.partySlug);
     }
@@ -31,13 +43,12 @@ export const getUsers = async (filters: { role?: UserRole, governorate?: Governo
         users = users.filter(u => u.governorateSlug === filters.governorateSlug);
     }
 
-    return users;
+    return simulateFetch(users);
 };
 
-
-export const getPosts = async (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
-    await delay(500);
+export const getPosts = (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
     let posts = MOCK_POSTS;
+
     if (filters.type) {
         posts = posts.filter(p => p.type === filters.type);
     }
@@ -50,30 +61,40 @@ export const getPosts = async (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', 
     if (filters.party && filters.party !== 'All') {
         posts = posts.filter(p => p.author.party === filters.party);
     }
-    return [...posts].sort(() => Math.random() - 0.5); // Randomize for demo
+
+    // Simulate server-side sorting by timestamp
+    const sortedPosts = posts.sort((a, b) => {
+        // A simple time ago parser for sorting
+        const getTime = (timestamp: string) => {
+            if (timestamp.includes('hour')) return parseInt(timestamp) * 60;
+            if (timestamp.includes('day')) return parseInt(timestamp) * 60 * 24;
+            return 0;
+        };
+        return getTime(a.timestamp) - getTime(b.timestamp);
+    });
+
+    return simulateFetch(sortedPosts);
 };
 
-export const getEvents = async (filters: { governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Event[]> => {
-    await delay(400);
+export const getEvents = (filters: { governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Event[]> => {
     let events = MOCK_EVENTS;
     if (filters.governorate && filters.governorate !== 'All') {
         events = events.filter(e => e.organizer.governorate === filters.governorate);
     }
-    if (filters.party && filters.party !== 'All') {
+     if (filters.party && filters.party !== 'All') {
         events = events.filter(e => e.organizer.party === filters.party);
     }
-    return events;
-}
+    return simulateFetch(events);
+};
 
-export const getArticles = async (filters: { governorate?: Governorate | 'All' }): Promise<Article[]> => {
-    await delay(600);
-    // Filtering by governorate is not supported by mock data, returning all
-    return MOCK_ARTICLES;
-}
+export const getArticles = (filters: { governorate?: Governorate | 'All' }): Promise<Article[]> => {
+    // Mock doesn't filter by governorate for articles, returning all.
+    return simulateFetch(MOCK_ARTICLES);
+};
 
-export const getDebates = async (filters: { governorate?: Governorate | 'All', party?: string | 'All', participantIds?: string[] }): Promise<Debate[]> => {
-    await delay(450);
+export const getDebates = (filters: { governorate?: Governorate | 'All', party?: string | 'All', participantIds?: string[] }): Promise<Debate[]> => {
     let debates = MOCK_DEBATES;
+    
     if (filters.governorate && filters.governorate !== 'All') {
         debates = debates.filter(d => d.participants.some(p => p.governorate === filters.governorate));
     }
@@ -83,31 +104,29 @@ export const getDebates = async (filters: { governorate?: Governorate | 'All', p
     if (filters.participantIds && filters.participantIds.length > 0) {
         debates = debates.filter(d => d.participants.some(p => filters.participantIds!.includes(p.id)));
     }
-    return debates;
-}
 
+    return simulateFetch(debates);
+};
 
-export const createPost = async (postDetails: Partial<Post>, author: User): Promise<Post> => {
-    await delay(200);
+export const createPost = (postDetails: Partial<Post>, author: User): Promise<Post> => {
     const newPost: Post = {
-        id: `post${Date.now()}`,
+        id: `post-${Date.now()}`,
         author: author,
         content: postDetails.content || '',
         timestamp: 'Just now',
         likes: 0,
         comments: 0,
         shares: 0,
-        type: postDetails.type || 'Post',
-        ...postDetails
+        type: 'Post',
+        ...postDetails,
     };
-    MOCK_POSTS.unshift(newPost);
-    return newPost;
+    // The UI will optimistically update with this returned post.
+    return simulateFetch(newPost);
 };
 
-export const createReel = async (details: { caption: string }, author: User): Promise<Post> => {
-    await delay(200);
-    const newReel: Post = {
-        id: `reel${Date.now()}`,
+export const createReel = (details: { caption: string }, author: User): Promise<Post> => {
+     const newReel: Post = {
+        id: `reel-${Date.now()}`,
         author: author,
         content: details.caption,
         timestamp: 'Just now',
@@ -115,60 +134,64 @@ export const createReel = async (details: { caption: string }, author: User): Pr
         comments: 0,
         shares: 0,
         type: 'Reel',
-        mediaUrl: `https://picsum.photos/seed/newReel${Date.now()}/400/700`,
+        mediaUrl: 'https://picsum.photos/seed/newreel/400/700'
     };
-    MOCK_POSTS.unshift(newReel);
-    return newReel;
+    return simulateFetch(newReel);
 };
 
-export const createEvent = async (details: { title: string, date: string, location: string }, organizer: User): Promise<Event> => {
-    await delay(200);
+export const createEvent = (details: { title: string, date: string, location: string }, organizer: User): Promise<Event> => {
     const newEvent: Event = {
-        id: `event${Date.now()}`,
-        title: details.title,
-        date: details.date,
-        location: details.location,
+        id: `event-${Date.now()}`,
         organizer: organizer,
+        ...details
     };
-    MOCK_EVENTS.unshift(newEvent);
-    return newEvent;
+    return simulateFetch(newEvent);
+};
+
+export const login = (role: UserRole): Promise<User | null> => {
+    // Log in as the first user found with the selected role
+    const userToLogin = MOCK_USERS.find(u => u.role === role);
+    return simulateFetch(userToLogin || null);
+};
+
+export const registerUser = (details: { name: string; email: string; dob: string; role: UserRole }): Promise<User> => {
+    console.log("(Mock API) Registering new user:", details);
+    const newUser: User = {
+        id: `user-${Date.now()}`,
+        name: details.name,
+        role: details.role,
+        avatarUrl: `https://picsum.photos/seed/user${Date.now()}/150/150`,
+        verified: false,
+        party: details.role === UserRole.Candidate ? 'Independent' : 'N/A',
+        governorate: 'Baghdad', // Default for new users
+        bio: `A new ${details.role} on the platform.`,
+    };
+    return simulateFetch(newUser);
 };
 
 
-export const login = async (role: UserRole): Promise<User | null> => {
-    await delay(100);
-    if (role === UserRole.Voter) {
-        return MOCK_USERS.find(u => u.id === 'voter1') || null;
-    }
-    if (role === UserRole.Candidate) {
-        return MOCK_USERS.find(u => u.id === 'user1') || null;
-    }
-    return null;
-};
-
-export const updateUser = async (userId: string, updates: Partial<User>): Promise<User | null> => {
-    await delay(150);
+export const updateUser = (userId: string, updates: Partial<User>): Promise<User | null> => {
     const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
-    if (userIndex > -1) {
-        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], ...updates };
-        return MOCK_USERS[userIndex];
-    }
-    return null;
+    if (userIndex === -1) return simulateFetch(null);
+    
+    // NOTE: This doesn't actually mutate the constant, but simulates the return value.
+    const updatedUser = { ...MOCK_USERS[userIndex], ...updates };
+    return simulateFetch(updatedUser);
 };
 
-
-export const followCandidate = async (candidateId: string): Promise<{ success: boolean }> => {
-    await delay(100);
-    console.log(`User followed candidate with id: ${candidateId}`);
-    return { success: true };
+export const followCandidate = (candidateId: string): Promise<{ success: boolean }> => {
+    console.log(`(Mock API) Followed candidate: ${candidateId}`);
+    return simulateFetch({ success: true });
 };
 
-export const likePost = async (postId: string): Promise<{ success: boolean }> => {
-    await delay(50);
-    const post = MOCK_POSTS.find(p => p.id === postId);
-    if (post) {
-        post.likes += 1;
-    }
-    console.log(`Liked post with id: ${postId}`);
-    return { success: true };
+export const likePost = (postId: string): Promise<{ success: boolean }> => {
+    console.log(`(Mock API) Liked post: ${postId}`);
+    return simulateFetch({ success: true });
+};
+
+export const uploadVoiceNote = async (audioBlob: Blob): Promise<{ success: boolean; url: string }> => {
+    console.log('(Mock API) Uploading voice note:', audioBlob);
+    // Create a temporary URL for playback in the UI
+    const url = URL.createObjectURL(audioBlob);
+    return simulateFetch({ success: true, url: url });
 };

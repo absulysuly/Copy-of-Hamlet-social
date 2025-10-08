@@ -1,18 +1,16 @@
 import React from 'react';
-// Fix: added .ts extension to types import
-import { User, Post } from '../types.ts';
-// Fix: added .tsx extension to Icons import
+import { User, Post, Language } from '../types.ts';
 import { XMarkIcon } from './icons/Icons.tsx';
-// Fix: added .ts extension to ComposeView import
 import ComposeView from './views/ComposeView.tsx';
 
 interface ComposeModalProps {
     user: User;
     onClose: () => void;
-    isElectionMode: boolean;
+    // Fix: Added language prop to be passed down to ComposeView.
+    language: Language;
 }
 
-const ComposeModal: React.FC<ComposeModalProps> = ({ user, onClose, isElectionMode }) => {
+const ComposeModal: React.FC<ComposeModalProps> = ({ user, onClose, language }) => {
     const handlePost = (postDetails: Partial<Post>) => {
         console.log("New post created:", postDetails);
         // In a real app, this would call an API to save the post.
@@ -20,23 +18,21 @@ const ComposeModal: React.FC<ComposeModalProps> = ({ user, onClose, isElectionMo
         onClose();
     };
 
-    const iconColor = isElectionMode ? 'text-election-dark-text' : 'text-white';
-
-
     return (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center backdrop-blur-sm p-4">
             <div 
                 className="glass-card rounded-lg shadow-xl w-full max-w-2xl relative"
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
             >
-                <div className="flex justify-between items-center p-4 border-b border-white/20">
+                <div className="flex justify-between items-center p-4 border-b border-[var(--color-glass-border)]">
                     <h2 className="text-xl font-bold">Compose Post</h2>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10">
-                        <XMarkIcon className={`w-6 h-6 ${iconColor}`} />
+                        <XMarkIcon className="w-6 h-6 text-theme-text-base" />
                     </button>
                 </div>
                 <div className="p-2">
-                    <ComposeView user={user} onPost={handlePost} />
+                    {/* Fix: Passed the language prop to ComposeView. */}
+                    <ComposeView user={user} onPost={handlePost} language={language} />
                 </div>
             </div>
         </div>

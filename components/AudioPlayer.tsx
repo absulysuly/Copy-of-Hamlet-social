@@ -3,81 +3,116 @@ import { PlayButtonIcon, PauseIcon } from './icons/Icons.tsx';
 import { Governorate } from '../types.ts';
 
 interface AudioPlayerProps {
-    duration: number; // in seconds
+    src: string;
     governorate?: Governorate;
 }
 
 const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ duration, governorate }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate }) => {
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const progressBarRef = useRef<HTMLDivElement>(null);
+
     const [isPlaying, setIsPlaying] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const intervalRef = useRef<number | null>(null);
+    const [duration, setDuration] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
 
+    // Effect to setup audio element and its event listeners
     useEffect(() => {
-        if (isPlaying) {
-            intervalRef.current = window.setInterval(() => {
-                setProgress(prev => {
-                    if (prev >= duration) {
-                        setIsPlaying(false);
-                        return duration;
-                    }
-                    return prev + 1;
-                });
-            }, 1000);
-        } else {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-        }
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        const setAudioData = () => {
+            setDuration(audio.duration);
+            setCurrentTime(audio.currentTime);
         };
-    }, [isPlaying, duration]);
-    
-    useEffect(() => {
-        // Reset progress if component re-renders with same duration (e.g. feed refresh)
-        setProgress(0);
-        setIsPlaying(false);
-    }, [duration]);
 
-    const togglePlay = () => {
-        if (progress >= duration) {
-            setProgress(0);
-            setIsPlaying(true);
+        const setAudioTime = () => setCurrentTime(audio.currentTime);
+        const handlePlay = () => setIsPlaying(true);
+        const handlePause = () => setIsPlaying(false);
+        const handleEnded = () => {
+            setIsPlaying(false);
+            setCurrentTime(0); // Reset on end for replayability
+        };
+
+        audio.addEventListener('loadedmetadata', setAudioData);
+        audio.addEventListener('timeupdate', setAudioTime);
+        audio.addEventListener('play', handlePlay);
+        audio.addEventListener('pause', handlePause);
+        audio.addEventListener('ended', handleEnded);
+
+        // Preload metadata to get duration
+        audio.load();
+
+        return () => {
+            audio.removeEventListener('loadedmetadata', setAudioData);
+            audio.removeEventListener('timeupdate', setAudioTime);
+            audio.removeEventListener('play', handlePlay);
+            audio.removeEventListener('pause', handlePause);
+            audio.removeEventListener('ended', handleEnded);
+        };
+    }, [src]);
+
+    const togglePlayPause = () => {
+        if (isPlaying) {
+            audioRef.current?.pause();
         } else {
-            setIsPlaying(!isPlaying);
+            audioRef.current?.play().catch(error => console.error("Audio play failed:", error));
         }
+        setIsPlaying(!isPlaying);
     };
     
-    const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
+    const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const progressBar = progressBarRef.current;
+        const audio = audioRef.current;
+        if (!progressBar || !audio) return;
+
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const newTime = (clickX / width) * duration;
+        
+        if (isFinite(newTime)) {
+            audio.currentTime = newTime;
+            setCurrentTime(newTime);
+        }
+    };
+
+    const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
     return (
         <div className="my-4 p-3 bg-black/20 rounded-lg flex items-center space-x-4">
+            {/* Hidden audio element */}
+            <audio ref={audioRef} src={src} preload="metadata" />
+            
             <span className="text-2xl">🔊</span>
             <div className="flex-shrink-0">
                  <button 
-                    onClick={togglePlay} 
-                    className="w-10 h-10 flex items-center justify-center bg-brand-hot-pink text-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-hot-pink"
+                    onClick={togglePlayPause} 
+                    className="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
                     aria-label={isPlaying ? 'Pause' : 'Play'}
+                    disabled={!src || duration === 0}
                 >
                     {isPlaying ? <PauseIcon className="w-5 h-5" /> : <PlayButtonIcon className="w-5 h-5" />}
                 </button>
             </div>
             <div className="flex-grow flex flex-col justify-center">
-                 <p className="text-sm font-semibold font-arabic text-slate-200">
+                 <p className="text-sm font-semibold font-arabic text-theme-text-muted">
                     {governorate ? `رسالة صوتية من ${governorate}` : 'رسالة صوتية'}
                 </p>
                 {/* Waveform and progress bar */}
-                <div className="w-full bg-white/20 rounded-full h-2 relative overflow-hidden mt-1">
+                <div 
+                    ref={progressBarRef}
+                    onClick={handleProgressClick}
+                    className="w-full bg-white/20 rounded-full h-2 relative overflow-hidden mt-1 cursor-pointer group"
+                >
                     <div 
-                        className="bg-brand-hot-pink h-full rounded-full"
+                        className="bg-primary h-full rounded-full transition-all duration-100"
                         style={{ width: `${progressPercentage}%` }}
                     />
                      {/* Fake waveform SVG */}
@@ -118,8 +153,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ duration, governorate }) => {
                     </svg>
                 </div>
             </div>
-            <div className="text-xs font-mono text-slate-400">
-                {formatTime(progress)}/{formatTime(duration)}
+            <div className="text-xs font-mono text-theme-text-muted">
+                {formatTime(currentTime)}/{formatTime(duration)}
             </div>
         </div>
     );

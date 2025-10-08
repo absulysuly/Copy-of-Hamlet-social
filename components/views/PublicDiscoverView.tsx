@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, GOVERNORATES, GOVERNORATE_AR_MAP } from '../../types.ts';
+import { User, UserRole, Governorate } from '../../types.ts';
 import * as api from '../../services/apiService.ts';
 import PublicDiscoverCandidateCard from '../PublicDiscoverCandidateCard.tsx';
-import { SLUG_PARTY_MAP, SLUG_GOVERNORATE_MAP } from '../../constants.ts';
+import { SLUG_PARTY_MAP, SLUG_GOVERNORATE_MAP, GOVERNORATE_AR_MAP } from '../../constants.ts';
 
 const PublicDiscoverView: React.FC = () => {
     const [candidates, setCandidates] = useState<User[]>([]);
@@ -26,8 +26,8 @@ const PublicDiscoverView: React.FC = () => {
                 setGovernorateName(governorate);
                 
                 // Set Arabic name for governorate
-                if(governorate && GOVERNORATES.includes(governorate as any)){
-                    setGovernorateArName(GOVERNORATE_AR_MAP[governorate as keyof typeof GOVERNORATE_AR_MAP]);
+                if(governorate && GOVERNORATE_AR_MAP[governorate as Governorate]){
+                    setGovernorateArName(GOVERNORATE_AR_MAP[governorate as Governorate]);
                 }
 
                 // Fetch candidates based on slugs

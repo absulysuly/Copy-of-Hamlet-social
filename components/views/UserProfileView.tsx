@@ -11,9 +11,10 @@ interface UserProfileViewProps {
     onUpdateUser: (user: User) => void;
     language: Language;
     onSelectProfile: (profile: User) => void;
+    onSelectPost: (post: Post) => void;
 }
 
-const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, language, onSelectProfile }) => {
+const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, language, onSelectProfile, onSelectPost }) => {
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -74,9 +75,12 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
             </div>
 
             {/* Post Composer */}
-            <div className="mb-6">
-                <ComposeView user={user} onPost={handlePost} />
-            </div>
+            {user.role === UserRole.Candidate && (
+                <div className="mb-6">
+                    <ComposeView user={user} onPost={handlePost} language={language} />
+                </div>
+            )}
+
 
             {/* User's Post Feed */}
             <div>
@@ -84,7 +88,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
                 {isLoading ? (
                     <p className="text-center py-10 text-slate-400">Loading posts...</p>
                 ) : userPosts.length > 0 ? (
-                    userPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} />)
+                    userPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
                 ) : (
                     <p className="text-center py-10 text-slate-400">You haven't posted anything yet.</p>
                 )}

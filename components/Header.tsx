@@ -1,81 +1,64 @@
-import React, { useState } from 'react';
-// Fix: added .ts extension to types import
-import { User, Governorate, GOVERNORATES, GOVERNORATE_AR_MAP, AppTab, Language, HomeViewMode } from '../types.ts';
-// Fix: added .tsx extension to Icons import
-import { SearchIcon, EditIcon, ChevronDownIcon, UsersIcon } from './icons/Icons.tsx';
+import React from 'react';
+import { User, AppTab, Language, HomeViewMode } from '../types.ts';
+import { EditIcon, UsersIcon, QrCodeIcon, HomeIcon } from './icons/Icons.tsx';
 import { UI_TEXT } from '../translations.ts';
-import LanguageSwitcher from './LanguageSwitcher.tsx';
 
 interface HeaderProps {
     user: User | null;
     onCompose: () => void;
     onRequestLogin: () => void;
-    selectedGovernorate: Governorate | 'All';
-    onGovernorateChange: (gov: Governorate | 'All') => void;
-    parties: string[];
-    selectedParty: string | 'All';
-    onPartyChange: (party: string | 'All') => void;
     onNavigate: (tab: AppTab) => void;
-    language: Language;
-    onLanguageChange: (lang: Language) => void;
     homeViewMode: HomeViewMode;
     onModeChange: (mode: HomeViewMode) => void;
+    onQrScan: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onCompose, onRequestLogin, selectedGovernorate, onGovernorateChange, parties, selectedParty, onPartyChange, onNavigate, language, onLanguageChange, homeViewMode, onModeChange }) => {
+const Header: React.FC<HeaderProps> = ({ user, onCompose, onRequestLogin, onNavigate, homeViewMode, onModeChange, onQrScan }) => {
+    // This is a placeholder, language is now managed in App.tsx directly
+    const language: Language = 'ar';
     const texts = UI_TEXT[language];
-
-    const isElectionMode = homeViewMode === 'Election';
-    const headerClasses = isElectionMode
-        ? 'formal-header text-white'
-        : 'glass-nav';
-    const textColor = isElectionMode ? 'text-white' : 'text-white';
-    const placeholderColor = isElectionMode ? 'placeholder-slate-200' : 'placeholder-slate-400';
-    const inputBg = isElectionMode ? 'bg-black/20' : 'bg-white/10';
 
     const getModeTabClasses = (mode: HomeViewMode) => {
         const isActive = homeViewMode === mode;
-        if (isActive) {
-            return isElectionMode 
-                ? 'bg-white text-formal-primary-700' 
-                : 'border-brand-hot-pink text-brand-hot-pink glow';
-        } else {
-            return isElectionMode 
-                ? 'text-white hover:bg-white/20' 
-                : 'border-transparent text-slate-300 hover:text-white hover:border-slate-400';
-        }
+        return isActive 
+            ? 'bg-primary text-on-primary shadow-md' 
+            : 'bg-transparent text-theme-text-muted hover:text-theme-text-base';
     };
 
-
     return (
-        <header className={`fixed top-0 left-0 right-0 z-40 h-40 flex flex-col px-4 sm:px-6 ${headerClasses}`}>
-            {/* Top Bar: Logo, Search, Actions */}
-            <div className="flex items-center space-x-4 w-full h-16">
-                <div className="flex items-center justify-start lg:w-64">
-                    <button onClick={() => onModeChange('Social')} className={`text-xl font-bold font-arabic ${textColor}`}>
+        <header className="fixed top-0 left-0 right-0 z-40 h-24 flex flex-col px-4 sm:px-6 glass-nav">
+            {/* Top Bar: Logo, Lang Switcher & Actions */}
+            <div className="flex items-center justify-between w-full h-14">
+                {/* Left side: Home Icon */}
+                <div className="flex-1 flex justify-start">
+                    <button
+                        onClick={() => { onModeChange('Social'); onNavigate(AppTab.Home); }}
+                        className="p-2 rounded-full hover:bg-white/10 text-theme-text-base"
+                        aria-label="Home"
+                    >
+                        <HomeIcon className="w-6 h-6" />
+                    </button>
+                </div>
+
+                {/* Center: App Name */}
+                <div className="flex-1 flex justify-center">
+                    <button onClick={() => { onModeChange('Social'); onNavigate(AppTab.Home); }} className="text-xl font-bold font-arabic text-theme-text-base whitespace-nowrap">
                         {texts.appName}
                     </button>
                 </div>
 
-                <div className="flex-1 flex justify-center">
-                    <div className="w-full max-w-lg">
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <SearchIcon className={`w-5 h-5 ${isElectionMode ? 'text-slate-200' : 'text-slate-400'}`} />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="ابحث عن مرشحين أو مواضيع"
-                                className={`block w-full pl-10 pr-3 py-2 border rounded-full text-slate-100 focus:outline-none focus:ring-2 focus:ring-brand-hot-pink font-arabic ${isElectionMode ? 'border-white/50' : 'border-white/20'} ${inputBg} ${placeholderColor}`}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex items-center space-x-2 lg:space-x-4 lg:w-auto justify-end flex-shrink-0">
+                {/* Right side: Actions */}
+                <div className="flex-1 flex items-center justify-end space-x-1 sm:space-x-2">
+                    <button 
+                        onClick={onQrScan}
+                        className="hidden lg:flex items-center justify-center w-9 h-9 text-sm font-semibold bg-white/10 text-theme-text-base rounded-full transition-all hover:bg-white/20"
+                        title="Scan QR Code"
+                    >
+                        <QrCodeIcon className="w-5 h-5" />
+                    </button>
                     <button 
                         onClick={onCompose}
-                        className="hidden lg:flex items-center space-x-2 px-4 py-2 text-sm font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110"
+                        className="hidden lg:flex items-center space-x-2 px-4 py-2 text-sm font-semibold bg-primary text-on-primary rounded-full transition-all hover:brightness-110"
                     >
                         <EditIcon className="w-4 h-4" />
                         <span className="font-arabic">انشر</span>
@@ -86,31 +69,24 @@ const Header: React.FC<HeaderProps> = ({ user, onCompose, onRequestLogin, select
                          </button>
                     ) : (
                         <button onClick={onRequestLogin} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
-                            <UsersIcon className="w-5 h-5 text-slate-300" />
+                            <UsersIcon className="w-5 h-5 text-theme-text-muted" />
                         </button>
                     )}
                 </div>
             </div>
-             {/* Middle Bar: Language Switcher */}
-            <div className="h-12 flex items-center justify-start border-t border-white/10">
-                <LanguageSwitcher 
-                    language={language} 
-                    onLanguageChange={onLanguageChange} 
-                    isElectionMode={isElectionMode}
-                />
-            </div>
+            
             {/* Bottom Bar: Main Navigation */}
-            <nav className="h-12 flex items-center justify-center border-t border-white/10">
-                 <div className="flex space-x-4">
+            <nav className="h-10 flex items-center justify-center border-t border-[var(--color-glass-border)]">
+                 <div className="flex space-x-2 bg-black/20 rounded-full p-1">
                     <button
                         onClick={() => onModeChange('Social')}
-                        className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-200 border-b-2 font-arabic ${getModeTabClasses('Social')}`}
+                        className={`px-6 py-1.5 text-sm font-semibold rounded-full transition-colors duration-300 font-arabic ${getModeTabClasses('Social')}`}
                     >
                         {texts.social}
                     </button>
                     <button
                         onClick={() => onModeChange('Election')}
-                        className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-200 border-b-2 font-arabic ${getModeTabClasses('Election')}`}
+                        className={`px-6 py-1.5 text-sm font-semibold rounded-full transition-colors duration-300 font-arabic ${getModeTabClasses('Election')}`}
                     >
                         {texts.serious}
                     </button>

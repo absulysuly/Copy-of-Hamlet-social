@@ -1,30 +1,19 @@
-
-
 import React from 'react';
 
 interface TopNavBarProps<T extends string> {
     tabs: T[];
     activeTab: T;
     onTabChange: (tab: T) => void;
-    isElectionMode: boolean;
 }
 
-function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, isElectionMode }: TopNavBarProps<T>) {
-    const navBarClasses = isElectionMode
-        ? 'border-b border-neutral-gray-medium'
-        : 'border-b border-white/20';
+function TopNavBar<T extends string>({ tabs, activeTab, onTabChange }: TopNavBarProps<T>) {
+    const navBarClasses = 'border-b border-[var(--color-glass-border)]';
 
     const getTabClasses = (tab: T) => {
         const isActive = activeTab === tab;
-        if (isElectionMode) {
-            return isActive
-                ? 'border-election-green text-election-green'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300';
-        } else {
-            return isActive
-                ? 'border-brand-hot-pink text-brand-hot-pink glow'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500';
-        }
+        return isActive
+            ? 'border-primary text-primary glow'
+            : 'border-transparent text-theme-text-muted hover:text-theme-text-base hover:border-theme-text-muted';
     };
 
     return (

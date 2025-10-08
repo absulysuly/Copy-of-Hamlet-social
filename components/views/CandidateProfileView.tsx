@@ -12,9 +12,10 @@ interface CandidateProfileViewProps {
     requestLogin: () => void;
     language: Language;
     onSelectProfile: (profile: User) => void;
+    onSelectPost: (post: Post) => void;
 }
 
-const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, user, requestLogin, language, onSelectProfile }) => {
+const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, user, requestLogin, language, onSelectProfile, onSelectPost }) => {
     const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isQrModalOpen, setQrModalOpen] = useState(false);
@@ -48,7 +49,7 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
         // TODO: Wire up contact actions to backend
     };
 
-    const qrUrl = `https://civic-social.yoursite.web.app/discover?party=${candidate.partySlug}&gov=${candidate.governorateSlug}`;
+    const qrUrl = `https://civic-social.yoursite.web.app/discover?party=${candidate.partySlug}&gov=${candidate.governorateSlug}&candidate=${candidate.id}`;
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 text-white">
@@ -82,7 +83,7 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
                 {isLoading ? (
                     <p className="text-center py-10 text-slate-400">Loading posts...</p>
                 ) : candidatePosts.length > 0 ? (
-                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} />)
+                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
                 ) : (
                     <p className="text-center py-10 text-slate-400">This candidate has not posted yet.</p>
                 )}

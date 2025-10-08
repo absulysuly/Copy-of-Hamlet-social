@@ -3,7 +3,7 @@ import Card from '../components/ui/Card.tsx';
 import Input from '../components/ui/Input.tsx';
 import Select from '../components/ui/Select.tsx';
 import Button from '../components/ui/Button.tsx';
-import { IRAQ_GOVERNORATES } from '../constants.ts';
+import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
 import CheckCircleIcon from '../icons/CheckCircleIcon.tsx';
 
 const VoterRegistrationPage: React.FC = () => {
@@ -81,7 +81,7 @@ const VoterRegistrationPage: React.FC = () => {
                                 />
                                 <Select id="governorate" name="governorate" label="المحافظة" required>
                                     <option value="">اختر محافظتك</option>
-                                    {IRAQ_GOVERNORATES.map(gov => (
+                                    {IRAQI_GOVERNORATES_INFO.map(gov => (
                                         <option key={gov.id} value={gov.enName}>{gov.name}</option>
                                     ))}
                                 </Select>

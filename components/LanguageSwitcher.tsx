@@ -7,7 +7,6 @@ import KurdistanFlagIcon from './election/icons/KurdistanFlagIcon.tsx';
 interface LanguageSwitcherProps {
   language: Language;
   onLanguageChange: (lang: 'ar' | 'en' | 'ku') => void;
-  isElectionMode: boolean;
 }
 
 const FlagButton: React.FC<{
@@ -16,25 +15,18 @@ const FlagButton: React.FC<{
   children: React.ReactNode;
   'aria-label': string;
   label: string;
-  isElectionMode: boolean;
-}> = ({ isActive, onClick, children, label, isElectionMode, ...props }) => {
+}> = ({ isActive, onClick, children, label, ...props }) => {
   
   const buttonClasses = `flex items-center space-x-1 rtl:space-x-reverse p-1 rounded-md transition-all duration-200 ${
-    isElectionMode
-      ? (isActive ? 'bg-election-green/10' : 'hover:bg-neutral-gray-medium')
-      : (isActive ? 'bg-white/20' : 'hover:bg-white/10')
+    isActive ? 'bg-primary/10' : 'hover:bg-white/10'
   }`;
   
   const flagContainerClasses = `w-5 h-3 rounded-sm overflow-hidden border transition-all duration-200 ${
-    isElectionMode
-      ? (isActive ? 'border-election-green' : 'border-neutral-gray-medium')
-      : (isActive ? 'border-brand-hot-pink' : 'border-white/20')
+    isActive ? 'border-primary' : 'border-[var(--color-glass-border)]'
   }`;
 
   const labelClasses = `text-[10px] font-semibold font-arabic ${
-    isElectionMode
-      ? (isActive ? 'text-election-green' : 'text-election-dark-text')
-      : (isActive ? 'text-brand-hot-pink' : 'text-slate-200')
+    isActive ? 'text-primary' : 'text-theme-text-muted'
   }`;
 
   return (
@@ -53,8 +45,8 @@ const FlagButton: React.FC<{
 };
 
 
-const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ language, onLanguageChange, isElectionMode }) => {
-    const containerClasses = `flex items-center space-x-0.5 rtl:space-x-reverse p-0.5 rounded-lg ${isElectionMode ? 'bg-neutral-gray-light' : 'bg-black/20'}`;
+const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ language, onLanguageChange }) => {
+    const containerClasses = `flex items-center space-x-0.5 rtl:space-x-reverse p-0.5 rounded-lg bg-black/20`;
 
     return (
         <div className={containerClasses}>
@@ -63,7 +55,6 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ language, onLanguag
             onClick={() => onLanguageChange('ar')}
             aria-label="Switch to Arabic"
             label="العربية"
-            isElectionMode={isElectionMode}
           >
             <IraqFlagIcon />
           </FlagButton>
@@ -72,7 +63,6 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ language, onLanguag
             onClick={() => onLanguageChange('ku')}
             aria-label="Switch to Kurdish"
             label="کوردی"
-            isElectionMode={isElectionMode}
           >
             <KurdistanFlagIcon />
           </FlagButton>
@@ -81,7 +71,6 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ language, onLanguag
             onClick={() => onLanguageChange('en')}
             aria-label="Switch to English"
             label="English"
-            isElectionMode={isElectionMode}
           >
             <UsaFlagIcon />
           </FlagButton>

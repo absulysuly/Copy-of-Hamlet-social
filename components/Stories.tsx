@@ -3,48 +3,45 @@ import { User } from '../types.ts';
 
 interface StoriesProps {
     users: User[];
+    onSelectProfile: (profile: User) => void;
 }
 
-const StoryItem: React.FC<{ user: User }> = ({ user }) => (
+const StoryItem: React.FC<{ user: User; onSelectProfile: (profile: User) => void; }> = ({ user, onSelectProfile }) => (
     <button
-        onClick={() => alert(`Viewing stories for ${user.name}`)}
-        className="flex flex-col items-center flex-shrink-0 w-24 p-2 focus:outline-none focus:ring-2 focus:ring-brand-hot-pink rounded-lg"
+        onClick={() => onSelectProfile(user)}
+        className="flex flex-col items-center flex-shrink-0 w-24 p-2 focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
         aria-label={`View stories by ${user.name}`}
     >
         <div className="relative">
-            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-br from-yellow-400 via-flag-red to-purple-600">
+            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-br from-secondary via-primary to-accent">
                  <img 
-                    className="w-full h-full rounded-full object-cover border-2 border-brand-deep-purple"
+                    className="w-full h-full rounded-full object-cover border-2 border-[var(--color-background)]"
                     src={user.avatarUrl} 
-                    alt="" 
+                    alt={user.name} 
                  />
             </div>
         </div>
-        <p className="text-xs text-center text-white/90 truncate w-full mt-2">{user.name}</p>
+        <p className="text-xs text-center text-theme-text-muted group-hover:text-theme-text-base truncate w-full mt-2">{user.name}</p>
     </button>
 );
 
 
-const Stories: React.FC<StoriesProps> = ({ users }) => {
+const Stories: React.FC<StoriesProps> = ({ users, onSelectProfile }) => {
     if (!users || users.length === 0) {
         return null;
     }
 
-    // Duplicate users for a seamless loop, ensuring there's enough content to scroll
-    const extendedUsers = users.length > 10 ? [...users, ...users] : [...users, ...users, ...users, ...users];
+    // Duplicate users for a seamless loop.
+    const extendedUsers = [...users, ...users];
 
     return (
-        <div className="w-full overflow-hidden group relative">
-            {/* Left and right fades for a clean look */}
-            <div className="absolute top-0 bottom-0 left-0 z-10 w-12 bg-gradient-to-r from-brand-deep-purple to-transparent pointer-events-none"></div>
-            <div className="absolute top-0 bottom-0 right-0 z-10 w-12 bg-gradient-to-l from-brand-deep-purple to-transparent pointer-events-none"></div>
-
+        <div className="w-full overflow-hidden relative">
             <div 
-                className="flex group-hover:[animation-play-state:paused]"
-                style={{ animation: `scroll-x ${users.length * 5}s linear infinite` }}
+                className="flex"
+                style={{ animation: `scroll-x ${users.length * 1.5}s linear infinite` }}
             >
                 {extendedUsers.map((user, index) => (
-                    <StoryItem key={`${user.id}-${index}`} user={user} />
+                    <StoryItem key={`${user.id}-${index}`} user={user} onSelectProfile={onSelectProfile} />
                 ))}
             </div>
         </div>

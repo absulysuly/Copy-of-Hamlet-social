@@ -1,11 +1,12 @@
 
+
 import React, { useState } from 'react';
 import Card from '../components/ui/Card.tsx';
 import Input from '../components/ui/Input.tsx';
 import Select from '../components/ui/Select.tsx';
 import Textarea from '../components/ui/Textarea.tsx';
 import Button from '../components/ui/Button.tsx';
-import { IRAQ_GOVERNORATES } from '../constants.ts';
+import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
 import { submitIntegrityReport } from '../services/api.ts';
 import CheckCircleIcon from '../icons/CheckCircleIcon.tsx';
 
@@ -74,7 +75,7 @@ const IntegrityHubPage: React.FC = () => {
 
                                 <Select id="governorate" name="governorate" label="المحافظة" required>
                                     <option value="">اختر المحافظة التي وقعت فيها المخالفة...</option>
-                                    {IRAQ_GOVERNORATES.map(gov => (
+                                    {IRAQI_GOVERNORATES_INFO.map(gov => (
                                         <option key={gov.id} value={gov.enName}>{gov.name}</option>
                                     ))}
                                 </Select>

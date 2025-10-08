@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, GOVERNORATES, GOVERNORATE_AR_MAP } from '../../types.ts';
+import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types.ts';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
 import { UI_TEXT } from '../../translations.ts';
 import * as api from '../../services/apiService.ts';
 
@@ -8,6 +9,7 @@ import Stories from '../Stories.tsx';
 import ComposeView from './ComposeView.tsx';
 import PostCard from '../PostCard.tsx';
 import TopNavBar from '../TopNavBar.tsx';
+import { SearchIcon } from '../icons/Icons.tsx';
 
 import ReelsView from './ReelsView.tsx';
 import CandidatesView from './CandidatesView.tsx';
@@ -25,12 +27,13 @@ interface HomeViewProps {
     parties: string[];
     onSelectProfile: (profile: User) => void;
     onSelectReel: (reel: Post) => void;
+    onSelectPost: (post: Post) => void;
     language: Language;
-    isElectionMode: boolean;
+    activeTab: MainContentTab;
+    onTabChange: (tab: MainContentTab) => void;
 }
 
-const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, language, isElectionMode }) => {
-    const [mainTab, setMainTab] = useState<MainContentTab>(AppTab.Posts);
+const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, language, activeTab, onTabChange }) => {
     
     // --- STATE FOR ASYNC DATA ---
     const [socialPosts, setSocialPosts] = useState<Post[]>([]);
@@ -83,15 +86,15 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
     const texts = UI_TEXT[language];
     
     const MobileFilterBar = () => (
-        <div className="sm:hidden flex gap-4 p-3 bg-black/20 backdrop-blur-sm my-4 rounded-lg border border-white/20">
+        <div className="sm:hidden flex gap-4 p-3 bg-black/20 backdrop-blur-sm my-4 rounded-lg border border-[var(--color-glass-border)]">
             {/* Governorate Filter */}
             <div className="flex-1">
-                <label htmlFor="mobile-gov-filter" className="block text-xs font-medium text-slate-300 font-arabic">المحافظة</label>
+                <label htmlFor="mobile-gov-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">المحافظة</label>
                 <select 
                     id="mobile-gov-filter"
                     value={selectedGovernorate}
                     onChange={(e) => onGovernorateChange(e.target.value as Governorate | 'All')}
-                    className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/20 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-hot-pink font-arabic text-right"
+                    className="mt-1 block w-full p-1.5 border border-[var(--color-glass-border)] rounded-md bg-white/20 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
                 >
                     <option value="All">كل العراق</option>
                     {GOVERNORATES.map(gov => (
@@ -101,12 +104,12 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
             </div>
             {/* Party Filter */}
             <div className="flex-1">
-                <label htmlFor="mobile-party-filter" className="block text-xs font-medium text-slate-300 font-arabic">الحزب</label>
+                <label htmlFor="mobile-party-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">الحزب</label>
                 <select 
                     id="mobile-party-filter"
                     value={selectedParty}
                     onChange={(e) => onPartyChange(e.target.value)}
-                    className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/20 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-hot-pink font-arabic text-right"
+                    className="mt-1 block w-full p-1.5 border border-[var(--color-glass-border)] rounded-md bg-white/20 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
                 >
                     <option value="All">الكل</option>
                     {parties.map(party => (
@@ -120,17 +123,17 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
     // --- RENDER LOGIC ---
     const renderSocialContent = () => {
         if (isLoading) {
-            return <div className="text-center py-10 text-slate-200">Loading...</div>;
+            return <div className="text-center py-10 text-theme-text-muted">Loading...</div>;
         }
 
-        switch (mainTab) {
+        switch (activeTab) {
             case AppTab.Posts:
-                const composer = user?.role === UserRole.Candidate ? <ComposeView user={user} onPost={handlePost} /> : null;
+                const composer = user ? <ComposeView user={user} onPost={handlePost} language={language} /> : null;
                 const postsWithStories = socialPosts.reduce((acc, post, index) => {
-                    acc.push(<PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} />);
+                    acc.push(<PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />);
                     // Inject stories every 4 posts
                     if ((index + 1) % 4 === 0) {
-                        acc.push(<div key={`stories-${index}`} className="my-6"><Stories users={storyCandidates} /></div>);
+                        acc.push(<div key={`stories-${index}`} className="my-6"><Stories users={storyCandidates} onSelectProfile={onSelectProfile} /></div>);
                     }
                     return acc;
                 }, [] as React.ReactNode[]);
@@ -140,7 +143,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                         {composer && <div className="mb-4">{composer}</div>}
                         {postsWithStories.length > 0 
                             ? postsWithStories
-                            : <p className="text-center py-10 text-slate-300">No posts found for the selected filters.</p>
+                            : <p className="text-center py-10 text-theme-text-muted">No posts found for the selected filters.</p>
                         }
                     </div>
                 );
@@ -161,8 +164,26 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-4 sm:p-6">
             {/* Main Content Column */}
             <main className="lg:col-span-3">
-                <div className="mt-4">
+                 {/* Search Bar - Moved from Header */}
+                <div className="w-full max-w-2xl mx-auto">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <SearchIcon className="w-5 h-5 text-theme-text-muted" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="ابحث عن مرشحين، مواضيع..."
+                            className="block w-full text-sm pl-11 pr-4 py-2.5 border rounded-full text-theme-text-base focus:outline-none focus:ring-2 focus:ring-primary font-arabic border-white/20 bg-white/10 placeholder-theme-text-muted"
+                        />
+                    </div>
+                </div>
+
+                <div className="mt-6">
                     <HeroSection />
+                </div>
+
+                <div className="mt-6">
+                    <Stories users={storyCandidates} onSelectProfile={onSelectProfile}/>
                 </div>
                 
                 <MobileFilterBar />
@@ -171,9 +192,8 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                 <div className="mt-2 z-10 py-2">
                     <TopNavBar<MainContentTab>
                         tabs={[AppTab.Posts, AppTab.Reels, AppTab.Candidates, AppTab.Debates, AppTab.Events]}
-                        activeTab={mainTab}
-                        onTabChange={setMainTab}
-                        isElectionMode={false}
+                        activeTab={activeTab}
+                        onTabChange={onTabChange}
                     />
                 </div>
                 
@@ -181,7 +201,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
             </main>
 
             {/* Right Sidebar (Desktop) */}
-            <aside className={`hidden lg:block lg:col-span-1 space-y-6 text-white`}>
+            <aside className="hidden lg:block lg:col-span-1 space-y-6">
                 <div className="glass-card rounded-lg p-4">
                     <h3 className="font-bold mb-3 font-arabic">{texts.whoToFollow}</h3>
                     <div className="space-y-3">
@@ -191,18 +211,18 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                                     <img src={candidate.avatarUrl} alt={candidate.name} className="w-10 h-10 rounded-full" />
                                     <div>
                                         <p className="font-semibold text-sm">{candidate.name}</p>
-                                        <p className="text-xs text-slate-400">{candidate.party}</p>
+                                        <p className="text-xs text-theme-text-muted">{candidate.party}</p>
                                     </div>
                                 </div>
-                                <button onClick={(e) => handleFollow(e, candidate.id)} className="px-3 py-1 text-xs font-semibold rounded-full bg-brand-hot-pink text-white transition-all hover:brightness-110">Follow</button>
+                                <button onClick={(e) => handleFollow(e, candidate.id)} className="px-3 py-1 text-xs font-semibold rounded-full bg-primary text-on-primary transition-all hover:brightness-110">Follow</button>
                             </div>
-                        )) : <p className="text-xs text-slate-400">No candidates to show.</p>}
+                        )) : <p className="text-xs text-theme-text-muted">No candidates to show.</p>}
                     </div>
                 </div>
 
                 <div className="glass-card rounded-lg p-4">
                     <h3 className="font-bold mb-3 font-arabic">{texts.platformRules}</h3>
-                    <ul className="text-sm space-y-2 list-disc list-inside text-slate-300 font-arabic">
+                    <ul className="text-sm space-y-2 list-disc list-inside text-theme-text-muted font-arabic">
                         <li>{texts.rule1}</li>
                         <li>{texts.rule2}</li>
                         <li>{texts.rule3}</li>

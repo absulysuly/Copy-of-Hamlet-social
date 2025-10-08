@@ -1,4 +1,35 @@
-import { User, UserRole, Post, Governorate, Event, Article, Debate } from './types.ts';
+import { User, UserRole, Post, Governorate, Event, Article, Debate, GovernorateInfo, TeaHouseTopic, TeaHouseMessage } from './types.ts';
+
+// --- GOVERNORATE DATA (Single Source of Truth) ---
+export const IRAQI_GOVERNORATES_INFO: GovernorateInfo[] = [
+  { id: 1, name: 'بغداد', enName: 'Baghdad', slug: 'baghdad', region: 'central' },
+  { id: 2, name: 'البصرة', enName: 'Basra', slug: 'basra', region: 'south' },
+  { id: 3, name: 'نينوى', enName: 'Nineveh', slug: 'ninawa', region: 'north' },
+  { id: 4, name: 'أربيل', enName: 'Erbil', slug: 'erbil', region: 'north' },
+  { id: 5, name: 'الأنبار', enName: 'Anbar', slug: 'anbar', region: 'west' },
+  { id: 6, name: 'ذي قار', enName: 'Dhi Qar', slug: 'dhiqar', region: 'south' },
+  { id: 7, name: 'صلاح الدين', enName: 'Salah al-Din', slug: 'salahaddin', region: 'north' },
+  { id: 8, name: 'ديالى', enName: 'Diyala', slug: 'diyala', region: 'central' },
+  { id: 9, name: 'كركوك', enName: 'Kirkuk', slug: 'kirkuk', region: 'north' },
+  { id: 10, name: 'السليمانية', enName: 'Sulaymaniyah', slug: 'sulaymaniyah', region: 'north' },
+  { id: 11, name: 'بابل', enName: 'Babil', slug: 'babel', region: 'central' },
+  { id: 12, name: 'واسط', enName: 'Wasit', slug: 'wasit', region: 'central' },
+  { id: 13, name: 'ميسان', enName: 'Maysan', slug: 'maysan', region: 'south' },
+  { id: 14, name: 'المثنى', enName: 'Muthanna', slug: 'muthanna', region: 'south' },
+  { id: 15, name: 'القادسية', enName: 'Qadisiyyah', slug: 'qadisiyah', region: 'south' },
+  { id: 16, name: 'النجف', enName: 'Najaf', slug: 'najaf', region: 'central' },
+  { id: 17, name: 'كربلاء', enName: 'Karbala', slug: 'karbala', region: 'central' },
+  { id: 18, name: 'دهوك', enName: 'Dohuk', slug: 'duhok', region: 'north' }
+];
+
+// --- Derived Governorate Constants ---
+export const GOVERNORATES = IRAQI_GOVERNORATES_INFO.map(g => g.enName);
+export const GOVERNORATE_AR_MAP: Record<Governorate, string> = Object.fromEntries(
+    IRAQI_GOVERNORATES_INFO.map(g => [g.enName, g.name])
+) as Record<Governorate, string>;
+export const GOVERNORATE_SLUG_MAP: Record<Governorate, string> = Object.fromEntries(
+    IRAQI_GOVERNORATES_INFO.map(g => [g.enName, g.slug])
+) as Record<Governorate, string>;
 
 // --- SLUG MAPPINGS ---
 export const PARTY_SLUG_MAP: Record<string, string> = {
@@ -6,28 +37,8 @@ export const PARTY_SLUG_MAP: Record<string, string> = {
     'Progress Party': 'progress-party',
     'National Unity': 'national-unity',
     'Kurdistan Future': 'kurdistan-future',
+    'Sadrist Movement': 'sadrist',
     'Independent': 'independent',
-};
-
-export const GOVERNORATE_SLUG_MAP: Record<Governorate, string> = {
-    'Baghdad': 'baghdad',
-    'Basra': 'basra',
-    'Nineveh': 'nineveh',
-    'Erbil': 'erbil',
-    'Anbar': 'anbar',
-    'Dhi Qar': 'dhi-qar',
-    'Salah al-Din': 'salah-al-din',
-    'Diyala': 'diyala',
-    'Kirkuk': 'kirkuk',
-    'Sulaymaniyah': 'sulaymaniyah',
-    'Babil': 'babil',
-    'Wasit': 'wasit',
-    'Maysan': 'maysan',
-    'Muthanna': 'muthanna',
-    'Qadisiyyah': 'qadisiyyah',
-    'Najaf': 'najaf',
-    'Karbala': 'karbala',
-    'Dohuk': 'dohuk',
 };
 
 // Reverse maps for display purposes on discover page
@@ -36,27 +47,27 @@ export const SLUG_PARTY_MAP: Record<string, string> = Object.fromEntries(
 );
 
 export const SLUG_GOVERNORATE_MAP: Record<string, string> = Object.fromEntries(
-  Object.entries(GOVERNORATE_SLUG_MAP).map(([name, slug]) => [slug, name])
+  IRAQI_GOVERNORATES_INFO.map(g => [g.slug, g.enName])
 );
 
-
 export const MOCK_USERS: User[] = [
-    { id: 'user1', name: 'Ahmed Al-Iraqi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user1/150/150', verified: true, party: 'Future Alliance', governorate: 'Baghdad', isElected: false, bio: 'Striving for a better Baghdad. Focused on infrastructure and youth employment.', partySlug: 'future-alliance', governorateSlug: 'baghdad' },
+    { id: 'user1', name: 'Ahmed Al-Iraqi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user1/150/150', verified: true, party: 'Future Alliance', governorate: 'Baghdad', isElected: true, bio: 'Striving for a better Baghdad. Focused on infrastructure and youth employment.', partySlug: 'future-alliance', governorateSlug: 'baghdad' },
     { id: 'user2', name: 'Fatima Al-Basri', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user2/150/150', verified: true, party: 'Progress Party', governorate: 'Basra', bio: 'Economist and activist, working to bring economic prosperity to Basra.', partySlug: 'progress-party', governorateSlug: 'basra' },
-    { id: 'user3', name: 'Yusuf Al-Mosuli', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user3/150/150', verified: false, party: 'National Unity', governorate: 'Nineveh', bio: 'Dedicated to rebuilding our communities and fostering unity.', partySlug: 'national-unity', governorateSlug: 'nineveh' },
+    { id: 'user3', name: 'Yusuf Al-Mosuli', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user3/150/150', verified: false, party: 'National Unity', governorate: 'Nineveh', bio: 'Dedicated to rebuilding our communities and fostering unity.', partySlug: 'national-unity', governorateSlug: 'ninawa' },
     { id: 'user4', name: 'Layla Al-Erbili', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user4/150/150', verified: true, party: 'Kurdistan Future', governorate: 'Erbil', isElected: false, bio: 'Championing modern education and technology for the next generation.', partySlug: 'kurdistan-future', governorateSlug: 'erbil' },
-    { id: 'user5', name: 'Omar Al-Anbari', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user5/150/150', verified: false, party: 'Independent', governorate: 'Anbar', bio: 'An independent voice for the people of Anbar.', partySlug: 'independent', governorateSlug: 'anbar'},
-    { id: 'user6', name: 'Zahra Al-Najafi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user6/150/150', verified: false, party: 'Progress Party', governorate: 'Najaf', bio: 'Working to improve healthcare and social services.', partySlug: 'progress-party', governorateSlug: 'najaf'},
+    { id: 'user5', name: 'Omar Al-Anbari', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user5/150/150', verified: false, party: 'Independent', governorate: 'Anbar', bio: 'An independent voice for the people of Anbar.', partySlug: 'independent', governorateSlug: 'anbar' },
+    { id: 'user6', name: 'Zahra Al-Najafi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user6/150/150', verified: false, party: 'Progress Party', governorate: 'Najaf', bio: 'Working to improve healthcare and social services.', partySlug: 'progress-party', governorateSlug: 'najaf' },
+    { id: 'user7', name: 'Amir Al-Sadr', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user7/150/150', verified: true, party: 'Sadrist Movement', governorate: 'Basra', bio: 'Leading the movement for a sovereign Iraq.', partySlug: 'sadrist', governorateSlug: 'basra' },
     { id: 'voter1', name: 'Ali Hussein', role: UserRole.Voter, avatarUrl: 'https://picsum.photos/seed/voter1/150/150', verified: false, party: 'N/A', governorate: 'Baghdad' },
     { id: 'voter2', name: 'Noor Khalid', role: UserRole.Voter, avatarUrl: 'https://picsum.photos/seed/voter2/150/150', verified: false, party: 'N/A', governorate: 'Basra' },
 ];
 
 export const MOCK_POSTS: Post[] = [
-    { id: 'post1', author: MOCK_USERS[0], content: 'Today we inaugurated the new water treatment plant in Sadr City. This is a crucial step towards providing clean water for all residents. #Baghdad #Progress', timestamp: '2 hours ago', likes: 1200, comments: 150, shares: 80, type: 'Post', mediaUrl: 'https://picsum.photos/seed/post1/800/600', isSponsored: true },
+    { id: 'post1', author: MOCK_USERS[0], content: 'Today we inaugurated the new water treatment plant in Sadr City. This is a crucial step towards providing clean water for all residents. #Baghdad #Progress', timestamp: '2 hours ago', likes: 1200, comments: 150, shares: 80, type: 'Post', mediaUrl: 'https://picsum.photos/seed/post1/800/600' },
     { id: 'post2', author: MOCK_USERS[1], content: 'Met with local fishermen in Basra to discuss the challenges they face. Protecting our environment and our local industries is my top priority.', timestamp: '5 hours ago', likes: 850, comments: 95, shares: 45, type: 'Post' },
     { id: 'post3', author: MOCK_USERS[2], content: 'Rebuilding the historic Al-Nuri Mosque is a symbol of our city\'s resilience. We must continue to work together to restore Nineveh\'s heritage.', timestamp: '1 day ago', likes: 2500, comments: 300, shares: 200, type: 'Post', mediaUrl: 'https://picsum.photos/seed/post3/800/600' },
     { id: 'post4', author: MOCK_USERS[3], content: 'Launching a new coding bootcamp for young people in Erbil! Technology is the future, and we must empower our youth with the skills they need to succeed.', timestamp: '2 days ago', likes: 1800, comments: 210, shares: 120, type: 'Post' },
-    { id: 'post5', author: MOCK_USERS[0], content: 'Here is a short message for my constituents.', timestamp: '3 days ago', likes: 500, comments: 60, shares: 30, type: 'VoiceNote', duration: 30 },
+    { id: 'post5', author: MOCK_USERS[0], content: 'Here is a short message for my constituents.', timestamp: '3 days ago', likes: 500, comments: 60, shares: 30, type: 'VoiceNote', duration: 30, mediaUrl: 'https://storage.googleapis.com/smart-campaign-_black-hole-assets/mock-voicenote.mp3' },
     { id: 'reel1', author: MOCK_USERS[1], content: 'A quick tour of the Basra port development project! #Basra #Economy', timestamp: '4 days ago', likes: 3200, comments: 400, shares: 250, type: 'Reel', mediaUrl: 'https://picsum.photos/seed/reel1/400/700' },
 ];
 
@@ -74,4 +85,20 @@ export const MOCK_ARTICLES: Article[] = [
 export const MOCK_DEBATES: Debate[] = [
     { id: 'debate1', title: 'The Future of Iraq\'s Economy', topic: 'Economic Policy and Diversification', scheduledTime: '2024-09-01T20:00:00', isLive: true, participants: [MOCK_USERS[0], MOCK_USERS[1]], reactions: { justice: 120, idea: 345, warning: 50 } },
     { id: 'debate2', title: 'Healthcare Reform Debate', topic: 'Improving Public Health Services', scheduledTime: '2024-09-05T20:00:00', isLive: false, participants: [MOCK_USERS[2], MOCK_USERS[3], MOCK_USERS[5]], reactions: { justice: 88, idea: 210, warning: 95 } },
+];
+
+// --- TEA HOUSE MOCK DATA ---
+export const MOCK_TEA_HOUSE_TOPICS: TeaHouseTopic[] = [
+    { id: 'th1', title: 'نقاش حول أزمة الكهرباء', lastMessage: 'نحتاج حلول جذرية وليس مؤقتة...', participants: 12, lastActivity: '5m ago', category: 'Services', language: 'ar' },
+    { id: 'th2', title: 'فرص العمل للشباب في بغداد', lastMessage: 'هل هناك أي مبادرات جديدة؟', participants: 25, lastActivity: '22m ago', category: 'Economy', language: 'ar' },
+    { id: 'th3', title: 'Electoral programs for independent candidates', lastMessage: 'How do we evaluate their promises?', participants: 8, lastActivity: '1h ago', category: 'Politics', language: 'en' },
+    { id: 'th4', title: 'گفتوگۆ لەسەر هەلی کار', lastMessage: 'چۆن دەتوانین هەلی کاری زیاتر بۆ گەنجان دابین بکەین؟', participants: 5, lastActivity: '3h ago', category: 'Economy', language: 'ku' },
+];
+
+export const MOCK_TEA_HOUSE_MESSAGES: TeaHouseMessage[] = [
+    { id: 'msg1', author: MOCK_USERS[7], type: 'text', content: 'السلام عليكم. برأيي، المشكلة ليست فقط في الانتاج، بل في شبكات التوزيع القديمة.', timestamp: '10m ago' },
+    { id: 'msg2', author: MOCK_USERS[0], type: 'text', content: 'أتفق تماماً. نعمل على خطة لتحديث الشبكة في مناطق محددة كبداية.', timestamp: '8m ago' },
+    { id: 'msg3', author: MOCK_USERS[8], type: 'voice', content: 'رسالة صوتية', mediaUrl: 'https://storage.googleapis.com/smart-campaign-_black-hole-assets/mock-voicenote.mp3', timestamp: '7m ago' },
+    { id: 'msg4', author: MOCK_USERS[7], type: 'image', content: 'صورة للمحطة الجديدة', mediaUrl: 'https://picsum.photos/seed/powerplant/600/400', timestamp: '5m ago' },
+    { id: 'msg5', author: MOCK_USERS[0], type: 'document', content: 'خطة تحديث الشبكة.pdf', mediaUrl: '#', timestamp: '2m ago' },
 ];

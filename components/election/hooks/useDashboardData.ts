@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IRAQ_GOVERNORATES } from '../constants.ts';
+import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
 
 const MOCK_DATA = {
     stats: {
@@ -19,7 +19,7 @@ const MOCK_DATA = {
             women: { count: 939, percentage: 28.9 },
         },
     },
-    participation: IRAQ_GOVERNORATES.map(gov => ({
+    participation: IRAQI_GOVERNORATES_INFO.map(gov => ({
         governorateId: gov.id,
         governorateName: gov.name,
         estimatedTurnout: Math.floor(Math.random() * (65 - 30 + 1) + 30),

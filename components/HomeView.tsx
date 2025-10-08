@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, Event, GOVERNORATES, GOVERNORATE_AR_MAP } from '../../types.ts';
+// Fix: Moved GOVERNORATES and GOVERNORATE_AR_MAP imports to constants.ts where they are defined.
+import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, Event } from '../../types.ts';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
 import { UI_TEXT } from '../../translations.ts';
 import * as api from '../../services/apiService.ts';
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Governorate, Event } from '../../types.ts';
 import { CalendarIcon, LocationIcon, ShareIcon } from '../icons/Icons.tsx';
 import * as api from '../../services/apiService.ts';
+import { ResponsiveGrid } from '../UI/Responsive.tsx';
 
 interface EventsViewProps {
     selectedGovernorate: Governorate | 'All';
@@ -71,13 +72,13 @@ const EventsView: React.FC<EventsViewProps> = ({ selectedGovernorate, selectedPa
             {isLoading ? (
                  <p className="text-slate-300 col-span-full text-center mt-8">Loading events...</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <ResponsiveGrid>
                     {events.length > 0 ? (
                         events.map(event => <EventCard key={event.id} event={event} />)
                     ) : (
                         <p className="text-slate-300 col-span-full text-center mt-8">No events scheduled for the selected filters.</p>
                     )}
-                </div>
+                </ResponsiveGrid>
             )}
         </div>
     );
