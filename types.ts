@@ -1,60 +1,93 @@
-// Fix: Populating types.ts with all necessary type definitions for the application.
-export type Language = 'en' | 'ku' | 'ar';
+
+
+// --- ENUMS & LITERAL TYPES ---
 
 export enum UserRole {
     Voter = 'Voter',
     Candidate = 'Candidate',
 }
 
-export const GOVERNORATES = [
-    "Al Anbar", "Al-Qādisiyyah", "Babil", "Baghdad", "Basra",
-    "Dhi Qar", "Diyala", "Dohuk", "Erbil", "Karbala", "Kirkuk",
-    "Maysan", "Muthanna", "Najaf", "Nineveh", "Saladin",
-    "Sulaymaniyah", "Wasit"
-] as const;
-
-export type Governorate = typeof GOVERNORATES[number];
-
-export interface User {
-    id: string;
-    name: string;
-    avatarUrl: string;
-    role: UserRole;
-    verified: boolean;
-    party: string;
-    governorate: Governorate;
-    bio?: string;
-}
-
 export enum AppTab {
-    Home = 'Home', // A generic home tab that contains the main content
+    Home = 'Home',
+    Discover = 'Discover',
+    AskNeighbor = 'Ask a Neighbor',
+    DebateRoom = 'Debate Room',
+    Settings = 'Settings',
+    UserProfile = 'My Profile',
+    CandidateProfile = 'Candidate Profile',
+    Dashboard = 'Dashboard',
+    // For HomeView tabs
     Posts = 'Posts',
     Reels = 'Reels',
     Candidates = 'Candidates',
     Debates = 'Debates',
     Events = 'Events',
-    DebateRoom = 'Debate Room',
-    Dashboard = 'Dashboard',
-    Settings = 'Settings',
-    CandidateProfile = 'Candidate Profile', // For navigation to a specific profile
 }
+
+export type Language = 'en' | 'ar' | 'ku';
+
+export const GOVERNORATES = [
+    'Baghdad', 'Basra', 'Nineveh', 'Erbil', 'Anbar', 'Dhi Qar', 'Salah al-Din',
+    'Diyala', 'Kirkuk', 'Sulaymaniyah', 'Babil', 'Wasit', 'Maysan', 'Muthanna',
+    'Qadisiyyah', 'Najaf', 'Karbala', 'Dohuk'
+] as const;
+
+export type Governorate = typeof GOVERNORATES[number];
+
+export const GOVERNORATE_AR_MAP: Record<Governorate, string> = {
+    'Baghdad': 'بغداد',
+    'Basra': 'البصرة',
+    'Nineveh': 'نينوى',
+    'Erbil': 'أربيل',
+    'Anbar': 'الأنبار',
+    'Dhi Qar': 'ذي قار',
+    'Salah al-Din': 'صلاح الدين',
+    'Diyala': 'ديالى',
+    'Kirkuk': 'كركوك',
+    'Sulaymaniyah': 'السليمانية',
+    'Babil': 'بابل',
+    'Wasit': 'واسط',
+    'Maysan': 'ميسان',
+    'Muthanna': 'المثنى',
+    'Qadisiyyah': 'القادسية',
+    'Najaf': 'النجف',
+    'Karbala': 'كربلاء',
+    'Dohuk': 'دهوك',
+};
 
 export type MainContentTab = AppTab.Posts | AppTab.Reels | AppTab.Candidates | AppTab.Debates | AppTab.Events;
 
-export type PostType = 'Post' | 'Reel' | 'Story';
+export type HomeViewMode = 'Social' | 'Election';
+
+
+// --- INTERFACES ---
+
+export interface User {
+    id: string;
+    name: string;
+    role: UserRole;
+    avatarUrl: string;
+    verified: boolean;
+    party: string;
+    governorate: Governorate;
+    isElected?: boolean;
+    bio?: string;
+    partySlug?: string;
+    governorateSlug?: string;
+}
 
 export interface Post {
     id: string;
     author: User;
-    timestamp: string;
     content: string;
-    mediaUrl?: string;
+    timestamp: string;
     likes: number;
     comments: number;
     shares: number;
-    isSponsored: boolean;
-    type: PostType;
-    governorates: Governorate[];
+    type: 'Post' | 'Reel' | 'VoiceNote';
+    mediaUrl?: string;
+    isSponsored?: boolean;
+    duration?: number; // for voice notes
 }
 
 export interface Event {
@@ -63,7 +96,16 @@ export interface Event {
     date: string;
     location: string;
     organizer: User;
-    governorate: Governorate;
+}
+
+export interface Article {
+    id: string;
+    title: string;
+    source: string;
+    timestamp: string;
+    authorName: string;
+    contentSnippet: string;
+    url: string;
 }
 
 export interface Debate {
@@ -73,15 +115,9 @@ export interface Debate {
     scheduledTime: string;
     isLive: boolean;
     participants: User[];
-}
-
-export interface Article {
-    id: string;
-    source: string;
-    timestamp: string;
-    title: string;
-    authorName: string;
-    contentSnippet: string;
-    url: string;
-    governorates: Governorate[];
+    reactions: {
+        justice: number;
+        idea: number;
+        warning: number;
+    };
 }

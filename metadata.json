@@ -1,5 +1,7 @@
 {
-  "name": "Copy of Hamlet —social",
-  "description": "Hamlet is a single‑page civic social platform that surfaces verified candidate content by governorate/city for Iraq’s 2025 national election. It supports various content formats, integrates social media, and is fully accessible and bilingual.",
-  "requestFramePermissions": []
+  "name": "Copy of Smart Campaign",
+  "description": "A safe, engaging space for Iraqis to discuss politics, share concerns, and hold leaders accountable — using voice, text, and community moderation to foster inclusive dialogue before, during, and after elections.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }

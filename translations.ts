@@ -2,6 +2,7 @@ import { Language } from './types.ts';
 
 type Translations = {
     [key in Language]: {
+        appName: string;
         social: string;
         serious: string;
         whoToFollow: string;
@@ -10,7 +11,7 @@ type Translations = {
         rule2: string;
         rule3: string;
         rule4: string;
-        welcomeToHamlet: string;
+        welcomeToApp: string;
         chooseYourRole: string;
         iAmVoter: string;
         voterDescription: string;
@@ -21,15 +22,16 @@ type Translations = {
 
 export const UI_TEXT: Translations = {
     en: {
-        social: 'Social',
-        serious: 'Serious',
+        appName: 'Smart Campaign',
+        social: 'Social Interaction',
+        serious: 'Election Management',
         whoToFollow: 'Who to follow',
         platformRules: 'Platform Rules',
         rule1: 'Be respectful to others.',
         rule2: 'No hate speech or harassment.',
         rule3: 'Verify information before sharing.',
         rule4: 'Engage in constructive dialogue.',
-        welcomeToHamlet: 'Welcome to Hamlet',
+        welcomeToApp: 'Welcome to {appName}',
         chooseYourRole: 'Choose your role to get started.',
         iAmVoter: 'I am a Voter',
         voterDescription: 'Follow candidates, join debates, and stay informed.',
@@ -37,15 +39,16 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'Create posts, share your message, and engage with voters.',
     },
     ku: {
-        social: 'کۆمەڵایەتی',
-        serious: 'جدی',
+        appName: 'هەڵمەتی زیرەک',
+        social: 'کارلێکی کۆمەڵایەتی',
+        serious: 'بەڕێوەبردنی هەڵبژاردن',
         whoToFollow: 'کێ فۆڵۆ بکەیت',
         platformRules: 'ڕێنماییەکان',
         rule1: 'ڕێز لە کەسانی تر بگرە.',
         rule2: 'دووربە لە وتاری ڕق و گێچەڵی ئەلکترۆni.',
         rule3: 'پێش بڵاوکردنەوە، لە ڕاستی زانیارییەکان دڵنیابە.',
         rule4: 'بەشداری بکە لە گفتوگۆی بنیاتنەرانە.',
-        welcomeToHamlet: 'بەخێربێن بۆ ھاملێت',
+        welcomeToApp: 'بەخێربێن بۆ {appName}',
         chooseYourRole: 'ڕۆڵی خۆت هەڵبژێرە بۆ دەستپێکردن.',
         iAmVoter: 'من دەنگدەرم',
         voterDescription: 'فۆڵۆی کاندیدەکان بکە، بەشداری لە دیبەیتەکان بکە و ئاگادار بە.',
@@ -53,15 +56,16 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'پۆست دروست بکە، پەیامەکەت بڵاوبکەرەوە و لەگەڵ دەنگدەران بەردەوام بە.',
     },
     ar: {
-        social: 'اجتماعي',
-        serious: 'جدي',
+        appName: 'الحملة الذكية',
+        social: 'التفاعل الاجتماعي',
+        serious: 'إدارة الانتخابات',
         whoToFollow: 'من تتابعه',
         platformRules: 'قواعد المنصة',
         rule1: 'كن محترما للآخرين.',
         rule2: 'لا لخطاب الكراهية أو التحرش.',
         rule3: 'تحقق من المعلومات قبل مشاركتها.',
         rule4: 'انخرط في حوار بناء.',
-        welcomeToHamlet: 'أهلاً بك في هاملت',
+        welcomeToApp: 'أهلاً بك في {appName}',
         chooseYourRole: 'اختر دورك للبدء.',
         iAmVoter: 'أنا ناخب',
         voterDescription: 'تابع المرشحين، شارك في المناقشات، وابق على اطلاع.',

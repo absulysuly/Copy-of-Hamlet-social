@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { User, UserRole, Language } from '../types.ts';
 import { EditIcon, XMarkIcon } from './icons/Icons.tsx';
@@ -11,9 +10,10 @@ interface LoginModalProps {
     onClose: () => void;
     language: Language;
     onLanguageChange: (lang: Language) => void;
+    isElectionMode: boolean;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose, language, onLanguageChange }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose, language, onLanguageChange, isElectionMode }) => {
     const handleSelectRole = async (role: UserRole) => {
         // TODO: This now uses the apiService, which simulates a backend call.
         // Once the backend is live, this will handle real authentication.
@@ -28,39 +28,42 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose, language, onL
     };
     
     const texts = UI_TEXT[language];
+    const textColor = isElectionMode ? 'text-election-dark-text' : 'text-white';
+    const secondaryTextColor = isElectionMode ? 'text-gray-600' : 'text-slate-300';
+    const iconColor = isElectionMode ? 'text-gray-800' : 'text-white';
 
     return (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center backdrop-blur-sm p-4" onClick={onClose}>
             <div 
-                className="bg-mocha-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm p-6 text-center relative"
+                className="glass-card rounded-lg shadow-xl w-full max-w-sm p-6 text-center relative"
                 onClick={(e) => e.stopPropagation()}
             >
-                <button onClick={onClose} className="absolute top-2 right-2 p-2 rounded-full hover:bg-neutral-gray-light dark:hover:bg-gray-700">
-                    <XMarkIcon className="w-6 h-6" />
+                <button onClick={onClose} className="absolute top-2 right-2 p-2 rounded-full hover:bg-white/10">
+                    <XMarkIcon className={`w-6 h-6 ${iconColor}`} />
                 </button>
 
-                <LanguageSwitcher language={language} onLanguageChange={onLanguageChange} />
+                <LanguageSwitcher language={language} onLanguageChange={onLanguageChange} isElectionMode={isElectionMode} />
 
-                <h2 className="text-xl font-bold mb-2 mt-4">{texts.welcomeToHamlet}</h2>
-                <p className="text-neutral-gray-dark dark:text-gray-400 mb-6">{texts.chooseYourRole}</p>
+                <h2 className={`text-xl font-bold mb-2 mt-4 ${textColor}`}>{texts.welcomeToApp.replace('{appName}', texts.appName)}</h2>
+                <p className={`${secondaryTextColor} mb-6`}>{texts.chooseYourRole}</p>
                 
                 <div className="space-y-4">
                     <button 
                         onClick={() => handleSelectRole(UserRole.Voter)}
-                        className="w-full text-left p-4 border dark:border-gray-700 rounded-lg hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors"
+                        className="w-full text-left p-4 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
                     >
-                        <h3 className="font-bold text-md">{texts.iAmVoter}</h3>
-                        <p className="text-sm text-neutral-gray-dark dark:text-gray-400">{texts.voterDescription}</p>
+                        <h3 className={`font-bold text-md ${textColor}`}>{texts.iAmVoter}</h3>
+                        <p className={`text-sm ${isElectionMode ? 'text-gray-500' : 'text-slate-400'}`}>{texts.voterDescription}</p>
                     </button>
                     <button 
                         onClick={() => handleSelectRole(UserRole.Candidate)}
-                        className="w-full text-left p-4 border dark:border-gray-700 rounded-lg hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors"
+                        className="w-full text-left p-4 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
                     >
-                        <h3 className="font-bold text-md flex items-center">
+                        <h3 className={`font-bold text-md flex items-center ${textColor}`}>
                             {texts.iAmCandidate}
-                            <EditIcon className="w-4 h-4 ml-2 text-action-blue" />
+                            <EditIcon className="w-4 h-4 ml-2 text-brand-hot-pink" />
                         </h3>
-                        <p className="text-sm text-neutral-gray-dark dark:text-gray-400">{texts.candidateDescription}</p>
+                        <p className={`text-sm ${isElectionMode ? 'text-gray-500' : 'text-slate-400'}`}>{texts.candidateDescription}</p>
                     </button>
                 </div>
             </div>

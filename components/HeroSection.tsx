@@ -1,4 +1,3 @@
-// Fix: Populating HeroSection.tsx with full component implementation.
 import React, { useState, useEffect } from 'react';
 import { MOCK_POSTS } from '../constants.ts';
 
@@ -24,7 +23,7 @@ const HeroSection: React.FC = () => {
     };
 
     return (
-        <div className="w-full aspect-square md:aspect-[2/1] lg:aspect-[3/1] relative group rounded-lg overflow-hidden shadow-lg">
+        <div className="w-full aspect-[4/3] md:aspect-[2/1] lg:aspect-[3/1] relative group rounded-lg overflow-hidden shadow-lg">
            <div className="w-full h-full relative">
                 {slides.map((slide, slideIndex) => (
                     <div

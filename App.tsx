@@ -1,195 +1,164 @@
-
 import React, { useState, useEffect } from 'react';
-import './index.css'; // Assuming tailwind css is setup here
-
-import { User, AppTab, Governorate, UserRole, Post, Language } from './types.ts';
-
+import { User, UserRole, Governorate, Language, AppTab, Post, HomeViewMode } from './types.ts';
+import * as api from './services/apiService.ts';
 import Header from './components/Header.tsx';
 import Sidebar from './components/Sidebar.tsx';
-import ComposeModal from './components/ComposeModal.tsx';
-import LoginModal from './components/LoginModal.tsx';
-
-// Views
+import BottomBar from './components/BottomBar.tsx';
 import HomeView from './components/views/HomeView.tsx';
-import CandidateDashboardView from './components/views/CandidateDashboardView.tsx';
-import SettingsView from './components/views/SettingsView.tsx';
-import CandidateProfileView from './components/views/CandidateProfileView.tsx';
+import PublicDiscoverView from './components/views/PublicDiscoverView.tsx';
+import AskNeighborView from './components/views/AskNeighborView.tsx';
 import DebateRoomView from './components/views/DebateRoomView.tsx';
+import SettingsView from './components/views/SettingsView.tsx';
+import UserProfileView from './components/views/UserProfileView.tsx';
+import CandidateProfileView from './components/views/CandidateProfileView.tsx';
+import CandidateDashboardView from './components/views/CandidateDashboardView.tsx';
+import LoginModal from './components/LoginModal.tsx';
+import ComposeModal from './components/ComposeModal.tsx';
 import FullScreenReelView from './components/views/FullScreenReelView.tsx';
+import ElectionManagementView from './components/views/ElectionManagementView.tsx';
+import ElectionHero from './components/ElectionHero.tsx';
 
 
-function App() {
+const App: React.FC = () => {
     // --- STATE MANAGEMENT ---
-    // User state: null if guest, User object if logged in. Drives all auth-related UI.
     const [user, setUser] = useState<User | null>(null);
-    // Active Tab: Controls which main view is displayed (e.g., Home, Dashboard).
-    const [activeTab, setActiveTab] = useState<AppTab>(AppTab.Home);
-    // Modal States: Control the visibility of various modals.
-    const [isComposeOpen, setComposeOpen] = useState(false);
+    const [homeViewMode, setHomeViewMode] = useState<HomeViewMode>('Social');
+    const [activeTab, setActiveTab] = useState<AppTab>(AppTab.Home); // Sub-navigation for Social view
     const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-    // Global Filters: State for filters that affect content across the entire app.
-    const [selectedGovernorate, setSelectedGovernorate] = useState<Governorate | 'All'>('All');
-    // Accessibility & Language: State for user-specific preferences.
+    const [isComposeModalOpen, setComposeModalOpen] = useState(false);
     const [isHighContrast, setHighContrast] = useState(false);
-    const [language, setLanguage] = useState<Language>('en');
-    // View-specific State: Manages navigation to deeper content like profiles or full-screen reels.
-    const [viewingCandidate, setViewingCandidate] = useState<User | null>(null);
-    const [viewingReel, setViewingReel] = useState<Post | null>(null);
+    const [language, setLanguage] = useState<Language>('ar');
+
+    // Filters
+    const [selectedGovernorate, setSelectedGovernorate] = useState<Governorate | 'All'>('All');
+    const [selectedParty, setSelectedParty] = useState<string | 'All'>('All');
+    const [parties, setParties] = useState<string[]>([]);
+
+    // View-specific state
+    const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
+    const [selectedReel, setSelectedReel] = useState<Post | null>(null);
+    const [electionPath, setElectionPath] = useState('/');
+    
+    // --- ROUTING ---
+    const [isPublicDiscoverPage, setIsPublicDiscoverPage] = useState(false);
+    useEffect(() => {
+        if (window.location.pathname === '/discover') {
+            setIsPublicDiscoverPage(true);
+        }
+    }, []);
+
 
     // --- EFFECTS ---
-    // Toggles a class on the root HTML element for high-contrast mode styling.
     useEffect(() => {
-        document.documentElement.classList.toggle('high-contrast', isHighContrast);
-    }, [isHighContrast]);
-    
-    // --- HANDLERS ---
-    /**
-     * Triggers the login modal if the user is not authenticated.
-     * This function is passed to components with interactive elements.
-     */
-    const requestLogin = () => {
-        if (!user) {
-            setLoginModalOpen(true);
-        }
-    }
+        // Fetch parties for filters
+        api.getParties().then(setParties);
+    }, []);
 
-    /**
-     * Handles the successful login event.
-     * @param {User} loggedInUser - The user object returned from the login process.
-     * @todo Replace MOCK_USERS logic in LoginModal with a real API call.
-     */
+    // --- HANDLERS ---
     const handleLogin = (loggedInUser: User) => {
         setUser(loggedInUser);
         setLoginModalOpen(false);
-        // Redirect candidates to their dashboard upon login.
         if (loggedInUser.role === UserRole.Candidate) {
             setActiveTab(AppTab.Dashboard);
         } else {
             setActiveTab(AppTab.Home);
         }
     };
-    
-    /**
-     * Handles navigation to a specific candidate's profile page.
-     */
-    const handleSelectCandidate = (candidate: User) => {
-        setViewingCandidate(candidate);
-        setActiveTab(AppTab.CandidateProfile);
-    };
-    
-    /**
-     * Handles primary navigation via the sidebar.
-     * Resets sub-views like the candidate profile when navigating away.
-     */
-    const handleNavigate = (tab: AppTab) => {
-        if (tab === AppTab.CandidateProfile) {
-            // Prevent direct navigation to the generic profile tab.
-            return;
-        }
-        setViewingCandidate(null); // Clear specific candidate view
-        setActiveTab(tab);
+
+    const handleUpdateUser = (updatedUser: User) => {
+        setUser(updatedUser);
     }
     
-    /**
-     * Opens the compose modal, requesting login if the user is a guest.
-     */
-    const handleCompose = () => {
-        if (!user) {
-            requestLogin();
-            return;
-        }
-        setComposeOpen(true);
+    const handleNavigate = (tab: AppTab) => {
+        setSelectedProfile(null); // Clear selected profile when changing main tabs
+        setActiveTab(tab);
     };
 
-    /**
-     * Handles opening the full-screen reel player.
-     * @param {Post} reel - The reel post to be displayed.
-     */
-    const handleSelectReel = (reel: Post) => {
-        if (!user) {
-            requestLogin();
-        } else {
-            setViewingReel(reel);
-        }
+    const handleSelectCandidate = (candidate: User) => {
+        setSelectedProfile(candidate);
+        setActiveTab(AppTab.CandidateProfile);
     };
 
-    /**
-     * Closes the full-screen reel player.
-     */
-    const handleCloseReel = () => {
-        setViewingReel(null);
-    };
+    // --- RENDER LOGIC ---
+    if (isPublicDiscoverPage) {
+        return (
+             <div className={`min-h-screen font-sans`}>
+                <PublicDiscoverView />
+            </div>
+        )
+    }
+    
+    const isElectionMode = homeViewMode === 'Election';
 
-    /**
-     * Renders the main content view based on the activeTab state.
-     * This acts as a simple client-side router.
-     */
-    const renderView = () => {
-        // Special case for deep-linked views like candidate profiles.
-        if (activeTab === AppTab.CandidateProfile && viewingCandidate) {
-            return <CandidateProfileView candidate={viewingCandidate} user={user} requestLogin={requestLogin} />;
+    const renderSocialContent = () => {
+         if (selectedReel) {
+            return <FullScreenReelView reel={selectedReel} onClose={() => setSelectedReel(null)} user={user} requestLogin={() => setLoginModalOpen(true)} />
         }
         
+        // This logic is now specific to the "Social" section
         switch (activeTab) {
-            case AppTab.Dashboard:
-                // Protected view: only render if the user is a candidate.
-                return user?.role === UserRole.Candidate 
-                    ? <CandidateDashboardView user={user} />
-                    : <HomeView user={user} requestLogin={requestLogin} selectedGovernorate={selectedGovernorate} onSelectCandidate={handleSelectCandidate} onSelectReel={handleSelectReel} language={language} onLanguageChange={setLanguage} />;
+            case AppTab.Home:
+            case AppTab.Discover: // Fallback to Home for now
+                return <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+            case AppTab.AskNeighbor:
+                return <AskNeighborView />;
+            case AppTab.DebateRoom:
+                return <DebateRoomView />;
             case AppTab.Settings:
                 return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} />;
-             case AppTab.DebateRoom:
-                return <DebateRoomView />;
-            case AppTab.Home:
+            case AppTab.UserProfile:
+                return user ? <UserProfileView user={user} onUpdateUser={handleUpdateUser} language={language} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+            case AppTab.CandidateProfile:
+                 return selectedProfile ? <CandidateProfileView candidate={selectedProfile} user={user} requestLogin={() => setLoginModalOpen(true)} language={language} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+            case AppTab.Dashboard:
+                return user?.role === UserRole.Candidate ? <CandidateDashboardView user={user} language={language} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
             default:
-                return <HomeView user={user} requestLogin={requestLogin} selectedGovernorate={selectedGovernorate} onSelectCandidate={handleSelectCandidate} onSelectReel={handleSelectReel} language={language} onLanguageChange={setLanguage} />;
+                return <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
         }
-    };
+    }
+    
+    const appThemeClass = isElectionMode ? 'theme-election' : 'theme-social';
 
     return (
-        <div className="bg-neutral-gray-light dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+        <div className={`min-h-screen font-sans ${isHighContrast ? 'high-contrast' : ''} ${appThemeClass}`}>
             <Header 
                 user={user} 
-                onCompose={handleCompose}
-                onRequestLogin={requestLogin}
+                onCompose={() => user ? setComposeModalOpen(true) : setLoginModalOpen(true)}
+                onRequestLogin={() => setLoginModalOpen(true)}
                 selectedGovernorate={selectedGovernorate}
                 onGovernorateChange={setSelectedGovernorate}
-            />
-            
-            <Sidebar 
-                userRole={user?.role}
-                activeTab={activeTab}
+                parties={parties}
+                selectedParty={selectedParty}
+                onPartyChange={setSelectedParty}
                 onNavigate={handleNavigate}
+                language={language}
+                onLanguageChange={setLanguage}
+                homeViewMode={homeViewMode}
+                onModeChange={setHomeViewMode}
             />
-
-            <main className="pt-16 lg:pl-64">
-                {renderView()}
-            </main>
-
-            {/* Modal Overlays */}
-            {viewingReel && (
-                <FullScreenReelView 
-                    reel={viewingReel} 
-                    onClose={handleCloseReel}
-                    user={user}
-                    requestLogin={requestLogin}
-                />
-            )}
+            <Sidebar user={user} activeTab={activeTab} onNavigate={handleNavigate} isElectionMode={isElectionMode} />
             
-            {isLoginModalOpen && (
-                <LoginModal 
-                    onLogin={handleLogin} 
-                    onClose={() => setLoginModalOpen(false)}
-                    language={language}
-                    onLanguageChange={setLanguage}
-                />
-            )}
+            <main className="lg:pl-64 pt-40 pb-16 lg:pb-0">
+                {homeViewMode === 'Social' ? (
+                    renderSocialContent()
+                ) : (
+                    <div className="p-4 sm:p-6">
+                        <div className="mt-4">
+                            <ElectionHero />
+                        </div>
+                        <div className="mt-6">
+                            <ElectionManagementView path={electionPath} onNavigate={setElectionPath} />
+                        </div>
+                    </div>
+                )}
+            </main>
+            
+            <BottomBar user={user} activeTab={activeTab} onNavigate={handleNavigate} language={language} isElectionMode={isElectionMode} />
 
-            {isComposeOpen && user && (
-                <ComposeModal user={user} onClose={() => setComposeOpen(false)} />
-            )}
+            {isLoginModalOpen && <LoginModal onLogin={handleLogin} onClose={() => setLoginModalOpen(false)} language={language} onLanguageChange={setLanguage} isElectionMode={isElectionMode} />}
+            {isComposeModalOpen && user && <ComposeModal user={user} onClose={() => setComposeModalOpen(false)} isElectionMode={isElectionMode} />}
         </div>
     );
-}
+};
 
 export default App;

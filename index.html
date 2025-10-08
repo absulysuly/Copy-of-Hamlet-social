@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hamlet</title>
+    <title>Smart Campaign</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -20,11 +20,31 @@
               'neutral-gray-light': '#F5F6F7',
               'neutral-gray-medium': '#E6E6E8',
               'neutral-gray-dark': '#9AA0A6',
-              'action-blue': '#0A66C2',
+              // New "Vibrant Glass" Branding
+              'brand-hot-pink': '#F000B8',
+              'brand-deep-purple': '#1C0C2C',
+              // New Formal Election Theme Colors
+              'official': {
+                100: '#f7fafc',
+                200: '#edf2f7',
+                300: '#e2e8f0',
+                700: '#4a5568',
+                800: '#2d3748',
+                900: '#1a202c',
+              },
+              'formal-primary': {
+                100: '#ebf8ff',
+                500: '#3182ce',
+                600: '#2b6cb0',
+                700: '#2c5282',
+              },
+              'formal-secondary': {
+                500: '#d69e2e',
+              },
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
-              arabic: ['Noto Sans Arabic', 'sans-serif'],
+              arabic: ['Tajawal', 'sans-serif'],
             }
           }
         }
@@ -38,6 +58,170 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+      
+      .theme-social {
+        background-color: #100C1C; /* Darker futuristic purple */
+        background-image: 
+            radial-gradient(circle at 15% 50%, rgba(240, 0, 184, 0.6), transparent 35%),
+            radial-gradient(circle at 85% 30%, rgba(0, 255, 255, 0.4), transparent 40%),
+            radial-gradient(circle at 50% 90%, rgba(167, 38, 217, 0.5), transparent 45%);
+        background-attachment: fixed;
+        color: white;
+      }
+
+      .theme-election {
+        background-color: #f7fafc; /* official-100 */
+        color: #1a202c; /* official-900 */
+      }
+
+      .glass-card {
+        background: rgba(237, 230, 242, 0.15); /* White blurry glass with subtle purple tint */
+        backdrop-filter: blur(30px); /* Stronger blur */
+        -webkit-backdrop-filter: blur(30px); /* Stronger blur */
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6); /* Enhanced 3D text shadow for visibility */
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out; /* Enhanced transition for pop effect */
+      }
+      
+      .theme-social .glass-card:hover {
+        transform: translateY(-10px) perspective(1000px) rotateX(4deg) rotateY(-4deg) scale(1.04);
+        box-shadow: 0 25px 50px -12px rgba(240, 0, 184, 0.4), 0 0 20px rgba(240, 0, 184, 0.5);
+        border-color: rgba(240, 0, 184, 0.6);
+      }
+
+      .hero-election-bg {
+        background-color: #2b6cb0; /* formal-primary-600 */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M50 0 L61.2 34.5 H100 L70 55.9 L79.4 90.5 L50 69.1 L20.6 90.5 L30 55.9 L0 34.5 H38.8 z' /%3E%3C/g%3E%3C/svg%3E");
+        background-size: 50px 50px;
+      }
+
+      /* --- START FORMAL ELECTION THEME --- */
+      .formal-header {
+        background: linear-gradient(to right, #2d3748, #1a202c);
+      }
+      .formal-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0; /* official-300 */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        color: #1a202c; /* official-900 */
+      }
+      .formal-button {
+        background-color: #2b6cb0; /* formal-primary-600 */
+        color: #ffffff;
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        transition: background-color 0.2s;
+      }
+      .formal-button:hover {
+        background-color: #2c5282; /* formal-primary-700 */
+      }
+      .formal-stats {
+        background-color: #ebf8ff; /* formal-primary-100 */
+        border-left: 4px solid #3182ce; /* formal-primary-500 */
+      }
+      .status-active {
+        background-color: #c6f6d5;
+        color: #2f855a;
+      }
+      .status-pending {
+        background-color: #feebc8;
+        color: #975a16;
+      }
+      .status-inactive {
+        background-color: #e2e8f0;
+        color: #4a5568;
+      }
+      .management-glass-card {
+        background: rgba(237, 242, 247, 0.8); /* official-200 */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: #1a202c;
+      }
+
+      /* Override social styles for election theme */
+      .theme-election .glass-card, .theme-election .formal-card {
+        background: #FFFFFF;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+        color: #1a202c;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        text-shadow: none; /* Reset text shadow for formal theme */
+      }
+      .theme-election .glass-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.1);
+      }
+      .theme-election .text-white { color: #1a202c !important; }
+      .theme-election .text-slate-200, .theme-election .text-slate-300, .theme-election .text-slate-400 { color: #4a5568 !important; }
+      /* --- END FORMAL ELECTION THEME --- */
+      
+      @keyframes progress-bar {
+        0% { width: 0%; }
+      }
+      .progress-bar-animated {
+        animation: progress-bar 1.5s ease-out forwards;
+      }
+      
+      @keyframes chart-draw {
+        to { stroke-dashoffset: 0; }
+      }
+      .chart-animated {
+        animation: chart-draw 2s ease-out forwards;
+      }
+
+
+      @keyframes glow {
+        from {
+          box-shadow: 0 0 15px -5px rgba(240, 0, 184, 0.5);
+        }
+        to {
+          box-shadow: 0 0 25px 5px rgba(240, 0, 184, 0.7);
+        }
+      }
+
+      .glow {
+          animation: glow 1.5s ease-in-out infinite alternate;
+      }
+
+      .glass-nav {
+        background: rgba(28, 12, 44, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      @keyframes scroll-x {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+      
+      /* --- HIGH CONTRAST MODE --- */
+      .high-contrast {
+        --hc-bg: #ffffff;
+        --hc-text: #000000;
+        --hc-link: #0000ff;
+        --hc-border: #000000;
+        --hc-interactive-bg: #ffff00;
+        --hc-interactive-text: #000000;
+        --hc-focus-outline: 3px solid #ff00ff;
+
+        background-color: var(--hc-bg) !important;
+        color: var(--hc-text) !important;
+        animation: none !important;
+      }
+
+      /* ... (rest of high contrast styles are unchanged) ... */
+      
+      /* Reduced Motion Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        .theme-social, .glow, .glass-button, .glass-card, * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
     </style>
   <script type="importmap">
 {
@@ -50,7 +234,7 @@
 }
 </script>
 </head>
-  <body class="bg-neutral-gray-light">
+  <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

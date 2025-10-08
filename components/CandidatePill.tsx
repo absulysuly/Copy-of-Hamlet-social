@@ -1,4 +1,3 @@
-
 // Fix: Populating components/CandidatePill.tsx with a reusable candidate component.
 import React from 'react';
 import { User } from '../types.ts';
@@ -31,21 +30,21 @@ const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user
     return (
         <div 
             onClick={() => onSelect(candidate)}
-            className="bg-mocha-white dark:bg-gray-800 rounded-lg shadow-sm border border-neutral-gray-medium dark:border-gray-700 p-4 flex items-center justify-between cursor-pointer hover:bg-neutral-gray-light dark:hover:bg-gray-700 transition-colors"
+            className="glass-card rounded-lg p-4 flex items-center justify-between cursor-pointer"
         >
             <div className="flex items-center space-x-4">
-                <img className="w-12 h-12 rounded-full" src={candidate.avatarUrl} alt={candidate.name} />
+                <img className="w-12 h-12 rounded-full ring-2 ring-white/50" src={candidate.avatarUrl} alt={candidate.name} />
                 <div>
-                    <p className="font-bold flex items-center">
+                    <p className="font-bold flex items-center text-white">
                         {candidate.name}
-                        {candidate.verified && <VerifiedIcon className="w-4 h-4 text-action-blue ml-1.5" />}
+                        {candidate.verified && <VerifiedIcon className="w-4 h-4 text-brand-hot-pink ml-1.5" />}
                     </p>
-                    <p className="text-sm text-neutral-gray-dark dark:text-gray-400">{candidate.party}</p>
+                    <p className="text-sm text-slate-300">{candidate.party}</p>
                 </div>
             </div>
             <button 
                 onClick={handleFollow}
-                className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-action-blue rounded-full hover:bg-blue-700"
+                className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110"
             >
                 <PlusIcon className="w-3 h-3"/>
                 <span>Follow</span>

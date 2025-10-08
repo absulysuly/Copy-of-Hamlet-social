@@ -1,167 +1,174 @@
-// TODO: This file simulates a backend API. Replace with actual HTTP calls to the Windsurf backend.
+import { User, UserRole, Post, Event, Article, Debate, Governorate } from '../types.ts';
+import { MOCK_USERS, MOCK_POSTS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES } from '../constants.ts';
 
-import { MOCK_USERS, MOCK_POSTS, MOCK_EVENTS, MOCK_DEBATES, MOCK_ARTICLES } from '../constants.ts';
-import { User, UserRole, Post, Event, Debate, Article, Governorate } from '../types.ts';
+// --- SIMULATE API LATENCY ---
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-const LATENCY = 200; // ms to simulate network delay
+// --- API FUNCTIONS ---
 
-// --- DATA FETCHING ---
-
-export const getUsers = async (filters: { role?: UserRole, governorate?: Governorate | 'All' }): Promise<User[]> => {
-    console.log('API: getUsers called with', filters);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            let users = MOCK_USERS;
-            if (filters.role) {
-                users = users.filter(u => u.role === filters.role);
-            }
-            if (filters.governorate && filters.governorate !== 'All') {
-                users = users.filter(u => u.governorate === filters.governorate);
-            }
-            resolve(users);
-        }, LATENCY);
-    });
+export const getParties = async (): Promise<string[]> => {
+    await delay(100);
+    return [...new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate && u.party !== 'Independent').map(u => u.party))];
 };
 
-export const getPosts = async (filters: { type?: 'Post' | 'Reel', governorate?: Governorate | 'All', authorId?: string }): Promise<Post[]> => {
-    console.log('API: getPosts called with', filters);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            let posts = MOCK_POSTS;
-            if (filters.type) {
-                posts = posts.filter(p => p.type === filters.type);
-            }
-            if (filters.governorate && filters.governorate !== 'All') {
-                posts = posts.filter(p => p.governorates.includes(filters.governorate as Governorate));
-            }
-            if (filters.authorId) {
-                posts = posts.filter(p => p.author.id === filters.authorId);
-            }
-            resolve([...posts].sort(() => Math.random() - 0.5)); // Simulate dynamic feed
-        }, LATENCY);
-    });
+export const getUsers = async (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', partySlug?: string, governorateSlug?: string }): Promise<User[]> => {
+    await delay(300);
+    let users = MOCK_USERS;
+
+    if (filters.role) {
+        users = users.filter(u => u.role === filters.role);
+    }
+    if (filters.governorate && filters.governorate !== 'All') {
+        users = users.filter(u => u.governorate === filters.governorate);
+    }
+    if (filters.party && filters.party !== 'All') {
+        users = users.filter(u => u.party === filters.party);
+    }
+    if (filters.partySlug) {
+        users = users.filter(u => u.partySlug === filters.partySlug);
+    }
+     if (filters.governorateSlug) {
+        users = users.filter(u => u.governorateSlug === filters.governorateSlug);
+    }
+
+    return users;
 };
 
-export const getEvents = async (filters: { governorate?: Governorate | 'All' }): Promise<Event[]> => {
-    console.log('API: getEvents called with', filters);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            const events = MOCK_EVENTS.filter(event =>
-                !filters.governorate || filters.governorate === 'All' || event.governorate === filters.governorate
-            );
-            resolve(events);
-        }, LATENCY);
-    });
+
+export const getPosts = async (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
+    await delay(500);
+    let posts = MOCK_POSTS;
+    if (filters.type) {
+        posts = posts.filter(p => p.type === filters.type);
+    }
+    if (filters.authorId) {
+        posts = posts.filter(p => p.author.id === filters.authorId);
+    }
+    if (filters.governorate && filters.governorate !== 'All') {
+        posts = posts.filter(p => p.author.governorate === filters.governorate);
+    }
+    if (filters.party && filters.party !== 'All') {
+        posts = posts.filter(p => p.author.party === filters.party);
+    }
+    return [...posts].sort(() => Math.random() - 0.5); // Randomize for demo
 };
 
-export const getDebates = async (filters: { governorate?: Governorate | 'All', participantIds?: string[] }): Promise<Debate[]> => {
-    console.log('API: getDebates called with', filters);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            let debates = MOCK_DEBATES;
-            if (filters.governorate && filters.governorate !== 'All') {
-                debates = debates.filter(debate =>
-                    debate.participants.some(p => p.governorate === filters.governorate)
-                );
-            }
-            if (filters.participantIds && filters.participantIds.length > 0) {
-                debates = debates.filter(debate =>
-                    debate.participants.some(p => filters.participantIds!.includes(p.id))
-                );
-            }
-            resolve(debates);
-        }, LATENCY);
-    });
-};
+export const getEvents = async (filters: { governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Event[]> => {
+    await delay(400);
+    let events = MOCK_EVENTS;
+    if (filters.governorate && filters.governorate !== 'All') {
+        events = events.filter(e => e.organizer.governorate === filters.governorate);
+    }
+    if (filters.party && filters.party !== 'All') {
+        events = events.filter(e => e.organizer.party === filters.party);
+    }
+    return events;
+}
 
 export const getArticles = async (filters: { governorate?: Governorate | 'All' }): Promise<Article[]> => {
-    console.log('API: getArticles called with', filters);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            const articles = MOCK_ARTICLES.filter(article =>
-                !filters.governorate || filters.governorate === 'All' || article.governorates.includes(filters.governorate as Governorate)
-            );
-            resolve(articles);
-        }, LATENCY);
-    });
+    await delay(600);
+    // Filtering by governorate is not supported by mock data, returning all
+    return MOCK_ARTICLES;
+}
+
+export const getDebates = async (filters: { governorate?: Governorate | 'All', party?: string | 'All', participantIds?: string[] }): Promise<Debate[]> => {
+    await delay(450);
+    let debates = MOCK_DEBATES;
+    if (filters.governorate && filters.governorate !== 'All') {
+        debates = debates.filter(d => d.participants.some(p => p.governorate === filters.governorate));
+    }
+    if (filters.party && filters.party !== 'All') {
+        debates = debates.filter(d => d.participants.some(p => p.party === filters.party));
+    }
+    if (filters.participantIds && filters.participantIds.length > 0) {
+        debates = debates.filter(d => d.participants.some(p => filters.participantIds!.includes(p.id)));
+    }
+    return debates;
+}
+
+
+export const createPost = async (postDetails: Partial<Post>, author: User): Promise<Post> => {
+    await delay(200);
+    const newPost: Post = {
+        id: `post${Date.now()}`,
+        author: author,
+        content: postDetails.content || '',
+        timestamp: 'Just now',
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        type: postDetails.type || 'Post',
+        ...postDetails
+    };
+    MOCK_POSTS.unshift(newPost);
+    return newPost;
 };
 
+export const createReel = async (details: { caption: string }, author: User): Promise<Post> => {
+    await delay(200);
+    const newReel: Post = {
+        id: `reel${Date.now()}`,
+        author: author,
+        content: details.caption,
+        timestamp: 'Just now',
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        type: 'Reel',
+        mediaUrl: `https://picsum.photos/seed/newReel${Date.now()}/400/700`,
+    };
+    MOCK_POSTS.unshift(newReel);
+    return newReel;
+};
 
-// --- AUTHENTICATION ---
+export const createEvent = async (details: { title: string, date: string, location: string }, organizer: User): Promise<Event> => {
+    await delay(200);
+    const newEvent: Event = {
+        id: `event${Date.now()}`,
+        title: details.title,
+        date: details.date,
+        location: details.location,
+        organizer: organizer,
+    };
+    MOCK_EVENTS.unshift(newEvent);
+    return newEvent;
+};
+
 
 export const login = async (role: UserRole): Promise<User | null> => {
-    console.log('API: login called with role', role);
-    // TODO: Replace with a real authentication API call.
-    return new Promise(resolve => {
-        setTimeout(() => {
-            const userToLogin = MOCK_USERS.find(user => user.role === role);
-            resolve(userToLogin || null);
-        }, LATENCY);
-    });
+    await delay(100);
+    if (role === UserRole.Voter) {
+        return MOCK_USERS.find(u => u.id === 'voter1') || null;
+    }
+    if (role === UserRole.Candidate) {
+        return MOCK_USERS.find(u => u.id === 'user1') || null;
+    }
+    return null;
+};
+
+export const updateUser = async (userId: string, updates: Partial<User>): Promise<User | null> => {
+    await delay(150);
+    const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
+    if (userIndex > -1) {
+        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], ...updates };
+        return MOCK_USERS[userIndex];
+    }
+    return null;
 };
 
 
-// --- INTERACTIONS (PLACEHOLDERS) ---
-
 export const followCandidate = async (candidateId: string): Promise<{ success: boolean }> => {
-    console.log(`API: Follow candidate ${candidateId}`);
-    // TODO: Wire up to Windsurf backend
-    return Promise.resolve({ success: true });
+    await delay(100);
+    console.log(`User followed candidate with id: ${candidateId}`);
+    return { success: true };
 };
 
 export const likePost = async (postId: string): Promise<{ success: boolean }> => {
-    console.log(`API: Like post ${postId}`);
-    // TODO: Wire up to Windsurf backend
-    return Promise.resolve({ success: true });
-};
-
-export const createPost = async (content: string, user: User): Promise<Post> => {
-    console.log(`API: Create post with content: "${content}"`);
-    // TODO: Wire up to Windsurf backend. This is a mock response.
-    const newPost: Post = {
-        id: `post-${Date.now()}`,
-        author: user,
-        timestamp: 'Just now',
-        content: content,
-        likes: 0,
-        comments: 0,
-        shares: 0,
-        isSponsored: false,
-        type: 'Post',
-        governorates: [user.governorate],
-    };
-    return Promise.resolve(newPost);
-};
-
-export const createReel = async (details: { caption: string }, user: User): Promise<Post> => {
-    console.log(`API: Create reel with caption: "${details.caption}"`);
-    // TODO: Wire up to Windsurf backend, handle video file upload. This is a mock response.
-     const newReel: Post = {
-        id: `reel-${Date.now()}`,
-        author: user,
-        timestamp: 'Just now',
-        content: details.caption,
-        mediaUrl: 'https://images.unsplash.com/photo-1599518559222-1b6a71ac337d?w=400', // Placeholder
-        likes: 0,
-        comments: 0,
-        shares: 0,
-        isSponsored: false,
-        type: 'Reel',
-        governorates: [user.governorate],
-    };
-    return Promise.resolve(newReel);
-}
-
-export const createEvent = async (details: { title: string, date: string, location: string }, user: User): Promise<Event> => {
-    console.log(`API: Create event:`, details);
-    // TODO: Wire up to Windsurf backend. This is a mock response.
-    const newEvent: Event = {
-        id: `event-${Date.now()}`,
-        title: details.title,
-        date: new Date(details.date).toISOString(),
-        location: details.location,
-        organizer: user,
-        governorate: user.governorate,
-    };
-    return Promise.resolve(newEvent);
+    await delay(50);
+    const post = MOCK_POSTS.find(p => p.id === postId);
+    if (post) {
+        post.likes += 1;
+    }
+    console.log(`Liked post with id: ${postId}`);
+    return { success: true };
 };
