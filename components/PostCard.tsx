@@ -10,9 +10,10 @@ interface PostCardProps {
     user: User | null;
     requestLogin: () => void;
     language: Language;
+    onSelectAuthor?: (author: User) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language, onSelectAuthor }) => {
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [translatedContent, setTranslatedContent] = useState<string | null>(null);
     const [isTranslating, setIsTranslating] = useState(false);
@@ -88,10 +89,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language 
                     </div>
                 )}
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
+                    <div 
+                        className="flex items-center space-x-3 cursor-pointer group"
+                        onClick={() => onSelectAuthor && onSelectAuthor(post.author)}
+                    >
                         <img className="w-11 h-11 rounded-full ring-2 ring-white/50" src={post.author.avatarUrl} alt={post.author.name} />
                         <div>
-                            <p className="text-sm font-semibold text-white flex items-center">
+                            <p className="text-sm font-semibold text-white flex items-center group-hover:underline">
                                 {post.author.name}
                                 {post.author.verified && <VerifiedIcon className="w-4 h-4 text-brand-hot-pink ml-1.5" />}
                             </p>

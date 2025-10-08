@@ -8,9 +8,10 @@ import QRCodeDisplay from '../QRCodeDisplay.tsx';
 interface CandidateDashboardViewProps {
     user: User;
     language: Language;
+    onSelectProfile: (profile: User) => void;
 }
 
-const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, language }) => {
+const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, language, onSelectProfile }) => {
     const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     
@@ -103,7 +104,7 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
                 {isLoading ? (
                     <p className="text-center py-10 text-slate-400">Loading posts...</p>
                 ) : candidatePosts.length > 0 ? (
-                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} />)
+                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} />)
                 ) : (
                     <p className="text-center py-10 text-slate-400">You have not posted yet.</p>
                 )}

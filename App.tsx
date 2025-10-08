@@ -74,10 +74,34 @@ const App: React.FC = () => {
         setActiveTab(tab);
     };
 
-    const handleSelectCandidate = (candidate: User) => {
-        setSelectedProfile(candidate);
-        setActiveTab(AppTab.CandidateProfile);
+    const handleSelectProfile = (profile: User) => {
+        if (!user) {
+            setLoginModalOpen(true);
+            return;
+        }
+        // If it's the current user, go to their own profile page
+        if (profile.id === user.id) {
+            setActiveTab(AppTab.UserProfile);
+            return;
+        }
+        // If it's another candidate, go to their profile page
+        if (profile.role === UserRole.Candidate) {
+            setSelectedProfile(profile);
+            setActiveTab(AppTab.CandidateProfile);
+        } else {
+            // No public page for other voters for now.
+            console.log("Clicked on a voter profile, no public page for that yet.");
+        }
     };
+
+    const handleSelectReel = (reel: Post) => {
+        if (!user) {
+            setLoginModalOpen(true);
+            return;
+        }
+        setSelectedReel(reel);
+    };
+
 
     // --- RENDER LOGIC ---
     if (isPublicDiscoverPage) {
@@ -99,7 +123,7 @@ const App: React.FC = () => {
         switch (activeTab) {
             case AppTab.Home:
             case AppTab.Discover: // Fallback to Home for now
-                return <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+                return <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectProfile={handleSelectProfile} onSelectReel={handleSelectReel} language={language} isElectionMode={isElectionMode} />;
             case AppTab.AskNeighbor:
                 return <AskNeighborView />;
             case AppTab.DebateRoom:
@@ -107,13 +131,13 @@ const App: React.FC = () => {
             case AppTab.Settings:
                 return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} />;
             case AppTab.UserProfile:
-                return user ? <UserProfileView user={user} onUpdateUser={handleUpdateUser} language={language} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+                return user ? <UserProfileView user={user} onUpdateUser={handleUpdateUser} language={language} onSelectProfile={handleSelectProfile} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectProfile={handleSelectProfile} onSelectReel={handleSelectReel} language={language} isElectionMode={isElectionMode} />;
             case AppTab.CandidateProfile:
-                 return selectedProfile ? <CandidateProfileView candidate={selectedProfile} user={user} requestLogin={() => setLoginModalOpen(true)} language={language} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+                 return selectedProfile ? <CandidateProfileView candidate={selectedProfile} user={user} requestLogin={() => setLoginModalOpen(true)} language={language} onSelectProfile={handleSelectProfile} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectProfile={handleSelectProfile} onSelectReel={handleSelectReel} language={language} isElectionMode={isElectionMode} />;
             case AppTab.Dashboard:
-                return user?.role === UserRole.Candidate ? <CandidateDashboardView user={user} language={language} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+                return user?.role === UserRole.Candidate ? <CandidateDashboardView user={user} language={language} onSelectProfile={handleSelectProfile} /> : <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectProfile={handleSelectProfile} onSelectReel={handleSelectReel} language={language} isElectionMode={isElectionMode} />;
             default:
-                return <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectCandidate={handleSelectCandidate} onSelectReel={setSelectedReel} language={language} isElectionMode={isElectionMode} />;
+                return <HomeView user={user} requestLogin={() => setLoginModalOpen(true)} selectedGovernorate={selectedGovernorate} onGovernorateChange={setSelectedGovernorate} selectedParty={selectedParty} onPartyChange={setSelectedParty} parties={parties} onSelectProfile={handleSelectProfile} onSelectReel={handleSelectReel} language={language} isElectionMode={isElectionMode} />;
         }
     }
     

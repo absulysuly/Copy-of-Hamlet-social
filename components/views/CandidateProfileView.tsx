@@ -11,9 +11,10 @@ interface CandidateProfileViewProps {
     user: User | null;
     requestLogin: () => void;
     language: Language;
+    onSelectProfile: (profile: User) => void;
 }
 
-const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, user, requestLogin, language }) => {
+const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, user, requestLogin, language, onSelectProfile }) => {
     const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isQrModalOpen, setQrModalOpen] = useState(false);
@@ -81,7 +82,7 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
                 {isLoading ? (
                     <p className="text-center py-10 text-slate-400">Loading posts...</p>
                 ) : candidatePosts.length > 0 ? (
-                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} />)
+                    candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} />)
                 ) : (
                     <p className="text-center py-10 text-slate-400">This candidate has not posted yet.</p>
                 )}

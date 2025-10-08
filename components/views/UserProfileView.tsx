@@ -10,9 +10,10 @@ interface UserProfileViewProps {
     user: User;
     onUpdateUser: (user: User) => void;
     language: Language;
+    onSelectProfile: (profile: User) => void;
 }
 
-const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, language }) => {
+const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, language, onSelectProfile }) => {
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -83,7 +84,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
                 {isLoading ? (
                     <p className="text-center py-10 text-slate-400">Loading posts...</p>
                 ) : userPosts.length > 0 ? (
-                    userPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} />)
+                    userPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} />)
                 ) : (
                     <p className="text-center py-10 text-slate-400">You haven't posted anything yet.</p>
                 )}

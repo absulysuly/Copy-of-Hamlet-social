@@ -23,13 +23,13 @@ interface HomeViewProps {
     selectedParty: string | 'All';
     onPartyChange: (party: string | 'All') => void;
     parties: string[];
-    onSelectCandidate: (candidate: User) => void;
+    onSelectProfile: (profile: User) => void;
     onSelectReel: (reel: Post) => void;
     language: Language;
     isElectionMode: boolean;
 }
 
-const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectCandidate, onSelectReel, language, isElectionMode }) => {
+const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, language, isElectionMode }) => {
     const [mainTab, setMainTab] = useState<MainContentTab>(AppTab.Posts);
     
     // --- STATE FOR ASYNC DATA ---
@@ -126,12 +126,20 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
         switch (mainTab) {
             case AppTab.Posts:
                 const composer = user?.role === UserRole.Candidate ? <ComposeView user={user} onPost={handlePost} /> : null;
-                
+                const postsWithStories = socialPosts.reduce((acc, post, index) => {
+                    acc.push(<PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} />);
+                    // Inject stories every 4 posts
+                    if ((index + 1) % 4 === 0) {
+                        acc.push(<div key={`stories-${index}`} className="my-6"><Stories users={storyCandidates} /></div>);
+                    }
+                    return acc;
+                }, [] as React.ReactNode[]);
+
                 return (
                      <div className="mt-4">
                         {composer && <div className="mb-4">{composer}</div>}
-                        {socialPosts.length > 0 
-                            ? socialPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} />)
+                        {postsWithStories.length > 0 
+                            ? postsWithStories
                             : <p className="text-center py-10 text-slate-300">No posts found for the selected filters.</p>
                         }
                     </div>
@@ -139,7 +147,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
             case AppTab.Reels:
                 return <ReelsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} />;
             case AppTab.Candidates:
-                return <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} parties={parties} onSelectCandidate={onSelectCandidate} user={user} requestLogin={requestLogin} />;
+                return <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} parties={parties} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} />;
             case AppTab.Debates:
                 return <DebatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} />;
             case AppTab.Events:
@@ -158,10 +166,6 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                 </div>
                 
                 <MobileFilterBar />
-
-                <div className="mt-4">
-                   <Stories users={storyCandidates} />
-                </div>
 
                 {/* Non-sticky TopNavBar */}
                 <div className="mt-2 z-10 py-2">
@@ -183,7 +187,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                     <div className="space-y-3">
                         {candidatesToFollow.length > 0 ? candidatesToFollow.map(candidate => (
                             <div key={candidate.id} className="flex items-center justify-between">
-                                <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onSelectCandidate(candidate)}>
+                                <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onSelectProfile(candidate)}>
                                     <img src={candidate.avatarUrl} alt={candidate.name} className="w-10 h-10 rounded-full" />
                                     <div>
                                         <p className="font-semibold text-sm">{candidate.name}</p>
