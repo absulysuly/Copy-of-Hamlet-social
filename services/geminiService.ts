@@ -1,37 +1,18 @@
 import { GoogleGenAI } from "@google/genai";
 
-// --- SECURITY WARNING ---
-// The original implementation exposed an API key on the client-side.
-// This has been updated to proxy requests through a secure backend endpoint.
-// The client now calls our own backend (e.g., /api/gemini), which then securely
-// calls the Google Gemini API.
-// --------------------
-
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
-    // TODO: This function now calls a backend proxy.
-    // Ensure the Windsurf backend has a '/api/gemini' endpoint
-    // that accepts a POST request with a JSON body like { "topic": "..." }
-    // and returns a JSON response like { "suggestion": "..." }.
-    
     try {
-        const response = await fetch('/api/gemini', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ topic }),
+        // This assumes process.env.API_KEY is available in the execution environment.
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: `Generate a short, engaging social media post about the following topic for an Iraqi political candidate. Keep it under 280 characters. The topic is: "${topic}"`,
         });
 
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error("Gemini proxy server error:", errorData);
-            throw new Error(`API returned status ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.suggestion || "No suggestion received from the server.";
+        return response.text;
     } catch (error) {
-        console.error("Error generating content via proxy:", error);
+        console.error("Error generating content with Gemini:", error);
         return "Failed to generate content. Please check the connection and try again.";
     }
 };

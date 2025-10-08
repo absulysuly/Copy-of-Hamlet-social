@@ -257,7 +257,9 @@ const App: React.FC = () => {
                 )}
             </main>
             
-            <BottomBar user={user} activeTab={activeTab} onNavigate={handleNavigate} language={language} />
+            {activeTab !== AppTab.TeaHouse && (
+                <BottomBar user={user} activeTab={activeTab} onNavigate={handleNavigate} language={language} />
+            )}
 
             {isLoginModalOpen && <LoginModal onLogin={handleLogin} onClose={() => setLoginModalOpen(false)} language={language} onLanguageChange={setLanguage} />}
             {/* Fix: Passed language prop to ComposeModal to be used by ComposeView. */}

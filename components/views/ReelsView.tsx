@@ -37,7 +37,7 @@ const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, selectedPart
   return (
     <div className="p-4 sm:p-6">
       {reelPosts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {reelPosts.map(post => (
                 <ReelCard 
                     key={post.id} 

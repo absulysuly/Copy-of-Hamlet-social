@@ -24,19 +24,16 @@ const BottomBar: React.FC<BottomBarProps> = ({ user, activeTab, onNavigate, lang
         const isActive = activeTab === tab;
         return isActive ? 'text-primary' : 'text-theme-text-muted';
     };
-
-    // Determine the number of visible items for grid layout
-    const visibleItemCount = navItems.filter(item => item.enabled).length;
     
     return (
         <div className={`fixed bottom-0 left-0 right-0 z-50 h-16 lg:hidden ${barClasses}`}>
-            <div className={`grid h-full max-w-lg mx-auto font-medium grid-cols-${visibleItemCount}`}>
+            <div className="flex h-full max-w-lg mx-auto font-medium">
                 {navItems.map(item => item.enabled && (
                     <button
                         key={item.tab}
                         onClick={() => onNavigate(item.tab)}
                         type="button"
-                        className={`inline-flex flex-col items-center justify-center px-2 group hover:bg-primary/10 ${getItemClasses(item.tab)}`}
+                        className={`flex-1 inline-flex flex-col items-center justify-center px-2 group hover:bg-primary/10 ${getItemClasses(item.tab)}`}
                     >
                         <item.icon className="w-6 h-6 mb-1" />
                         <span className="text-[10px] leading-tight text-center font-arabic">{item.label}</span>

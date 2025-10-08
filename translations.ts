@@ -19,6 +19,7 @@ type Translations = {
         candidateDescription: string;
         navigate: string;
         teaHouse: string;
+        teaHouseFooter: string;
         register: string;
         fullName: string;
         dateOfBirth: string;
@@ -55,6 +56,7 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'Create posts, share your message, and engage with voters.',
         navigate: 'Navigate',
         teaHouse: 'Tea House',
+        teaHouseFooter: "People's Diwaniya",
         register: 'Register',
         fullName: 'Full Name',
         dateOfBirth: 'Date of Birth',
@@ -88,6 +90,7 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'پۆست دروست بکە، پەیامەکەت بڵاوبکەرەوە و لەگەڵ دەنگدەران بەردەوام بە.',
         navigate: 'ڕێدۆزی',
         teaHouse: 'چایخانە',
+        teaHouseFooter: 'قەهوەخانەی گەلەکە',
         register: 'تۆمارکردن',
         fullName: 'ناوی تەواو',
         dateOfBirth: 'ڕێکەوتی لەدایکبوون',
@@ -121,6 +124,7 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'أنشئ منشورات، شارك رسالتك، وتفاعل مع الناخبين.',
         navigate: 'التنقل',
         teaHouse: 'المقهى',
+        teaHouseFooter: 'ديوانية الشعب',
         register: 'تسجيل',
         fullName: 'الاسم الكامل',
         dateOfBirth: 'تاريخ الميلاد',

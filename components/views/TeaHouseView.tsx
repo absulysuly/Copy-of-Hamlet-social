@@ -1,33 +1,23 @@
-import React, { useState } from 'react';
-import { User, Language } from '../../types.ts';
-import { MOCK_POSTS } from '../../constants.ts';
-import { TeaHouseIcon, MicIcon, PlusIcon, PencilIcon, ImageIcon } from '../icons/Icons.tsx';
+import React, { useState, useEffect } from 'react';
+import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types.ts';
+import { MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES } from '../../constants.ts';
+// Fix: Imported PencilIcon to resolve reference error.
+import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons.tsx';
+import CreateTopicModal from '../CreateTopicModal.tsx';
+import { UI_TEXT } from '../../translations.ts';
 
-type Concept = 'minimal' | 'cultural' | 'modern';
+interface TeaHouseViewProps {
+    user: User | null;
+    requestLogin: () => void;
+    language: Language;
+}
 
-const DummyContent: React.FC = () => (
-    <div className="p-4 space-y-4">
-        {[...MOCK_POSTS, ...MOCK_POSTS].map((post, index) => (
-            <div key={`${post.id}-${index}`} className="glass-card p-4 rounded-lg">
-                <div className="flex items-center space-x-3">
-                    <img className="w-10 h-10 rounded-full" src={post.author.avatarUrl} alt={post.author.name} />
-                    <div>
-                        <p className="font-bold">{post.author.name}</p>
-                        <p className="text-xs text-theme-text-muted">{post.timestamp}</p>
-                    </div>
-                </div>
-                <p className="mt-2 text-sm">{post.content}</p>
-            </div>
-        ))}
-    </div>
-);
-
-// --- CONCEPT FOOTERS ---
-
-const MinimalFooter: React.FC = () => {
+const MinimalFooter: React.FC<{ onClick: () => void, language: Language }> = ({ onClick, language }) => {
+    const texts = UI_TEXT[language];
     return (
         <footer
-            className="fixed bottom-0 left-0 right-0 h-[72px] flex items-center justify-center cursor-pointer"
+            onClick={onClick}
+            className="fixed bottom-0 left-0 right-0 h-[72px] flex items-center justify-center cursor-pointer lg:hidden"
             style={{ backgroundColor: '#F5F1EB', color: '#8B5E3C' }}
         >
             <div className="relative flex flex-col items-center">
@@ -39,82 +29,128 @@ const MinimalFooter: React.FC = () => {
                         <span className="steam-3 text-lg opacity-80">.</span>
                     </div>
                 </div>
-                <h3 className="font-bold font-arabic mt-1">ديوانية الشعب / قەهوەخانەی گەلەکە</h3>
+                <h3 className="font-bold font-arabic mt-1">{texts.teaHouseFooter}</h3>
             </div>
         </footer>
     );
 };
 
-const CulturalFooter: React.FC = () => {
-    return (
-        <footer
-            className="fixed bottom-0 left-0 right-0 h-[72px] flex items-center justify-between px-6 cultural-pattern-bg"
-            style={{ color: '#F39C12' }}
-        >
-            <div className="flex items-center space-x-4">
-                <button className="p-2 rounded-full hover:bg-white/10"><PencilIcon className="w-6 h-6" /></button>
-                <button className="p-2 rounded-full hover:bg-white/10"><MicIcon className="w-6 h-6" /></button>
-                <button className="p-2 rounded-full hover:bg-white/10"><ImageIcon className="w-6 h-6" /></button>
-            </div>
-            <h3 className="font-bold text-lg font-arabic">انضم إلى النقاش / بەشداری بکە لە گفتوگۆکە</h3>
-        </footer>
-    );
-};
-
-const ModernFooter: React.FC = () => {
-    return (
-        <footer
-            className="fixed bottom-0 left-0 right-0 h-[72px] flex items-center justify-between px-6 glass-card rounded-none border-t border-b-0 border-x-0"
-            style={{ color: '#3498DB' }}
-        >
-            <h3 className="font-bold text-lg font-arabic">مقهى المجتمع / چایخانەی کۆمەڵگە</h3>
-            <button className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold bg-blue-500 text-white rounded-full transition-all hover:bg-blue-600">
-                <PlusIcon className="w-5 h-5" />
-                <span>Create New Topic</span>
-            </button>
-        </footer>
-    );
-};
-
-// Fix: Added props to the component to resolve type error in App.tsx.
-interface TeaHouseViewProps {
-    user: User | null;
-    requestLogin: () => void;
-    language: Language;
-}
-
-
-// --- Main Showcase View ---
 const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, language }) => {
-    const [activeConcept, setActiveConcept] = useState<Concept>('minimal');
+    const [filteredTopics, setFilteredTopics] = useState<TeaHouseTopic[]>([]);
+    const [selectedTopic, setSelectedTopic] = useState<TeaHouseTopic | null>(null);
+    const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+    const [newMessage, setNewMessage] = useState('');
+    const texts = UI_TEXT[language];
 
-    const renderFooter = () => {
-        switch (activeConcept) {
-            case 'minimal': return <MinimalFooter />;
-            case 'cultural': return <CulturalFooter />;
-            case 'modern': return <ModernFooter />;
-            default: return null;
-        }
+    useEffect(() => {
+        // Filter topics based on the selected app language
+        setFilteredTopics(MOCK_TEA_HOUSE_TOPICS.filter(topic => topic.language === language));
+        setSelectedTopic(null); // Reset view when language changes
+    }, [language]);
+
+    const handleCreateTopic = (data: { title: string; firstMessage: string; category: string; language: Language }) => {
+        console.log("Creating new topic (simulation):", data);
+        // In a real app, you'd call an API here.
+        // For now, just close the modal.
+        setCreateModalOpen(false);
     };
 
-    return (
-        <div className="pb-24">
-            <div className="p-4 max-w-md mx-auto">
-                 <label htmlFor="concept-select" className="block text-sm font-medium text-theme-text-muted mb-2">Select a Footer Concept to Test:</label>
-                 <select
-                    id="concept-select"
-                    value={activeConcept}
-                    onChange={(e) => setActiveConcept(e.target.value as Concept)}
-                    className="w-full p-2 border border-[var(--color-glass-border)] rounded-md bg-white/10 text-theme-text-base focus:outline-none focus:ring-1 focus:ring-primary"
-                 >
-                    <option value="minimal">Concept 1: Minimalist Beige</option>
-                    <option value="cultural">Concept 2: Cultural Pattern</option>
-                    <option value="modern">Concept 3: Modern Glassmorphism</option>
-                 </select>
-                 <p className="text-xs text-theme-text-muted mt-2">Scroll down to see how the fixed footer behaves with content.</p>
+    const handleSendMessage = () => {
+        if (!newMessage.trim()) return;
+        console.log("Sending message (simulation):", newMessage);
+        // In a real app, you'd call an API to send the message.
+        setNewMessage('');
+    };
+    
+    // --- RENDER LOGIC ---
+
+    if (selectedTopic) {
+        // Conversation View
+        return (
+            <div className="flex flex-col h-full max-w-2xl mx-auto pb-24">
+                <header className="p-4 flex items-center space-x-4 sticky top-0 bg-[var(--color-glass-bg)] backdrop-blur-md">
+                    <button onClick={() => setSelectedTopic(null)} className="p-2 rounded-full hover:bg-white/10">
+                        <ArrowLeftIcon className="w-6 h-6" />
+                    </button>
+                    <div>
+                        <h2 className="font-bold text-lg">{selectedTopic.title}</h2>
+                        <p className="text-xs text-theme-text-muted">{selectedTopic.participants} participants</p>
+                    </div>
+                </header>
+
+                <main className="flex-grow p-4 space-y-4 overflow-y-auto">
+                    {MOCK_TEA_HOUSE_MESSAGES.map((msg, index) => (
+                        <div key={msg.id} className={`flex items-end gap-2 ${msg.author.id === user?.id ? 'justify-end' : 'justify-start'}`}>
+                            {msg.author.id !== user?.id && <img src={msg.author.avatarUrl} alt={msg.author.name} className="w-8 h-8 rounded-full" />}
+                            <div className={`message-bubble ${msg.author.id === user?.id ? 'is-user' : 'is-other'}`}>
+                                {msg.type === 'text' && <p>{msg.content}</p>}
+                                {msg.type === 'image' && <img src={msg.mediaUrl} alt="shared" className="rounded-lg max-w-xs" />}
+                                <p className="text-xs opacity-70 mt-1 text-right">{msg.timestamp}</p>
+                            </div>
+                        </div>
+                    ))}
+                </main>
+
+                <footer className="fixed bottom-0 left-0 right-0 lg:left-64 teahouse-composer p-2">
+                     <div className="max-w-2xl mx-auto flex items-center space-x-2">
+                        <button className="p-3 rounded-full hover:bg-white/10 text-theme-text-muted"><PhotoIcon className="w-6 h-6"/></button>
+                        <button className="p-3 rounded-full hover:bg-white/10 text-theme-text-muted"><DocumentIcon className="w-6 h-6"/></button>
+                        <input
+                            type="text"
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            placeholder="Type a message..."
+                            className="flex-grow p-3 border border-[var(--color-glass-border)] rounded-full bg-white/10 placeholder-theme-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                        <button onClick={handleSendMessage} className="p-3 rounded-full bg-primary text-on-primary hover:brightness-110">
+                            <PencilIcon className="w-6 h-6" />
+                        </button>
+                    </div>
+                </footer>
             </div>
-            <DummyContent />
-            {renderFooter()}
+        );
+    }
+
+    // Topic List View
+    return (
+        <div className="p-4 sm:p-6 max-w-2xl mx-auto pb-24">
+            <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold font-arabic">{texts.teaHouse}</h1>
+                <p className="text-theme-text-muted mt-1">
+                    Discussions in your selected language.
+                </p>
+            </div>
+            
+            <div className="text-center mb-6">
+                 <button 
+                    onClick={() => user ? setCreateModalOpen(true) : requestLogin()}
+                    className="send-btn max-w-xs"
+                 >
+                    Create New Discussion
+                </button>
+            </div>
+
+            <div className="space-y-3">
+                {filteredTopics.map(topic => (
+                    <div key={topic.id} onClick={() => user ? setSelectedTopic(topic) : requestLogin()} className="glass-card p-4 rounded-lg cursor-pointer hover:border-primary">
+                        <div className="flex justify-between items-start">
+                             <div>
+                                <h3 className="font-bold text-lg">{topic.title}</h3>
+                                <p className="text-sm text-theme-text-muted">{topic.lastMessage}</p>
+                            </div>
+                            <span className="text-xs text-theme-text-muted whitespace-nowrap">{topic.lastActivity}</span>
+                        </div>
+                        <div className="text-xs text-theme-text-muted mt-2">{topic.participants} participants</div>
+                    </div>
+                ))}
+                {filteredTopics.length === 0 && (
+                    <p className="text-center text-theme-text-muted py-10">No discussions found for this language. Why not start one?</p>
+                )}
+            </div>
+            
+            {isCreateModalOpen && <CreateTopicModal onClose={() => setCreateModalOpen(false)} onCreate={handleCreateTopic} defaultLanguage={language} />}
+
+            <MinimalFooter onClick={() => user ? setCreateModalOpen(true) : requestLogin()} language={language} />
         </div>
     );
 };

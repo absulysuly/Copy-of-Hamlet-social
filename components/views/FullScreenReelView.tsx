@@ -23,7 +23,14 @@ const FullScreenReelView: React.FC<FullScreenReelViewProps> = ({ reel, onClose, 
         <div className="fixed inset-0 bg-black z-50 flex items-center justify-center animate-fade-in">
             <div className="relative h-full w-full max-w-md bg-black">
                 
-                <img src={reel.mediaUrl} alt="Reel video" className="w-full h-full object-contain" />
+                <video
+                    src={reel.mediaUrl}
+                    className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                    loop
+                    playsInline
+                />
 
                 {/* Back Button */}
                 <button 

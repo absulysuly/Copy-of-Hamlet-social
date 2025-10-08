@@ -33,13 +33,47 @@ export const GOVERNORATE_SLUG_MAP: Record<Governorate, string> = Object.fromEntr
 
 // --- SLUG MAPPINGS ---
 export const PARTY_SLUG_MAP: Record<string, string> = {
-    'Future Alliance': 'future-alliance',
-    'Progress Party': 'progress-party',
-    'National Unity': 'national-unity',
-    'Kurdistan Future': 'kurdistan-future',
-    'Sadrist Movement': 'sadrist',
+    'الحزب الاشتراكي الديمقراطي الكوردستاني': 'kurdistan-socialist-democratic-party',
+    'الاتحاد الوطني الكوردستاني': 'patriotic-union-of-kurdistan',
+    'تيار الموقف الوطني / هه لويست': 'national-position-current',
+    'جبهة شعبنا / به روى گه له مان': 'our-peoples-front',
+    'الجبهة التركمانية العراقية': 'iraqi-turkmen-front',
+    'الحزب الديمقراطي الكوردستاني': 'kurdistan-democratic-party',
+    'الاتحاد الإسلامي الكوردستاني': 'kurdistan-islamic-union',
+    'جماعة العدل الكوردستانية / العراق': 'kurdistan-justice-group',
+    'حراك الجيل الجديد': 'new-generation-movement',
+    'حزب العمران': 'umran-party',
+    'تحالف الانبار هويتنا': 'anbar-is-our-identity-alliance',
+    'تحالف سيادة الوطني - تشريع': 'national-sovereignty-alliance',
+    'الانتشار الوطني': 'national-dissemination',
+    'حزب تقدم': 'taqadum-party',
+    'تحالف عزم العراق / عزم': 'azm-alliance-iraq',
+    'القيادة': 'al-qiyada',
+    'تحالف التفوق': 'tafawuq-alliance',
+    'الجسم الوطني': 'al-jism-al-watani',
+    'تحالف قمم': 'qimam-alliance',
+    'حركة الصادقون': 'al-sadiqoun-movement',
+    'ائتلاف الاعمار والتنمية': 'reconstruction-and-development-coalition',
+    'ائتلاف الأساس العراق': 'al-asas-al-iraqi-coalition',
+    'التيار الوطني العشائري في العراق': 'national-tribal-current-of-iraq',
+    'تجمع الفاو زاخو': 'fao-zakho-gathering',
+    'منظمة بدر': 'badr-organization',
+    'ابشر يا عراق': 'absher-ya-iraq',
+    'تحالف قوى الدولة الوطنية': 'alliance-of-national-state-forces',
+    'ائتلاف دولة القانون': 'state-of-law-coalition',
+    'التحالف المدني الديمقراطي': 'civil-democratic-alliance',
+    'حزب الداعي': 'al-daie-party',
+    'تحالف البديل': 'al-badil-alliance',
+    'منقذون': 'munqithun',
+    'حركة حقوق': 'huqooq-movement',
+    'تحالف تصميم': 'tasmeem-alliance',
+    'تحالف خدمات': 'khadamat-alliance',
+    'حركة سومريون': 'sumeriyon-movement',
+    'اشراقة كانون': 'ishraqat-kanoon',
+    'تيار قضيتنا': 'qadhiyatuna-current',
     'Independent': 'independent',
 };
+
 
 // Reverse maps for display purposes on discover page
 export const SLUG_PARTY_MAP: Record<string, string> = Object.fromEntries(
@@ -51,13 +85,13 @@ export const SLUG_GOVERNORATE_MAP: Record<string, string> = Object.fromEntries(
 );
 
 export const MOCK_USERS: User[] = [
-    { id: 'user1', name: 'Ahmed Al-Iraqi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user1/150/150', verified: true, party: 'Future Alliance', governorate: 'Baghdad', isElected: true, bio: 'Striving for a better Baghdad. Focused on infrastructure and youth employment.', partySlug: 'future-alliance', governorateSlug: 'baghdad' },
-    { id: 'user2', name: 'Fatima Al-Basri', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user2/150/150', verified: true, party: 'Progress Party', governorate: 'Basra', bio: 'Economist and activist, working to bring economic prosperity to Basra.', partySlug: 'progress-party', governorateSlug: 'basra' },
-    { id: 'user3', name: 'Yusuf Al-Mosuli', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user3/150/150', verified: false, party: 'National Unity', governorate: 'Nineveh', bio: 'Dedicated to rebuilding our communities and fostering unity.', partySlug: 'national-unity', governorateSlug: 'ninawa' },
-    { id: 'user4', name: 'Layla Al-Erbili', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user4/150/150', verified: true, party: 'Kurdistan Future', governorate: 'Erbil', isElected: false, bio: 'Championing modern education and technology for the next generation.', partySlug: 'kurdistan-future', governorateSlug: 'erbil' },
+    { id: 'user1', name: 'Ahmed Al-Iraqi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user1/150/150', verified: true, party: 'حزب تقدم', governorate: 'Baghdad', isElected: true, bio: 'Striving for a better Baghdad. Focused on infrastructure and youth employment.', partySlug: 'taqadum-party', governorateSlug: 'baghdad' },
+    { id: 'user2', name: 'Fatima Al-Basri', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user2/150/150', verified: true, party: 'تحالف عزم العراق / عزم', governorate: 'Basra', bio: 'Economist and activist, working to bring economic prosperity to Basra.', partySlug: 'azm-alliance-iraq', governorateSlug: 'basra' },
+    { id: 'user3', name: 'Yusuf Al-Mosuli', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user3/150/150', verified: false, party: 'ائتلاف دولة القانون', governorate: 'Nineveh', bio: 'Dedicated to rebuilding our communities and fostering unity.', partySlug: 'state-of-law-coalition', governorateSlug: 'ninawa' },
+    { id: 'user4', name: 'Layla Al-Erbili', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user4/150/150', verified: true, party: 'الحزب الديمقراطي الكوردستاني', governorate: 'Erbil', isElected: false, bio: 'Championing modern education and technology for the next generation.', partySlug: 'kurdistan-democratic-party', governorateSlug: 'erbil' },
     { id: 'user5', name: 'Omar Al-Anbari', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user5/150/150', verified: false, party: 'Independent', governorate: 'Anbar', bio: 'An independent voice for the people of Anbar.', partySlug: 'independent', governorateSlug: 'anbar' },
-    { id: 'user6', name: 'Zahra Al-Najafi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user6/150/150', verified: false, party: 'Progress Party', governorate: 'Najaf', bio: 'Working to improve healthcare and social services.', partySlug: 'progress-party', governorateSlug: 'najaf' },
-    { id: 'user7', name: 'Amir Al-Sadr', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user7/150/150', verified: true, party: 'Sadrist Movement', governorate: 'Basra', bio: 'Leading the movement for a sovereign Iraq.', partySlug: 'sadrist', governorateSlug: 'basra' },
+    { id: 'user6', name: 'Zahra Al-Najafi', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user6/150/150', verified: false, party: 'تحالف قوى الدولة الوطنية', governorate: 'Najaf', bio: 'Working to improve healthcare and social services.', partySlug: 'alliance-of-national-state-forces', governorateSlug: 'najaf' },
+    { id: 'user7', name: 'Amir Al-Sadr', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/user7/150/150', verified: true, party: 'حركة الصادقون', governorate: 'Basra', bio: 'Leading the movement for a sovereign Iraq.', partySlug: 'al-sadiqoun-movement', governorateSlug: 'basra' },
     { id: 'voter1', name: 'Ali Hussein', role: UserRole.Voter, avatarUrl: 'https://picsum.photos/seed/voter1/150/150', verified: false, party: 'N/A', governorate: 'Baghdad' },
     { id: 'voter2', name: 'Noor Khalid', role: UserRole.Voter, avatarUrl: 'https://picsum.photos/seed/voter2/150/150', verified: false, party: 'N/A', governorate: 'Basra' },
 ];
@@ -68,7 +102,7 @@ export const MOCK_POSTS: Post[] = [
     { id: 'post3', author: MOCK_USERS[2], content: 'Rebuilding the historic Al-Nuri Mosque is a symbol of our city\'s resilience. We must continue to work together to restore Nineveh\'s heritage.', timestamp: '1 day ago', likes: 2500, comments: 300, shares: 200, type: 'Post', mediaUrl: 'https://picsum.photos/seed/post3/800/600' },
     { id: 'post4', author: MOCK_USERS[3], content: 'Launching a new coding bootcamp for young people in Erbil! Technology is the future, and we must empower our youth with the skills they need to succeed.', timestamp: '2 days ago', likes: 1800, comments: 210, shares: 120, type: 'Post' },
     { id: 'post5', author: MOCK_USERS[0], content: 'Here is a short message for my constituents.', timestamp: '3 days ago', likes: 500, comments: 60, shares: 30, type: 'VoiceNote', duration: 30, mediaUrl: 'https://storage.googleapis.com/smart-campaign-_black-hole-assets/mock-voicenote.mp3' },
-    { id: 'reel1', author: MOCK_USERS[1], content: 'A quick tour of the Basra port development project! #Basra #Economy', timestamp: '4 days ago', likes: 3200, comments: 400, shares: 250, type: 'Reel', mediaUrl: 'https://picsum.photos/seed/reel1/400/700' },
+    { id: 'reel1', author: MOCK_USERS[1], content: 'A quick tour of the Basra port development project! #Basra #Economy', timestamp: '4 days ago', likes: 3200, comments: 400, shares: 250, type: 'Reel', mediaUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
 ];
 
 export const MOCK_EVENTS: Event[] = [

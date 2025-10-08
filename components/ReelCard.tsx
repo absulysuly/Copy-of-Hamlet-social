@@ -13,7 +13,13 @@ const ReelCard: React.FC<ReelCardProps> = ({ reel, onSelectReel }) => {
             onClick={() => onSelectReel(reel)}
             className="w-full aspect-[9/16] glass-card rounded-2xl overflow-hidden relative group cursor-pointer"
         >
-            <img src={reel.mediaUrl} alt={reel.content} className="w-full h-full object-cover absolute inset-0" />
+            <video
+                src={reel.mediaUrl}
+                className="w-full h-full object-cover absolute inset-0"
+                preload="metadata"
+                muted
+                playsInline
+            />
             
             <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <PlayIcon className="w-16 h-16 text-white drop-shadow-lg" />
