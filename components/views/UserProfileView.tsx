@@ -5,6 +5,7 @@ import PostCard from '../PostCard.tsx';
 import ComposeView from './ComposeView.tsx';
 import EditProfileModal from '../EditProfileModal.tsx';
 import * as api from '../../services/apiService.ts';
+import { UI_TEXT } from '../../translations.ts';
 
 interface UserProfileViewProps {
     user: User;
@@ -18,6 +19,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const texts = UI_TEXT[language];
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -62,14 +64,14 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
                             </h2>
                             <button
                                 onClick={() => setEditModalOpen(true)}
-                                className="flex items-center space-x-2 px-3 py-1.5 text-sm font-semibold text-brand-hot-pink bg-brand-hot-pink/10 rounded-md hover:bg-brand-hot-pink/20"
+                                className="flex items-center space-x-2 px-3 py-1.5 text-sm font-semibold text-primary bg-primary/10 rounded-md hover:bg-primary/20"
                             >
                                 <EditIcon className="w-4 h-4"/>
-                                <span>Edit Profile</span>
+                                <span>{texts.editProfile}</span>
                             </button>
                         </div>
                         <p className="text-md text-slate-400">{user.party} - {user.governorate}</p>
-                        <p className="text-sm mt-2 text-slate-200">{user.bio || 'No biography provided.'}</p>
+                        <p className="text-sm mt-2 text-slate-200">{user.bio || texts.noBio}</p>
                     </div>
                 </div>
             </div>
@@ -84,13 +86,13 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
 
             {/* User's Post Feed */}
             <div>
-                <h3 className="text-xl font-bold mb-4">My Wall</h3>
+                <h3 className="text-xl font-bold mb-4">{texts.myWall}</h3>
                 {isLoading ? (
-                    <p className="text-center py-10 text-slate-400">Loading posts...</p>
+                    <p className="text-center py-10 text-slate-400">{texts.loadingPosts}</p>
                 ) : userPosts.length > 0 ? (
                     userPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
                 ) : (
-                    <p className="text-center py-10 text-slate-400">You haven't posted anything yet.</p>
+                    <p className="text-center py-10 text-slate-400">{texts.noPostsYetUser}</p>
                 )}
             </div>
 
@@ -99,6 +101,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ user, onUpdateUser, l
                     user={user}
                     onClose={() => setEditModalOpen(false)}
                     onSave={handleSaveProfile}
+                    language={language}
                 />
             )}
         </div>

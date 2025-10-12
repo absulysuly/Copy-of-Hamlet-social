@@ -18,11 +18,40 @@ import ComposeModal from './components/ComposeModal.tsx';
 import FullScreenReelView from './components/views/FullScreenReelView.tsx';
 import ElectionManagementView from './components/views/ElectionManagementView.tsx';
 import ElectionHero from './components/ElectionHero.tsx';
-import QRScannerModal from './components/QRScannerModal.tsx';
 import { colorThemes } from './utils/colorThemes.ts';
-import CrossPlatformNavigationView from './components/views/CrossPlatformNavigationView.tsx';
 import LanguageSwitcher from './components/LanguageSwitcher.tsx';
 import PostDetailModal from './components/PostDetailModal.tsx';
+import StoryViewModal from './components/views/StoryViewModal.tsx';
+import { UI_TEXT } from './translations.ts';
+
+
+const ModeSwitcher: React.FC<{
+    mode: HomeViewMode;
+    onModeChange: (mode: HomeViewMode) => void;
+    language: Language;
+}> = ({ mode, onModeChange, language }) => {
+    const texts = UI_TEXT[language];
+    const buttonBaseClasses = "w-1/2 py-1.5 text-sm font-semibold rounded-md transition-all duration-300";
+    const activeClasses = "bg-primary text-on-primary shadow-lg";
+    const inactiveClasses = "text-theme-text-muted hover:bg-white/10";
+
+    return (
+        <div className="p-1 rounded-lg bg-black/20 w-full max-w-md flex space-x-1">
+            <button
+                onClick={() => onModeChange('Social')}
+                className={`${buttonBaseClasses} ${mode === 'Social' ? activeClasses : inactiveClasses}`}
+            >
+                {texts.social}
+            </button>
+            <button
+                onClick={() => onModeChange('Election')}
+                className={`${buttonBaseClasses} ${mode === 'Election' ? activeClasses : inactiveClasses}`}
+            >
+                {texts.serious}
+            </button>
+        </div>
+    );
+};
 
 
 const App: React.FC = () => {
@@ -32,7 +61,6 @@ const App: React.FC = () => {
     const [activeTab, setActiveTab] = useState<AppTab>(AppTab.Home);
     const [isLoginModalOpen, setLoginModalOpen] = useState(false);
     const [isComposeModalOpen, setComposeModalOpen] = useState(false);
-    const [isQrScannerOpen, setQrScannerOpen] = useState(false);
     const [isHighContrast, setHighContrast] = useState(false);
     const [language, setLanguage] = useState<Language>('ar');
     const [activeTheme, setActiveTheme] = useState<ThemeName>('euphratesTeal');
@@ -46,6 +74,7 @@ const App: React.FC = () => {
     const [selectedProfile, setSelectedProfile] = useState<User | null>(null);
     const [selectedReel, setSelectedReel] = useState<Post | null>(null);
     const [selectedPostForDetail, setSelectedPostForDetail] = useState<Post | null>(null);
+    const [selectedStoryUser, setSelectedStoryUser] = useState<User | null>(null);
     const [electionPath, setElectionPath] = useState('/');
     const [mainHomeTab, setMainHomeTab] = useState<MainContentTab>(AppTab.Posts);
     
@@ -62,6 +91,13 @@ const App: React.FC = () => {
     useEffect(() => {
         api.getParties().then(setParties);
     }, []);
+
+    // Effect for handling language direction (LTR/RTL)
+    useEffect(() => {
+        const isRtl = language === 'ar' || language === 'ku';
+        document.documentElement.lang = language;
+        document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    }, [language]);
 
     // Effect for dual-brand theme switching
     useEffect(() => {
@@ -82,12 +118,23 @@ const App: React.FC = () => {
         if (homeViewMode === 'Election') {
             body.classList.add('election-mode');
             body.classList.remove('social-mode');
+            // When switching to election mode, reset social tab to home
+            // to avoid being stuck on a profile page etc.
+            if(activeTab !== AppTab.Home) setActiveTab(AppTab.Home);
         } else {
             body.classList.add('social-mode');
             body.classList.remove('election-mode');
         }
 
     }, [activeTheme, homeViewMode]);
+    
+    // When switching to election mode, set the active tab to the portal root
+     useEffect(() => {
+        if (homeViewMode === 'Election') {
+            setElectionPath('/');
+        }
+    }, [homeViewMode]);
+
 
     // --- HANDLERS ---
     const handleLogin = (loggedInUser: User) => {
@@ -107,6 +154,8 @@ const App: React.FC = () => {
     const handleNavigate = (tab: AppTab) => {
         setSelectedProfile(null);
         setActiveTab(tab);
+        // Always switch to social mode when a social tab is clicked
+        setHomeViewMode('Social');
     };
 
     const handleSelectProfile = (profile: User) => {
@@ -136,45 +185,19 @@ const App: React.FC = () => {
         setSelectedPostForDetail(post);
     };
     
+    const handleSelectStory = (storyUser: User) => {
+        setSelectedStoryUser(storyUser);
+    };
+    
     const handleClosePostDetail = () => {
         setSelectedPostForDetail(null);
     };
-
-    const handleQrScanSuccess = (data: string) => {
-        try {
-            const url = new URL(data);
-            const partySlug = url.searchParams.get('party');
-            const govSlug = url.searchParams.get('gov');
-
-            if (partySlug && govSlug) {
-                const party = SLUG_PARTY_MAP[partySlug] || 'All';
-                const governorate = Object.entries(GOVERNORATE_SLUG_MAP).find(([_name, slug]) => slug === govSlug)?.[0] as Governorate | 'All' || 'All';
-                
-                setSelectedParty(party);
-                setSelectedGovernorate(governorate);
-                
-                setHomeViewMode('Social');
-                setActiveTab(AppTab.Home);
-                setMainHomeTab(AppTab.Candidates);
-                setQrScannerOpen(false);
-            }
-        } catch (error) {
-            console.error("Invalid QR code data:", error);
-            // Optionally, show an error to the user
-        }
-    };
     
-    const handleNavigateToCandidates = () => {
-        handleNavigate(AppTab.Home);
-        setMainHomeTab(AppTab.Candidates);
-    };
-
-
     // --- RENDER LOGIC ---
     if (isPublicDiscoverPage) {
         return (
              <div className="min-h-screen font-sans">
-                <PublicDiscoverView />
+                <PublicDiscoverView language={language} />
             </div>
         )
     }
@@ -195,9 +218,11 @@ const App: React.FC = () => {
             onSelectProfile: handleSelectProfile,
             onSelectReel: handleSelectReel,
             onSelectPost: handleSelectPost,
+            onSelectStory: handleSelectStory,
             language: language,
             activeTab: mainHomeTab,
             onTabChange: setMainHomeTab,
+            onCompose: () => setComposeModalOpen(true),
         };
 
         switch (activeTab) {
@@ -207,11 +232,9 @@ const App: React.FC = () => {
             case AppTab.TeaHouse:
                 return <TeaHouseView user={user} requestLogin={() => setLoginModalOpen(true)} language={language} />;
             case AppTab.DebateRoom:
-                return <DebateRoomView />;
-            case AppTab.Navigate:
-                return <CrossPlatformNavigationView onNavigateToCandidates={handleNavigateToCandidates} onQrScan={() => setQrScannerOpen(true)} />;
+                return <DebateRoomView language={language} />;
             case AppTab.Settings:
-                return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} activeTheme={activeTheme} onChangeTheme={setActiveTheme} />;
+                return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} activeTheme={activeTheme} onChangeTheme={setActiveTheme} language={language} />;
             case AppTab.UserProfile:
                 return user ? <UserProfileView user={user} onUpdateUser={handleUpdateUser} language={language} onSelectProfile={handleSelectProfile} onSelectPost={handleSelectPost} /> : <HomeView {...homeViewProps} />;
             case AppTab.CandidateProfile:
@@ -227,20 +250,29 @@ const App: React.FC = () => {
         <div className={`min-h-screen font-sans ${isHighContrast ? 'high-contrast' : ''}`}>
             <Header 
                 user={user} 
-                onCompose={() => user ? setComposeModalOpen(true) : setLoginModalOpen(true)}
                 onRequestLogin={() => setLoginModalOpen(true)}
                 onNavigate={handleNavigate}
-                homeViewMode={homeViewMode}
-                onModeChange={setHomeViewMode}
-                onQrScan={() => setQrScannerOpen(true)}
+                language={language}
             />
-            <Sidebar user={user} activeTab={activeTab} onNavigate={handleNavigate} />
             
-            <main className="lg:pl-64 pt-24 pb-16 lg:pb-0">
-                 <div className="p-4 sm:px-6 flex justify-center">
+            <Sidebar 
+                user={user} 
+                activeTab={homeViewMode === 'Social' ? activeTab : electionPath} 
+                onNavigate={homeViewMode === 'Social' ? handleNavigate : setElectionPath}
+                homeViewMode={homeViewMode}
+                language={language}
+            />
+            
+            <main className="lg:pl-64 pt-14 pb-16 lg:pb-0">
+                 <div className="px-4 sm:px-6 flex flex-col items-center gap-4">
                     <LanguageSwitcher
                         language={language}
                         onLanguageChange={setLanguage}
+                    />
+                    <ModeSwitcher 
+                        mode={homeViewMode}
+                        onModeChange={setHomeViewMode}
+                        language={language}
                     />
                 </div>
                 {homeViewMode === 'Social' ? (
@@ -248,24 +280,29 @@ const App: React.FC = () => {
                 ) : (
                     <div className="p-4 sm:p-6">
                         <div className="mt-4">
-                            <ElectionHero />
+                            <ElectionHero language={language} />
                         </div>
                         <div className="mt-6">
-                            <ElectionManagementView path={electionPath} onNavigate={setElectionPath} />
+                            <ElectionManagementView path={electionPath} onNavigate={setElectionPath} language={language} />
                         </div>
                     </div>
                 )}
             </main>
             
-            {activeTab !== AppTab.TeaHouse && (
-                <BottomBar user={user} activeTab={activeTab} onNavigate={handleNavigate} language={language} />
-            )}
+            <BottomBar 
+                user={user} 
+                homeViewMode={homeViewMode}
+                socialActiveTab={activeTab} 
+                onSocialNavigate={handleNavigate} 
+                electionActivePath={electionPath}
+                onElectionNavigate={setElectionPath}
+                language={language}
+            />
 
             {isLoginModalOpen && <LoginModal onLogin={handleLogin} onClose={() => setLoginModalOpen(false)} language={language} onLanguageChange={setLanguage} />}
-            {/* Fix: Passed language prop to ComposeModal to be used by ComposeView. */}
             {isComposeModalOpen && user && <ComposeModal user={user} onClose={() => setComposeModalOpen(false)} language={language} />}
-            {isQrScannerOpen && <QRScannerModal onClose={() => setQrScannerOpen(false)} onScanSuccess={handleQrScanSuccess} />}
             {selectedPostForDetail && <PostDetailModal post={selectedPostForDetail} user={user} onClose={handleClosePostDetail} requestLogin={() => setLoginModalOpen(true)} language={language} />}
+            {selectedStoryUser && <StoryViewModal storyUser={selectedStoryUser} onClose={() => setSelectedStoryUser(null)} onSelectProfile={(user) => { setSelectedStoryUser(null); handleSelectProfile(user);}} user={user} requestLogin={() => setLoginModalOpen(true)} />}
         </div>
     );
 };

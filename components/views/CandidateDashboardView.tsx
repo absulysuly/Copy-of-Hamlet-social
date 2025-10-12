@@ -4,6 +4,7 @@ import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, TikTokIc
 import PostCard from '../PostCard.tsx';
 import * as api from '../../services/apiService.ts';
 import QRCodeDisplay from '../QRCodeDisplay.tsx';
+import { UI_TEXT } from '../../translations.ts';
 
 interface CandidateDashboardViewProps {
     user: User;
@@ -22,10 +23,11 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
         { name: 'X', icon: <XIcon className="w-6 h-6" />, linked: true },
         { name: 'YouTube', icon: <YouTubeIcon className="w-6 h-6" />, linked: false },
     ]);
+    const texts = UI_TEXT[language];
     
     // Ensure this view is only for candidates
     if (user.role !== UserRole.Candidate) {
-        return <p>Access Denied. This page is for candidates only.</p>;
+        return <p>{texts.accessDenied}</p>;
     }
 
     useEffect(() => {
@@ -70,7 +72,7 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
             document.body.removeChild(a);
         } catch (error) {
             console.error('Failed to download QR code:', error);
-            alert('Could not download QR code. Please try again.');
+            alert(texts.downloadQrFailed);
         }
     };
 
@@ -98,28 +100,28 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
                 </div>
 
                  <div className="border-t border-white/20 p-6">
-                    <h3 className="text-lg font-semibold text-white">Promotional Tools</h3>
-                    <p className="text-sm text-slate-400 mb-4 font-arabic">استخدم رمز الاستجابة السريعة هذا على الملصقات والنشرات لتوجيه الناخبين إلى صفحة بها جميع مرشحي حزبك في هذه المحافظة.</p>
+                    <h3 className="text-lg font-semibold text-white">{texts.promoTools}</h3>
+                    <p className="text-sm text-slate-400 mb-4 font-arabic">{texts.promoToolsDesc}</p>
                     <div className="flex flex-col sm:flex-row items-center gap-6">
                         <div className="bg-white p-4 rounded-lg inline-block">
                            <QRCodeDisplay url={qrUrl} />
                         </div>
                         <div className="text-center sm:text-left">
-                            <p className="font-bold font-arabic text-lg">اسكن QR لرؤية مرشحي حزبك!</p>
+                            <p className="font-bold font-arabic text-lg">{texts.scanToSee}</p>
                              <button
                                 onClick={handleDownloadQr}
                                 className="mt-4 flex items-center justify-center space-x-2 px-4 py-2 text-sm font-semibold bg-primary text-on-primary rounded-full transition-all hover:brightness-110"
                             >
                                 <DownloadIcon className="w-4 h-4" />
-                                <span className="font-arabic">تحميل QR كود</span>
+                                <span className="font-arabic">{texts.downloadQr}</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div className="border-t border-white/20 p-6">
-                    <h3 className="text-lg font-semibold text-white">Social Connections</h3>
-                    <p className="text-sm text-slate-400 mb-4">Link your social accounts to auto-share posts when you create content.</p>
+                    <h3 className="text-lg font-semibold text-white">{texts.socialConnections}</h3>
+                    <p className="text-sm text-slate-400 mb-4">{texts.socialConnectionsDesc}</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {socialPlatforms.map(platform => (
                             <div key={platform.name} className="flex items-center justify-between p-3 glass-card rounded-lg">
@@ -128,11 +130,11 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
                                     <span className="font-medium">{platform.name}</span>
                                 </div>
                                 {platform.linked ? (
-                                    <button onClick={() => handleLinkToggle(platform.name)} className="text-xs font-semibold text-flag-red hover:underline">Unlink</button>
+                                    <button onClick={() => handleLinkToggle(platform.name)} className="text-xs font-semibold text-flag-red hover:underline">{texts.unlink}</button>
                                 ) : (
                                     <button onClick={() => handleLinkToggle(platform.name)} className="flex items-center space-x-1 px-3 py-1 text-xs font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110">
                                         <LinkIcon className="w-3 h-3"/>
-                                        <span>Link</span>
+                                        <span>{texts.link}</span>
                                     </button>
                                 )}
                             </div>
@@ -142,13 +144,13 @@ const CandidateDashboardView: React.FC<CandidateDashboardViewProps> = ({ user, l
             </div>
 
             <div>
-                <h3 className="text-xl font-bold mb-4 text-white">My Posts</h3>
+                <h3 className="text-xl font-bold mb-4 text-white">{texts.myPosts}</h3>
                 {isLoading ? (
-                    <p className="text-center py-10 text-slate-400">Loading posts...</p>
+                    <p className="text-center py-10 text-slate-400">{texts.loadingPosts}</p>
                 ) : candidatePosts.length > 0 ? (
                     candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={() => {}} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
                 ) : (
-                    <p className="text-center py-10 text-slate-400">You have not posted yet.</p>
+                    <p className="text-center py-10 text-slate-400">{texts.noPostsYet}</p>
                 )}
             </div>
         </div>

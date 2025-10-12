@@ -1,23 +1,32 @@
 import React from 'react';
 import { useDashboardData } from '../hooks/useDashboardData.ts';
 import { UsersGroupIcon, ClipboardCheckIcon, ClockIcon, ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '../../icons/Icons.tsx';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 
+
+interface DashboardPageProps {
+    language: Language;
+}
 // --- SUB-COMPONENTS for FORMAL DASHBOARD ---
 
-const FormalHeader: React.FC = () => (
-    <div className="formal-header rounded-lg p-6 mb-8 text-white">
-        <div className="flex justify-between items-center">
-            <div>
-                <h1 className="text-3xl font-bold">Election Dashboard</h1>
-                <p className="text-lg text-slate-300 font-arabic">لوحة بيانات الانتخابات</p>
-            </div>
-            <div className="text-right">
-                <p className="font-bold text-lg">Iraqi Parliamentary Elections</p>
-                <p className="text-slate-300">2025</p>
+const FormalHeader: React.FC<{ language: Language }> = ({ language }) => {
+    const texts = UI_TEXT[language];
+    return (
+        <div className="formal-header rounded-lg p-6 mb-8 text-white">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold">{texts.electionDashboard}</h1>
+                    <p className="text-lg text-slate-300 font-arabic">{texts.dashboardSubtitle}</p>
+                </div>
+                <div className="text-right">
+                    <p className="font-bold text-lg">{texts.iraqiElections}</p>
+                    <p className="text-slate-300">{texts.electionYear}</p>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const StatCard: React.FC<{ title: string; value: string; icon: React.ReactNode; }> = ({ title, value, icon }) => (
     <div className="management-glass-card p-4 rounded-lg">
@@ -74,8 +83,9 @@ const useSortableData = (items: any[], config = null) => {
     return { items: sortedItems, requestSort, sortConfig };
 };
 
-const GovernorateTable: React.FC<{ data: any[] }> = ({ data }) => {
+const GovernorateTable: React.FC<{ data: any[], language: Language }> = ({ data, language }) => {
     const { items, requestSort, sortConfig } = useSortableData(data);
+    const texts = UI_TEXT[language];
 
     const getSortIcon = (name: string) => {
         if (!sortConfig || sortConfig.key !== name) {
@@ -90,12 +100,12 @@ const GovernorateTable: React.FC<{ data: any[] }> = ({ data }) => {
                 <thead className="bg-official-800/5">
                     <tr>
                         <th className="p-3 text-sm font-semibold tracking-wide">
-                             <button onClick={() => requestSort('governorateName')} className="flex items-center gap-1">المحافظة {getSortIcon('governorateName')}</button>
+                             <button onClick={() => requestSort('governorateName')} className="flex items-center gap-1">{texts.table.governorate} {getSortIcon('governorateName')}</button>
                         </th>
                         <th className="p-3 text-sm font-semibold tracking-wide">
-                            <button onClick={() => requestSort('estimatedTurnout')} className="flex items-center gap-1">المشاركة المتوقعة {getSortIcon('estimatedTurnout')}</button>
+                            <button onClick={() => requestSort('estimatedTurnout')} className="flex items-center gap-1">{texts.table.turnout} {getSortIcon('estimatedTurnout')}</button>
                         </th>
-                        <th className="p-3 text-sm font-semibold tracking-wide">الحالة</th>
+                        <th className="p-3 text-sm font-semibold tracking-wide">{texts.table.status}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-official-300/50">
@@ -105,7 +115,7 @@ const GovernorateTable: React.FC<{ data: any[] }> = ({ data }) => {
                             <td className="p-3 text-sm text-official-800">{gov.estimatedTurnout}%</td>
                             <td className="p-3">
                                 <span className={`p-1.5 text-xs font-medium uppercase tracking-wider rounded-lg bg-opacity-50 ${gov.estimatedTurnout > 50 ? 'status-active' : 'status-pending'}`}>
-                                    {gov.estimatedTurnout > 50 ? 'نشط' : 'متوسط'}
+                                    {gov.estimatedTurnout > 50 ? texts.status.active : texts.status.medium}
                                 </span>
                             </td>
                         </tr>
@@ -117,11 +127,12 @@ const GovernorateTable: React.FC<{ data: any[] }> = ({ data }) => {
 };
 
 
-const DashboardPage: React.FC = () => {
+const DashboardPage: React.FC<DashboardPageProps> = ({ language }) => {
   const { data, isLoading, error } = useDashboardData();
+  const texts = UI_TEXT[language];
 
   if (isLoading) {
-    return <div className="p-8 text-center">Loading Dashboard Data...</div>;
+    return <div className="p-8 text-center">{texts.loading}</div>;
   }
   if (error) {
     return <div className="p-8 text-center text-red-600">Error: {error.message}</div>;
@@ -132,26 +143,26 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <FormalHeader />
+      <FormalHeader language={language} />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard title="Total Registered Voters" value={stats.totalRegisteredVoters.toLocaleString()} icon={<UsersGroupIcon className="w-6 h-6"/>} />
-        <StatCard title="Approved Candidates" value={stats.approvedCandidatesCount.toLocaleString()} icon={<ClipboardCheckIcon className="w-6 h-6"/>} />
-        <StatCard title="Expected Turnout" value={`${stats.expectedTurnoutPercentage}%`} icon={<ClockIcon className="w-6 h-6"/>} />
+        <StatCard title={texts.totalVoters} value={stats.totalRegisteredVoters.toLocaleString()} icon={<UsersGroupIcon className="w-6 h-6"/>} />
+        <StatCard title={texts.approvedCandidates} value={stats.approvedCandidatesCount.toLocaleString()} icon={<ClipboardCheckIcon className="w-6 h-6"/>} />
+        <StatCard title={texts.expectedTurnout} value={`${stats.expectedTurnoutPercentage}%`} icon={<ClockIcon className="w-6 h-6"/>} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 management-glass-card p-6">
-             <h2 className="text-xl font-bold text-official-900 mb-4">Governorate Statistics</h2>
-             <GovernorateTable data={participation} />
+             <h2 className="text-xl font-bold text-official-900 mb-4">{texts.governorateStats}</h2>
+             <GovernorateTable data={participation} language={language} />
         </div>
         <div className="management-glass-card p-6">
-            <h2 className="text-xl font-bold text-official-900 mb-4">Election Timeline</h2>
+            <h2 className="text-xl font-bold text-official-900 mb-4">{texts.electionTimeline}</h2>
             <div className="space-y-4">
-                <TimelineItem date="August 1, 2024" title="Voter Registration Opens" isComplete={true} />
-                <TimelineItem date="September 15, 2024" title="Candidate Filing Deadline" isComplete={true} />
-                <TimelineItem date="October 1, 2024" title="Campaign Period Begins" isComplete={false} />
-                <TimelineItem date="November 5, 2024" title="Election Day" isComplete={false} />
+                <TimelineItem date="August 1, 2024" title={texts.timeline.voterRegistration} isComplete={true} />
+                <TimelineItem date="September 15, 2024" title={texts.timeline.candidateDeadline} isComplete={true} />
+                <TimelineItem date="October 1, 2024" title={texts.timeline.campaignPeriod} isComplete={false} />
+                <TimelineItem date="November 5, 2024" title={texts.timeline.electionDay} isComplete={false} />
             </div>
         </div>
       </div>

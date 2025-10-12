@@ -9,9 +9,16 @@ import Button from '../components/ui/Button.tsx';
 import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
 import { submitIntegrityReport } from '../services/api.ts';
 import CheckCircleIcon from '../icons/CheckCircleIcon.tsx';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 
-const IntegrityHubPage: React.FC = () => {
+interface IntegrityHubPageProps {
+    language: Language;
+}
+
+const IntegrityHubPage: React.FC<IntegrityHubPageProps> = ({ language }) => {
     const [submissionState, setSubmissionState] = useState<{ status: 'idle' | 'submitting' | 'success' | 'error', message: string, trackingId?: string }>({ status: 'idle', message: '' });
+    const texts = UI_TEXT[language];
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -23,14 +30,14 @@ const IntegrityHubPage: React.FC = () => {
             if (response.success) {
                 setSubmissionState({ 
                     status: 'success', 
-                    message: 'تم استلام بلاغك بنجاح!', 
+                    message: texts.submissionSuccess, 
                     trackingId: response.trackingId 
                 });
             } else {
-                setSubmissionState({ status: 'error', message: 'حدث خطأ أثناء إرسال البلاغ.' });
+                setSubmissionState({ status: 'error', message: texts.submissionError });
             }
         } catch (error) {
-            setSubmissionState({ status: 'error', message: 'حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.' });
+            setSubmissionState({ status: 'error', message: texts.networkError });
         }
     };
 
@@ -39,9 +46,9 @@ const IntegrityHubPage: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-12">
-                        <h1 className="text-5xl font-extrabold text-white">مركز نزاهة الانتخابات</h1>
+                        <h1 className="text-5xl font-extrabold text-white">{texts.integrityHubTitle}</h1>
                         <p className="mt-4 max-w-2xl mx-auto text-xl text-slate-300">
-                            الإبلاغ عن المخالفات الانتخابية بسرية وأمان. صوتك يساهم في ضمان انتخابات نزيهة.
+                            {texts.integrityHubDesc}
                         </p>
                     </div>
                     
@@ -53,28 +60,28 @@ const IntegrityHubPage: React.FC = () => {
                                 </div>
                             </div>
                             <h2 className="text-3xl font-bold text-white mb-3">{submissionState.message}</h2>
-                            <p className="text-slate-300 mb-2">رقم تتبع البلاغ الخاص بك هو:</p>
+                            <p className="text-slate-300 mb-2">{texts.trackingId}</p>
                             <p className="font-mono bg-black/20 p-2 rounded text-lg">{submissionState.trackingId}</p>
-                            <p className="text-slate-300 mt-4">شكرًا لمساهمتك في الحفاظ على نزاهة العملية الانتخابية. سيقوم فريقنا بمراجعة البلاغ.</p>
+                            <p className="text-slate-300 mt-4">{texts.submissionThanks}</p>
                             <Button onClick={() => setSubmissionState({ status: 'idle', message: '' })} className="mt-6">
-                                تقديم بلاغ جديد
+                                {texts.submitNewReport}
                             </Button>
                         </Card>
                     ) : (
                         <Card>
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <h2 className="text-2xl font-bold text-white border-b border-white/20 pb-4">تفاصيل البلاغ</h2>
-                                <Select id="reportType" name="reportType" label="نوع المخالفة" required>
-                                    <option value="">اختر نوع المخالفة...</option>
-                                    <option value="buying_votes">شراء أصوات</option>
-                                    <option value="propaganda_violation">مخالفة دعاية انتخابية</option>
-                                    <option value="voter_intimidation">ترهيب ناخبين</option>
-                                    <option value="misinformation">نشر معلومات مضللة</option>
-                                    <option value="other">أخرى</option>
+                                <h2 className="text-2xl font-bold text-white border-b border-white/20 pb-4">{texts.reportDetails}</h2>
+                                <Select id="reportType" name="reportType" label={texts.reportType} required>
+                                    <option value="">{texts.selectReportType}</option>
+                                    <option value="buying_votes">{texts.reportTypes.buying_votes}</option>
+                                    <option value="propaganda_violation">{texts.reportTypes.propaganda_violation}</option>
+                                    <option value="voter_intimidation">{texts.reportTypes.voter_intimidation}</option>
+                                    <option value="misinformation">{texts.reportTypes.misinformation}</option>
+                                    <option value="other">{texts.reportTypes.other}</option>
                                 </Select>
 
-                                <Select id="governorate" name="governorate" label="المحافظة" required>
-                                    <option value="">اختر المحافظة التي وقعت فيها المخالفة...</option>
+                                <Select id="governorate" name="governorate" label={texts.governorate} required>
+                                    <option value="">{texts.selectYourGovernorate}</option>
                                     {IRAQI_GOVERNORATES_INFO.map(gov => (
                                         <option key={gov.id} value={gov.enName}>{gov.name}</option>
                                     ))}
@@ -83,25 +90,25 @@ const IntegrityHubPage: React.FC = () => {
                                 <Textarea
                                     id="description"
                                     name="description"
-                                    label="وصف المخالفة"
+                                    label={texts.violationDesc}
                                     required
-                                    placeholder="يرجى تقديم وصف تفصيلي للمخالفة، بما في ذلك الزمان والمكان والأشخاص المعنيين إن أمكن."
+                                    placeholder={texts.violationDescPlaceholder}
                                 />
 
                                 <Input
                                     id="evidence"
                                     name="evidence"
-                                    label="إرفاق دليل (صورة، فيديو، مستند) - اختياري"
+                                    label={texts.attachEvidence}
                                     type="file"
                                 />
 
                                 <div className="pt-4 text-center">
                                     <Button type="submit" className="w-full md:w-auto" disabled={submissionState.status === 'submitting'}>
-                                        {submissionState.status === 'submitting' ? 'جاري الإرسال...' : 'إرسال البلاغ'}
+                                        {submissionState.status === 'submitting' ? texts.submitting : texts.submitReport}
                                     </Button>
                                 </div>
                                 <p className="text-center text-sm text-slate-400 pt-4">
-                                    جميع البلاغات سرية. لن تتم مشاركة معلوماتك الشخصية.
+                                    {texts.confidentialNotice}
                                 </p>
                             </form>
                         </Card>

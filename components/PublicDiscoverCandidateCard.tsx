@@ -1,12 +1,15 @@
 import React from 'react';
-import { User } from '../types.ts';
+import { User, Language } from '../types.ts';
 import { VerifiedIcon } from './icons/Icons.tsx';
+import { UI_TEXT } from '../translations.ts';
 
 interface PublicDiscoverCandidateCardProps {
     candidate: User;
+    language: Language;
 }
 
-const PublicDiscoverCandidateCard: React.FC<PublicDiscoverCandidateCardProps> = ({ candidate }) => {
+const PublicDiscoverCandidateCard: React.FC<PublicDiscoverCandidateCardProps> = ({ candidate, language }) => {
+    const texts = UI_TEXT[language];
     // This is the URL for the other application, as specified.
     const civicShellProfileUrl = `https://civic-shell.yoursite.web.app/candidate/${candidate.id}`;
 
@@ -26,7 +29,7 @@ const PublicDiscoverCandidateCard: React.FC<PublicDiscoverCandidateCardProps> = 
                 rel="noopener noreferrer"
                 className="mt-4 w-full block text-center px-4 py-2 text-sm font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110 font-arabic"
             >
-                عرض الملف
+                {texts.viewProfile}
             </a>
         </div>
     );

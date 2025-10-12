@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Post, User, Language } from '../types.ts';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon } from './icons/Icons.tsx';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon } from './icons/Icons.tsx';
 import * as api from '../services/apiService.ts';
 import { translateText } from '../services/geminiService.ts';
 import AudioPlayer from './AudioPlayer.tsx';
+import { UI_TEXT } from '../translations.ts';
 
 interface PostCardProps {
     post: Post;
@@ -21,6 +22,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
     const [isShowingTranslation, setIsShowingTranslation] = useState(false);
     // Assuming mock data is in Arabic for this feature
     const originalLanguage: Language = 'ar';
+    const texts = UI_TEXT[language];
 
     useEffect(() => {
         // Reset translation state when the post or language changes
@@ -87,10 +89,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
             // Fallback for browsers that don't support the Web Share API
             try {
                 await navigator.clipboard.writeText(shareData.url);
-                alert('Link to post copied to clipboard!');
+                alert(texts.shareLinkCopied);
             } catch (err) {
                 console.error('Failed to copy post link:', err);
-                alert('Sharing is not supported on this browser.');
+                alert(texts.shareNotSupported);
             }
         }
     };
@@ -116,9 +118,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
     return (
         <div onClick={() => onSelectPost(post)} className="glass-card rounded-xl shadow-lg mb-6 overflow-hidden cursor-pointer">
             <div className="p-4">
-                 {post.author.isElected && (
-                    <div className="mb-2 text-center">
-                        <span className="elected-tag">Elected MP</span>
+                 {post.isSponsored && (
+                    <div className="flex items-center text-xs font-bold text-theme-text-muted mb-2">
+                        <SparklesIcon className="w-4 h-4 mr-1 text-primary"/>
+                        <span>{texts.boostedPost}</span>
                     </div>
                 )}
                 <div className="flex items-center justify-between">
@@ -142,7 +145,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                         {isMenuOpen && (
                             <div className="absolute right-0 mt-2 w-48 glass-card rounded-md shadow-lg z-10">
                                 <button onClick={handleReport} className="block w-full text-left px-4 py-2 text-sm text-theme-text-muted hover:bg-white/10">
-                                    Report Post
+                                    {texts.reportPost}
                                 </button>
                             </div>
                         )}
@@ -154,13 +157,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 ) : (
                     <div className="my-4 glass-card rounded-lg p-4 post-content-wrapper">
                         <p className="text-theme-text-base text-sm whitespace-pre-line font-arabic">{displayedContent}</p>
-                        {isTranslating && <p className="text-xs text-theme-text-muted animate-pulse mt-2">Translating...</p>}
+                        {isTranslating && <p className="text-xs text-theme-text-muted animate-pulse mt-2">{texts.translating}</p>}
                         {canToggleTranslation && !isTranslating && (
                              <button
                                 onClick={(e) => { e.stopPropagation(); setIsShowingTranslation(prev => !prev); }}
                                 className="text-xs font-semibold text-primary hover:underline mt-2"
                             >
-                                {isShowingTranslation ? 'Show original' : 'Show translation'}
+                                {isShowingTranslation ? texts.showOriginal : texts.showTranslation}
                             </button>
                         )}
                     </div>
@@ -177,11 +180,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 <div className="flex justify-between text-theme-text-muted">
                     <div className="flex items-center space-x-1">
                         <HeartIcon className="w-4 h-4 text-theme-text-base" />
-                        <span className="text-xs">{post.likes} likes</span>
+                        <span className="text-xs">{post.likes}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs">
-                        <span>{post.comments} comments</span>
-                        <span>{post.shares} shares</span>
+                        <span>{post.comments} {texts.comment.toLowerCase()}s</span>
+                        <span>{post.shares} {texts.share.toLowerCase()}s</span>
                     </div>
                 </div>
 
@@ -190,15 +193,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 <div className="flex justify-around items-center text-theme-text-base">
                     <button onClick={(e) => handleInteraction(e, handleLike)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
                         <HeartIcon className="w-6 h-6" />
-                        <span className="font-semibold text-xs">Like</span>
+                        <span className="font-semibold text-xs">{texts.like}</span>
                     </button>
                      <button onClick={(e) => handleInteraction(e, handleComment)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
                         <CommentIcon className="w-6 h-6" />
-                        <span className="font-semibold text-xs">Comment</span>
+                        <span className="font-semibold text-xs">{texts.comment}</span>
                     </button>
                      <button onClick={handleShare} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
                         <ShareIcon className="w-6 h-6" />
-                        <span className="font-semibold text-xs">Share</span>
+                        <span className="font-semibold text-xs">{texts.share}</span>
                     </button>
                 </div>
             </div>

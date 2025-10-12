@@ -148,17 +148,20 @@ export const createEvent = (details: { title: string, date: string, location: st
     return simulateFetch(newEvent);
 };
 
-export const login = (role: UserRole): Promise<User | null> => {
-    // Log in as the first user found with the selected role
-    const userToLogin = MOCK_USERS.find(u => u.role === role);
-    return simulateFetch(userToLogin || null);
+export const socialLogin = (provider: 'google' | 'facebook'): Promise<User> => {
+    console.log(`(Mock API) Logging in with ${provider}...`);
+    // Return a user who needs to verify their email to test the flow.
+    const unverifiedUser = MOCK_USERS.find(u => !u.emailVerified);
+    return simulateFetch(unverifiedUser || MOCK_USERS[2]);
 };
 
-export const registerUser = (details: { name: string; email: string; dob: string; role: UserRole }): Promise<User> => {
+export const registerUser = (details: { name: string; email: string; role: UserRole }): Promise<User> => {
     console.log("(Mock API) Registering new user:", details);
     const newUser: User = {
         id: `user-${Date.now()}`,
         name: details.name,
+        email: details.email,
+        emailVerified: false, // New users must verify their email
         role: details.role,
         avatarUrl: `https://picsum.photos/seed/user${Date.now()}/150/150`,
         verified: false,
@@ -167,6 +170,21 @@ export const registerUser = (details: { name: string; email: string; dob: string
         bio: `A new ${details.role} on the platform.`,
     };
     return simulateFetch(newUser);
+};
+
+export const checkVerificationStatus = (userId: string): Promise<User | null> => {
+    const user = MOCK_USERS.find(u => u.id === userId);
+    if (!user) return simulateFetch(null);
+
+    // Simulate the user having clicked the link in their email.
+    const verifiedUser = { ...user, emailVerified: true };
+    console.log(`(Mock API) Checked status for ${userId}. User is now verified.`);
+    return simulateFetch(verifiedUser);
+};
+
+export const resendVerificationEmail = (userId: string): Promise<{ success: boolean }> => {
+    console.log(`(Mock API) Resending verification email for user: ${userId}`);
+    return simulateFetch({ success: true });
 };
 
 

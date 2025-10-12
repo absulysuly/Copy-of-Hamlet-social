@@ -31,7 +31,7 @@ const ComposeView: React.FC<ComposeViewProps> = ({ user, onPost, language }) => 
 
     const handleGenerateSuggestion = async () => {
         if (!topic) {
-            alert("Please enter a topic for the post suggestion.");
+            alert(texts.promptTopic);
             return;
         }
         setIsGenerating(true);
@@ -50,11 +50,11 @@ const ComposeView: React.FC<ComposeViewProps> = ({ user, onPost, language }) => 
     
     const handleSaveDraft = () => {
         console.log("Saving draft:", { content, privacy });
-        alert("Draft saved (simulation)!");
+        alert(texts.draftSaved);
     };
 
     const handlePreview = () => {
-        alert(`Previewing post:\n\n${content}\n\nPrivacy: ${privacy}`);
+        alert(`${texts.previewingPost}:\n\n${content}\n\n${texts.privacy}: ${privacy}`);
     };
 
     const handleToggleRecording = () => {
@@ -65,7 +65,7 @@ const ComposeView: React.FC<ComposeViewProps> = ({ user, onPost, language }) => 
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("Speech recognition is not supported in this browser.");
+            alert(texts.speechRecognitionNotSupported);
             return;
         }
 
@@ -104,13 +104,13 @@ const ComposeView: React.FC<ComposeViewProps> = ({ user, onPost, language }) => 
             <div className="flex space-x-4">
                 <img className="w-12 h-12 rounded-full ring-2 ring-white/50" src={user.avatarUrl} alt={user.name} />
                 <div className="w-full">
-                    <textarea value={content} onChange={(e) => setContent(e.target.value)} className="w-full p-2 border-none rounded-md bg-transparent focus:ring-0 text-lg placeholder-theme-text-muted" rows={5} placeholder="What's on your mind?" />
+                    <textarea value={content} onChange={(e) => setContent(e.target.value)} className="w-full p-2 border-none rounded-md bg-transparent focus:ring-0 text-lg placeholder-theme-text-muted" rows={5} placeholder={texts.whatsOnYourMind} />
                     <div className="border-t border-[var(--color-glass-border)] my-2"></div>
                     <div className="flex flex-col sm:flex-row gap-2">
-                        <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Or enter a topic for AI..." className="flex-grow p-2 text-sm border border-[var(--color-glass-border)] rounded-md bg-white/10 placeholder-theme-text-muted focus:outline-none focus:ring-1 focus:ring-primary" />
+                        <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder={texts.enterTopicForAI} className="flex-grow p-2 text-sm border border-[var(--color-glass-border)] rounded-md bg-white/10 placeholder-theme-text-muted focus:outline-none focus:ring-1 focus:ring-primary" />
                         <button onClick={handleGenerateSuggestion} disabled={isGenerating} className="flex items-center justify-center space-x-2 px-3 py-2 text-sm font-semibold text-primary bg-primary/10 rounded-md hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed">
                             <SparklesIcon className="w-4 h-4"/>
-                            <span>{isGenerating ? 'Generating...' : 'Get Suggestion'}</span>
+                            <span>{isGenerating ? texts.generating : texts.getSuggestion}</span>
                         </button>
                     </div>
                 </div>
@@ -143,7 +143,7 @@ const ComposeView: React.FC<ComposeViewProps> = ({ user, onPost, language }) => 
                     <button onClick={handleSaveDraft} className="px-4 py-2 text-sm font-semibold bg-white/10 text-theme-text-base rounded-full hover:bg-white/20">{texts.saveDraft}</button>
                     <button onClick={handlePreview} className="px-4 py-2 text-sm font-semibold bg-white/10 text-theme-text-base rounded-full hover:bg-white/20">{texts.preview}</button>
                     <button onClick={handlePost} disabled={!content.trim()} className="px-6 py-2 font-bold bg-primary text-on-primary rounded-full transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Post
+                        {texts.post}
                     </button>
                 </div>
             </div>

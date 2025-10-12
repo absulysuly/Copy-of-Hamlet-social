@@ -1,19 +1,22 @@
 // Fix: Populating components/CandidatePill.tsx with a reusable candidate component.
 import React, { useState } from 'react';
-import { User } from '../types.ts';
+import { User, Language } from '../types.ts';
 import { VerifiedIcon, PlusIcon, CheckIcon } from './icons/Icons.tsx';
 import * as api from '../services/apiService.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface CandidatePillProps {
     candidate: User;
     onSelect: (candidate: User) => void;
     user: User | null;
     requestLogin: () => void;
+    language: Language;
 }
 
-const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user, requestLogin }) => {
+const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user, requestLogin, language }) => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const texts = UI_TEXT[language];
 
     const handleFollow = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent card click-through to profile
@@ -61,12 +64,12 @@ const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user
                 {isFollowing ? (
                     <>
                         <CheckIcon className="w-3 h-3"/>
-                        <span>Following</span>
+                        <span>{texts.following}</span>
                     </>
                 ) : (
                      <>
                         <PlusIcon className="w-3 h-3"/>
-                        <span>Follow</span>
+                        <span>{texts.follow}</span>
                     </>
                 )}
             </button>

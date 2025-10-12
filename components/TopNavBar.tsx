@@ -1,12 +1,26 @@
 import React from 'react';
+import { Language } from '../types.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface TopNavBarProps<T extends string> {
     tabs: T[];
     activeTab: T;
     onTabChange: (tab: T) => void;
+    language: Language;
 }
 
-function TopNavBar<T extends string>({ tabs, activeTab, onTabChange }: TopNavBarProps<T>) {
+const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
+    'Posts': 'posts',
+    'Reels': 'reels',
+    'Candidates': 'candidates',
+    'Debates': 'debates',
+    'Tea House': 'teaHouse',
+    'Events': 'events',
+};
+
+
+function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }: TopNavBarProps<T>) {
+    const texts = UI_TEXT[language];
     const navBarClasses = 'border-b border-[var(--color-glass-border)]';
 
     const getTabClasses = (tab: T) => {
@@ -19,15 +33,20 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange }: TopNavBar
     return (
         <div className={navBarClasses}>
             <nav className="-mb-px flex justify-center space-x-6 px-4 sm:px-6" aria-label="Tabs">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => onTabChange(tab)}
-                        className={`whitespace-nowac py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
-                    >
-                        {tab}
-                    </button>
-                ))}
+                {tabs.map((tab) => {
+                    const translationKey = tabTranslationKeys[tab];
+                    const label = translationKey ? texts[translationKey] : tab;
+
+                    return (
+                        <button
+                            key={tab}
+                            onClick={() => onTabChange(tab)}
+                            className={`whitespace-nowac py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
+                        >
+                            {label}
+                        </button>
+                    );
+                })}
             </nav>
         </div>
     );

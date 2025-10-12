@@ -16,11 +16,11 @@ export enum AppTab {
     UserProfile = 'My Profile',
     CandidateProfile = 'Candidate Profile',
     Dashboard = 'Dashboard',
-    Navigate = 'Navigate',
+    Analytics = 'Analytics',
+    Candidates = 'Candidates',
     // For HomeView tabs
     Posts = 'Posts',
     Reels = 'Reels',
-    Candidates = 'Candidates',
     Debates = 'Debates',
     Events = 'Events',
 }
@@ -39,7 +39,7 @@ export type Language = 'en' | 'ar' | 'ku';
 export type Governorate = 'Baghdad' | 'Basra' | 'Nineveh' | 'Erbil' | 'Anbar' | 'Dhi Qar' | 'Salah al-Din' | 'Diyala' | 'Kirkuk' | 'Sulaymaniyah' | 'Babil' | 'Wasit' | 'Maysan' | 'Muthanna' | 'Qadisiyyah' | 'Najaf' | 'Karbala' | 'Dohuk';
 
 
-export type MainContentTab = AppTab.Posts | AppTab.Reels | AppTab.Candidates | AppTab.Debates | AppTab.Events;
+export type MainContentTab = AppTab.Posts | AppTab.Reels | AppTab.Candidates | AppTab.Debates | AppTab.TeaHouse;
 
 export type HomeViewMode = 'Social' | 'Election';
 
@@ -66,6 +66,8 @@ export interface User {
     bio?: string;
     partySlug?: string;
     governorateSlug?: string;
+    email?: string;
+    emailVerified?: boolean;
 }
 
 export interface Post {

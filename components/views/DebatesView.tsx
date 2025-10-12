@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Governorate, Debate, UserRole, User } from '../../types.ts';
+import { Governorate, Debate, UserRole, User, Language } from '../../types.ts';
 import { DebateIcon, CalendarIcon, ChevronDownIcon } from '../icons/Icons.tsx';
 import * as api from '../../services/apiService.ts';
+import { UI_TEXT } from '../../translations.ts';
 
 interface DebatesViewProps {
     selectedGovernorate: Governorate | 'All';
     selectedParty: string | 'All';
+    language: Language;
 }
 
-const DebateCard: React.FC<{ debate: Debate }> = ({ debate }) => {
+const DebateCard: React.FC<{ debate: Debate, language: Language }> = ({ debate, language }) => {
     const debateDate = new Date(debate.scheduledTime);
     const timeOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' };
     const dateOptions: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+    const texts = UI_TEXT[language];
     
     const [reactions, setReactions] = useState(debate.reactions || { justice: 0, idea: 0, warning: 0 });
 
@@ -65,7 +68,7 @@ const DebateCard: React.FC<{ debate: Debate }> = ({ debate }) => {
             <div className="bg-black/20 px-5 py-3">
                 <button className="w-full px-4 py-2 text-sm font-semibold text-white bg-brand-hot-pink rounded-full transition-all hover:brightness-110 flex items-center justify-center space-x-2">
                     <DebateIcon className="w-5 h-5" />
-                    <span>{debate.isLive ? 'Join Live Debate' : 'Set Reminder'}</span>
+                    <span>{debate.isLive ? texts.joinLiveDebate : texts.setReminder}</span>
                 </button>
             </div>
         </div>
@@ -73,9 +76,10 @@ const DebateCard: React.FC<{ debate: Debate }> = ({ debate }) => {
 };
 
 
-const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate, selectedParty }) => {
+const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate, selectedParty, language }) => {
     const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const texts = UI_TEXT[language];
     
     const [allCandidates, setAllCandidates] = useState<User[]>([]);
     const [filteredDebates, setFilteredDebates] = useState<Debate[]>([]);
@@ -117,7 +121,7 @@ const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate, selected
     return (
         <div className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
-                <h2 className="text-2xl font-bold text-white">Upcoming Debates</h2>
+                <h2 className="text-2xl font-bold text-white">{texts.debates}</h2>
 
                 {/* Candidate Filter */}
                 <div className="relative mt-4 sm:mt-0 w-full sm:w-72">
@@ -126,7 +130,7 @@ const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate, selected
                         className="w-full flex justify-between items-center p-2 text-sm text-white border border-white/20 rounded-lg bg-white/10 focus:ring-brand-hot-pink focus:border-brand-hot-pink"
                     >
                         <span className="truncate pr-2">
-                            {selectedCandidates.length > 0 ? selectedCandidates.map(c => c.name).join(', ') : 'Filter by specific candidate...'}
+                            {selectedCandidates.length > 0 ? selectedCandidates.map(c => c.name).join(', ') : texts.filterByCandidate}
                         </span>
                         <ChevronDownIcon className={`w-5 h-5 transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -137,7 +141,7 @@ const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate, selected
                                     onClick={() => setSelectedCandidateIds([])}
                                     className="w-full text-left px-3 py-2 text-sm font-semibold text-brand-hot-pink hover:bg-white/10 border-b border-white/20"
                                 >
-                                    Clear Selection
+                                    {texts.clearSelection}
                                 </button>
                            )}
                             {allCandidates.map(candidate => (
@@ -158,14 +162,14 @@ const DebatesView: React.FC<DebatesViewProps> = ({ selectedGovernorate, selected
             </div>
 
             {isLoading ? (
-                <p className="text-slate-300 col-span-full text-center mt-8">Loading debates...</p>
+                <p className="text-theme-text-muted col-span-full text-center mt-8">{texts.loadingDebates}</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {filteredDebates.length > 0 ? (
-                        filteredDebates.map(debate => <DebateCard key={debate.id} debate={debate} />)
+                        filteredDebates.map(debate => <DebateCard key={debate.id} debate={debate} language={language} />)
                     ) : (
-                        <p className="text-slate-300 col-span-full text-center mt-8">
-                            No debates found for the selected filters.
+                        <p className="text-theme-text-muted col-span-full text-center mt-8">
+                            {texts.noDebatesFound}
                         </p>
                     )}
                 </div>

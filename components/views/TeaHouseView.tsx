@@ -5,35 +5,13 @@ import { MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES } from '../../constants.
 import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons.tsx';
 import CreateTopicModal from '../CreateTopicModal.tsx';
 import { UI_TEXT } from '../../translations.ts';
+import AudioPlayer from '../AudioPlayer.tsx';
 
 interface TeaHouseViewProps {
     user: User | null;
     requestLogin: () => void;
     language: Language;
 }
-
-const MinimalFooter: React.FC<{ onClick: () => void, language: Language }> = ({ onClick, language }) => {
-    const texts = UI_TEXT[language];
-    return (
-        <footer
-            onClick={onClick}
-            className="fixed bottom-0 left-0 right-0 h-[72px] flex items-center justify-center cursor-pointer lg:hidden"
-            style={{ backgroundColor: '#F5F1EB', color: '#8B5E3C' }}
-        >
-            <div className="relative flex flex-col items-center">
-                <div className="relative w-10 h-10" style={{ animation: 'pulse-gentle 4s ease-in-out infinite' }}>
-                    <TeaHouseIcon className="w-full h-full" />
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-full flex justify-around">
-                        <span className="steam-1 text-lg opacity-80">.</span>
-                        <span className="steam-2 text-lg opacity-80">.</span>
-                        <span className="steam-3 text-lg opacity-80">.</span>
-                    </div>
-                </div>
-                <h3 className="font-bold font-arabic mt-1">{texts.teaHouseFooter}</h3>
-            </div>
-        </footer>
-    );
-};
 
 const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, language }) => {
     const [filteredTopics, setFilteredTopics] = useState<TeaHouseTopic[]>([]);
@@ -85,6 +63,15 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
                             <div className={`message-bubble ${msg.author.id === user?.id ? 'is-user' : 'is-other'}`}>
                                 {msg.type === 'text' && <p>{msg.content}</p>}
                                 {msg.type === 'image' && <img src={msg.mediaUrl} alt="shared" className="rounded-lg max-w-xs" />}
+                                {msg.type === 'voice' && msg.mediaUrl && (
+                                    <AudioPlayer src={msg.mediaUrl} governorate={msg.author.governorate} compact />
+                                )}
+                                {msg.type === 'document' && msg.mediaUrl && (
+                                     <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 p-2 bg-black/20 rounded-lg hover:bg-black/40">
+                                        <DocumentIcon className="w-6 h-6 flex-shrink-0" />
+                                        <span className="text-sm font-medium truncate">{msg.content}</span>
+                                     </a>
+                                )}
                                 <p className="text-xs opacity-70 mt-1 text-right">{msg.timestamp}</p>
                             </div>
                         </div>
@@ -99,7 +86,7 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Type a message..."
+                            placeholder={texts.typeAMessage}
                             className="flex-grow p-3 border border-[var(--color-glass-border)] rounded-full bg-white/10 placeholder-theme-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                         <button onClick={handleSendMessage} className="p-3 rounded-full bg-primary text-on-primary hover:brightness-110">
@@ -113,11 +100,11 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
 
     // Topic List View
     return (
-        <div className="p-4 sm:p-6 max-w-2xl mx-auto pb-24">
+        <div className="p-4 sm:p-6 max-w-2xl mx-auto">
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold font-arabic">{texts.teaHouse}</h1>
                 <p className="text-theme-text-muted mt-1">
-                    Discussions in your selected language.
+                    {texts.discussionsInLang}
                 </p>
             </div>
             
@@ -126,7 +113,7 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
                     onClick={() => user ? setCreateModalOpen(true) : requestLogin()}
                     className="send-btn max-w-xs"
                  >
-                    Create New Discussion
+                    {texts.createNewDiscussion}
                 </button>
             </div>
 
@@ -144,13 +131,11 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
                     </div>
                 ))}
                 {filteredTopics.length === 0 && (
-                    <p className="text-center text-theme-text-muted py-10">No discussions found for this language. Why not start one?</p>
+                    <p className="text-center text-theme-text-muted py-10">{texts.noDiscussionsFound}</p>
                 )}
             </div>
             
-            {isCreateModalOpen && <CreateTopicModal onClose={() => setCreateModalOpen(false)} onCreate={handleCreateTopic} defaultLanguage={language} />}
-
-            <MinimalFooter onClick={() => user ? setCreateModalOpen(true) : requestLogin()} language={language} />
+            {isCreateModalOpen && <CreateTopicModal onClose={() => setCreateModalOpen(false)} onCreate={handleCreateTopic} defaultLanguage={language} language={language} />}
         </div>
     );
 };

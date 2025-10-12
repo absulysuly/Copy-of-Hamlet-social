@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { ThemeName } from '../../types.ts';
+import { ThemeName, Language } from '../../types.ts';
 import ColorThemeSelector from '../UI/ColorThemeSelector.tsx';
+import { UI_TEXT } from '../../translations.ts';
 
 interface SettingsViewProps {
     isHighContrast: boolean;
     onToggleContrast: () => void;
     activeTheme: ThemeName;
     onChangeTheme: (theme: ThemeName) => void;
+    language: Language;
 }
 
 const ToggleSwitch: React.FC<{
@@ -29,30 +31,31 @@ const ToggleSwitch: React.FC<{
     );
 };
 
-const SettingsView: React.FC<SettingsViewProps> = ({ isHighContrast, onToggleContrast, activeTheme, onChangeTheme }) => {
+const SettingsView: React.FC<SettingsViewProps> = ({ isHighContrast, onToggleContrast, activeTheme, onChangeTheme, language }) => {
     const [largeText, setLargeText] = useState(false);
     const [ttsEnabled, setTtsEnabled] = useState(true);
+    const texts = UI_TEXT[language];
 
     return (
         <div className="max-w-3xl mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4">Accessibility & Display</h2>
+            <h2 className="text-2xl font-bold mb-4">{texts.accessibilityDisplay}</h2>
             <div className="glass-card rounded-lg shadow-sm p-6 space-y-4 divide-y divide-[var(--color-glass-border)]">
-                <ColorThemeSelector currentTheme={activeTheme} onChangeTheme={onChangeTheme} />
+                <ColorThemeSelector currentTheme={activeTheme} onChangeTheme={onChangeTheme} language={language} />
                 <ToggleSwitch
-                    label="High Contrast Mode"
-                    description="Increases text contrast for better readability."
+                    label={texts.highContrast}
+                    description={texts.highContrastDesc}
                     checked={isHighContrast}
                     onChange={onToggleContrast}
                 />
                 <ToggleSwitch
-                    label="Large Text"
-                    description="Increases the font size across the app."
+                    label={texts.largeText}
+                    description={texts.largeTextDesc}
                     checked={largeText}
                     onChange={() => setLargeText(p => !p)}
                 />
                  <ToggleSwitch
-                    label="Text-to-Speech (TTS)"
-                    description="Enable 'Read Content' button on long posts."
+                    label={texts.tts}
+                    description={texts.ttsDesc}
                     checked={ttsEnabled}
                     onChange={() => setTtsEnabled(p => !p)}
                 />
