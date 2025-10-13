@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { MOCK_POSTS } from '../constants.ts';
 
-const slides = MOCK_POSTS.filter(p => p.mediaUrl).map(p => ({
-    image: p.mediaUrl!,
-    caption: p.author.name,
-    subcaption: p.content.substring(0, 50) + '...',
-}));
-
-
 const HeroSection: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    const slides = MOCK_POSTS.filter(p => p.mediaUrl).map(p => ({
+        image: p.mediaUrl!,
+        caption: p.author.name,
+        subcaption: p.content.substring(0, 50) + '...',
+    }));
+
     useEffect(() => {
+        if (slides.length === 0) return;
         const timer = setTimeout(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
         }, 5000);
         return () => clearTimeout(timer);
-    }, [currentIndex]);
+    }, [currentIndex, slides.length]);
     
     const goToSlide = (slideIndex: number) => {
         setCurrentIndex(slideIndex);
     };
+
+    if (slides.length === 0) {
+        return null; // Don't render anything if there are no slides
+    }
 
     return (
         <div className="w-full aspect-[4/3] md:aspect-[2/1] lg:aspect-[3/1] relative group rounded-lg overflow-hidden shadow-lg">
