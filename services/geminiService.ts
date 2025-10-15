@@ -1,9 +1,19 @@
 import { GoogleGenAI } from "@google/genai";
 
+// Vite environment variable - must be prefixed with VITE_
+const getApiKey = (): string => {
+    return import.meta.env.VITE_GEMINI_API_KEY || '';
+};
+
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
     try {
-        // This assumes process.env.API_KEY is available in the execution environment.
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const apiKey = getApiKey();
+        if (!apiKey) {
+            console.warn('VITE_GEMINI_API_KEY not set in environment variables');
+            return 'AI features disabled. Set VITE_GEMINI_API_KEY to enable.';
+        }
+        
+        const ai = new GoogleGenAI({ apiKey });
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -21,7 +31,13 @@ export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 
     if (!text) return "";
 
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const apiKey = getApiKey();
+        if (!apiKey) {
+            console.warn('VITE_GEMINI_API_KEY not set - translation disabled');
+            return text; // Return original text if no API key
+        }
+        
+        const ai = new GoogleGenAI({ apiKey });
 
         const languageMap = {
             en: 'English',

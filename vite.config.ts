@@ -28,10 +28,8 @@ export default defineConfig(({ mode }) => {
           ext: '.br',
         }),
       ],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
+      // Environment variables are accessed via import.meta.env.VITE_*
+      // No need for explicit define - Vite handles VITE_ prefixed vars automatically
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
