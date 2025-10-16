@@ -95,6 +95,8 @@ type Translations = {
         following: string;
         shareLinkCopied: string;
         shareNotSupported: string;
+        enterComment: string;
+        errorOccurred: string;
         socialLoginFailed: string;
         registrationFailed: string;
         emailNotVerified: string;
@@ -369,6 +371,8 @@ export const UI_TEXT: Translations = {
         following: 'Following',
         shareLinkCopied: 'Link to post copied to clipboard!',
         shareNotSupported: 'Sharing is not supported on this browser.',
+        enterComment: 'Enter your comment',
+        errorOccurred: 'An error occurred. Please try again.',
         socialLoginFailed: 'Social login failed. Please try again.',
         registrationFailed: 'Registration failed. Please try again.',
         emailNotVerified: 'Email not verified yet. Please check your inbox for the verification link.',
@@ -633,6 +637,8 @@ export const UI_TEXT: Translations = {
         following: "فۆڵۆ کراوە",
         shareLinkCopied: "لینکی پۆستەکە کۆپی کرا!",
         shareNotSupported: "شەیرکردن لەم وێبگەڕەدا پشتگیری نەکراوە.",
+        enterComment: "لێدوانەکەت بنووسە",
+        errorOccurred: "هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵبدەرەوە.",
         socialLoginFailed: "چوونەژوورەوە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         registrationFailed: "تۆمارکردن سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         emailNotVerified: "ئیمەیڵ پشتڕاست نەکراوەتەوە. تکایە سندوقی نامەکانت بپشکنە.",
@@ -897,6 +903,8 @@ export const UI_TEXT: Translations = {
         following: "تتابعه",
         shareLinkCopied: "تم نسخ رابط المنشور!",
         shareNotSupported: "المشاركة غير مدعومة في هذا المتصفح.",
+        enterComment: "أدخل تعليقك",
+        errorOccurred: "حدث خطأ. يرجى المحاولة مرة أخرى.",
         socialLoginFailed: "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
         registrationFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
         emailNotVerified: "البريد الإلكتروني لم يتم التحقق منه بعد. يرجى مراجعة بريدك الوارد.",

@@ -15,6 +15,13 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language, onSelectAuthor, onSelectPost }) => {
     const [isMenuOpen, setMenuOpen] = useState(false);
+    const [likes, setLikes] = useState(post.likes);
+    const [comments, setComments] = useState(post.comments);
+    const [shares, setShares] = useState(post.shares);
+    const [isLiked, setIsLiked] = useState(false);
+    const [isLikeLoading, setIsLikeLoading] = useState(false);
+    const [isCommentLoading, setIsCommentLoading] = useState(false);
+    const [isShareLoading, setIsShareLoading] = useState(false);
     const texts = UI_TEXT[language];
 
     const handleInteraction = (e: React.MouseEvent, action: () => void) => {
@@ -27,11 +34,57 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
         }
     };
     
-    const handleLike = () => api.likePost(post.id).then(() => console.log('Liked post'));
-    const handleComment = () => console.log('Comment action placeholder');
+    const handleLike = async () => {
+        // Optimistic update
+        const previousLikes = likes;
+        const previousIsLiked = isLiked;
+        
+        setIsLikeLoading(true);
+        setIsLiked(!isLiked);
+        setLikes(isLiked ? likes - 1 : likes + 1);
+        
+        try {
+            await api.likePost(post.id);
+        } catch (error) {
+            // Rollback on error
+            console.error('Failed to like post:', error);
+            setIsLiked(previousIsLiked);
+            setLikes(previousLikes);
+            alert(texts.errorOccurred || 'An error occurred. Please try again.');
+        } finally {
+            setIsLikeLoading(false);
+        }
+    };
+    
+    const handleComment = async () => {
+        const comment = prompt(texts.enterComment || 'Enter your comment:');
+        if (!comment || !comment.trim()) return;
+        
+        // Optimistic update
+        const previousComments = comments;
+        setIsCommentLoading(true);
+        setComments(comments + 1);
+        
+        try {
+            await api.commentPost(post.id, comment);
+        } catch (error) {
+            // Rollback on error
+            console.error('Failed to comment on post:', error);
+            setComments(previousComments);
+            alert(texts.errorOccurred || 'An error occurred. Please try again.');
+        } finally {
+            setIsCommentLoading(false);
+        }
+    };
 
     const handleShare = async (e: React.MouseEvent) => {
         e.stopPropagation();
+        
+        // Optimistic update
+        const previousShares = shares;
+        setIsShareLoading(true);
+        setShares(shares + 1);
+        
         const postUrl = `${window.location.origin}/post/${post.id}`;
         const shareData = {
             title: `Post by ${post.author.name} on Smart Campaign`,
@@ -39,21 +92,25 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
             url: postUrl, 
         };
 
-        if (navigator.share) {
-            try {
+        try {
+            if (navigator.share) {
                 await navigator.share(shareData);
                 console.log('Post shared successfully');
-            } catch (error) {
-                console.error('Error sharing post:', error);
-            }
-        } else {
-            try {
+            } else {
                 await navigator.clipboard.writeText(shareData.url);
                 alert(texts.shareLinkCopied);
-            } catch (err) {
-                console.error('Failed to copy post link:', err);
-                alert(texts.shareNotSupported);
             }
+            // Track share in backend
+            await api.sharePost(post.id);
+        } catch (error) {
+            // Rollback on error
+            console.error('Error sharing post:', error);
+            setShares(previousShares);
+            if (!(error instanceof Error && error.name === 'AbortError')) {
+                alert(texts.shareNotSupported || 'Sharing not supported on this device');
+            }
+        } finally {
+            setIsShareLoading(false);
         }
     };
 
@@ -124,28 +181,28 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
             <div className="px-4 pb-2">
                 <div className="flex justify-between text-theme-text-muted">
                     <div className="flex items-center space-x-1">
-                        <HeartIcon className="w-4 h-4 text-theme-text-base" />
-                        <span className="text-xs">{post.likes}</span>
+                        <HeartIcon className={`w-4 h-4 ${isLiked ? 'text-red-500' : 'text-theme-text-base'}`} />
+                        <span className="text-xs">{likes}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs">
-                        <span>{post.comments} {texts.comment.toLowerCase()}s</span>
-                        <span>{post.shares} {texts.share.toLowerCase()}s</span>
+                        <span>{comments} {texts.comment.toLowerCase()}s</span>
+                        <span>{shares} {texts.share.toLowerCase()}s</span>
                     </div>
                 </div>
 
                 <div className="border-t border-[var(--color-glass-border)] my-2"></div>
 
                 <div className="flex justify-around items-center text-theme-text-base">
-                    <button onClick={(e) => handleInteraction(e, handleLike)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
-                        <HeartIcon className="w-6 h-6" />
+                    <button onClick={(e) => handleInteraction(e, handleLike)} disabled={isLikeLoading} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center disabled:opacity-50">
+                        <HeartIcon className={`w-6 h-6 ${isLiked ? 'text-red-500' : ''} ${isLikeLoading ? 'animate-pulse' : ''}`} />
                         <span className="font-semibold text-xs">{texts.like}</span>
                     </button>
-                     <button onClick={(e) => handleInteraction(e, handleComment)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
-                        <CommentIcon className="w-6 h-6" />
+                     <button onClick={(e) => handleInteraction(e, handleComment)} disabled={isCommentLoading} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center disabled:opacity-50">
+                        <CommentIcon className={`w-6 h-6 ${isCommentLoading ? 'animate-pulse' : ''}`} />
                         <span className="font-semibold text-xs">{texts.comment}</span>
                     </button>
-                     <button onClick={handleShare} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
-                        <ShareIcon className="w-6 h-6" />
+                     <button onClick={handleShare} disabled={isShareLoading} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center disabled:opacity-50">
+                        <ShareIcon className={`w-6 h-6 ${isShareLoading ? 'animate-pulse' : ''}`} />
                         <span className="font-semibold text-xs">{texts.share}</span>
                     </button>
                 </div>

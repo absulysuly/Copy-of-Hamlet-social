@@ -2,9 +2,21 @@ import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopi
 import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO } from '../constants.ts';
 import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types.ts';
 
+// USE_MOCKS toggle: set to true to use mock data, false to use real API calls
+export const USE_MOCKS = true;
+
 // INSTANT LOADING - No delays
 const simulateFetch = <T>(data: T): Promise<T> => {
     return Promise.resolve(JSON.parse(JSON.stringify(data)));
+};
+
+// realFetch: Helper for making actual API calls (when USE_MOCKS is false)
+const realFetch = async <T>(url: string, options?: RequestInit): Promise<T> => {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+        throw new Error(`API call failed: ${response.statusText}`);
+    }
+    return response.json();
 };
 
 export const getParties = (): Promise<string[]> => {
@@ -197,8 +209,37 @@ export const followCandidate = (candidateId: string): Promise<{ success: boolean
 };
 
 export const likePost = (postId: string): Promise<{ success: boolean }> => {
-    console.log(`(Mock API) Liked post: ${postId}`);
-    return simulateFetch({ success: true });
+    if (USE_MOCKS) {
+        console.log(`(Mock API) Liked post: ${postId}`);
+        return simulateFetch({ success: true });
+    }
+    return realFetch<{ success: boolean }>(`/api/posts/${postId}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+};
+
+export const sharePost = (postId: string): Promise<{ success: boolean }> => {
+    if (USE_MOCKS) {
+        console.log(`(Mock API) Shared post: ${postId}`);
+        return simulateFetch({ success: true });
+    }
+    return realFetch<{ success: boolean }>(`/api/posts/${postId}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+};
+
+export const commentPost = (postId: string, comment: string): Promise<{ success: boolean }> => {
+    if (USE_MOCKS) {
+        console.log(`(Mock API) Commented on post: ${postId}`, comment);
+        return simulateFetch({ success: true });
+    }
+    return realFetch<{ success: boolean }>(`/api/posts/${postId}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment })
+    });
 };
 
 
