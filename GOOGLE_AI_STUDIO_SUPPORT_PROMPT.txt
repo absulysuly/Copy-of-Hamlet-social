@@ -1,0 +1,124 @@
+============================================
+PROMPT FOR GOOGLE AI STUDIO SUPPORT
+Copy and paste this if you need to contact Google AI Studio
+============================================
+
+Subject: Model Availability & API Integration Clarification
+
+Hello Google AI Studio Support Team,
+
+I'm developing a multilingual social media platform for Iraqi political campaigns using the @google/genai SDK (v1.25.0) in a React/TypeScript application.
+
+TECHNICAL DETAILS:
+------------------
+- SDK Package: @google/genai v1.25.0
+- Framework: React 19.2.0 + Vite 7.1.10 + TypeScript 5.8.2
+- Environment: Browser-based application
+- API Key Source: https://aistudio.google.com/apikey
+
+CURRENT IMPLEMENTATION:
+-----------------------
+```typescript
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({ 
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY 
+});
+
+const response = await ai.models.generateContent({
+    model: 'gemini-2.0-flash-exp',
+    contents: 'Generate content...'
+});
+
+console.log(response.text);
+```
+
+USE CASES:
+----------
+1. Content Generation: Creating social media posts in Arabic
+2. Text Translation: Arabic ↔ English ↔ Kurdish (Sorani)
+3. Real-time translation for political campaign content
+
+QUESTIONS:
+----------
+
+1. MODEL AVAILABILITY
+   - Is 'gemini-2.0-flash-exp' the correct and current model name?
+   - Previously we used 'gemini-2.5-flash' - has this been deprecated?
+   - What are the recommended models for production use?
+   - Are there regional restrictions for Iraq/Middle East access?
+
+2. API COMPATIBILITY
+   - Is the @google/genai v1.25.0 SDK stable for production?
+   - Any known issues with browser-based implementations?
+   - Rate limits for free tier API keys?
+   - Best practices for error handling?
+
+3. FEATURES NEEDED
+   - Support for RTL (Right-to-Left) Arabic text
+   - Translation accuracy for political/formal Arabic
+   - Kurdish (Sorani) language support quality
+   - Character limits for generated content
+
+4. PRODUCTION READINESS
+   - Security recommendations for client-side vs server-side implementation
+   - Quota recommendations for ~1000 daily users
+   - Billing estimates for translation + content generation
+   - Uptime SLA and reliability guarantees
+
+CURRENT STATUS:
+---------------
+✓ SDK installed and imported successfully
+✓ Application builds without errors
+✓ Dev server runs without issues
+? Need confirmation on correct model names
+? Need API key configuration guidance
+? Need production deployment best practices
+
+SPECIFIC TECHNICAL CONCERN:
+----------------------------
+After updating from older Gemini integration, the application loads but we want to ensure:
+1. We're using the latest stable model names
+2. Our API configuration follows current best practices
+3. We're prepared for production deployment
+4. We have proper error handling for API failures
+
+ERROR MESSAGES (if any):
+------------------------
+[Paste any error messages from browser console here]
+
+REQUEST:
+--------
+Please provide:
+- Current list of valid model names for production
+- Recommended setup for browser-based React applications
+- Migration guide if model names have changed recently
+- Best practices documentation link
+
+Thank you for your assistance!
+
+============================================
+QUICK CHECKLIST BEFORE SENDING:
+============================================
+□ Include your actual error messages (check browser console)
+□ Mention your region/country if you suspect regional restrictions
+□ Attach screenshots if helpful
+□ Include your use case (helps them prioritize)
+
+============================================
+WHERE TO GET HELP:
+============================================
+
+1. Google AI Studio Forum:
+   https://discuss.ai.google.dev/
+
+2. GitHub Issues (for SDK bugs):
+   https://github.com/googleapis/js-genai/issues
+
+3. Stack Overflow (tag: google-gemini):
+   https://stackoverflow.com/questions/tagged/google-gemini
+
+4. Official Documentation:
+   https://ai.google.dev/gemini-api/docs
+
+============================================

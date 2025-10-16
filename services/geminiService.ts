@@ -2,10 +2,10 @@ import { GoogleGenAI } from "@google/genai";
 
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
     try {
-        // Get API key from environment variable shim
-        const apiKey = (window as any).process?.env?.VITE_API_KEY;
+        // Get API key from environment variable
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         if (!apiKey || apiKey === 'your_google_gemini_api_key_here') {
-            throw new Error('API key not configured');
+            throw new Error('API key not configured. Please add VITE_GEMINI_API_KEY to your .env file');
         }
         const ai = new GoogleGenAI({ apiKey });
 
@@ -25,10 +25,10 @@ export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 
     if (!text) return "";
 
     try {
-        // Get API key from environment variable shim
-        const apiKey = (window as any).process?.env?.VITE_API_KEY;
+        // Get API key from environment variable
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         if (!apiKey || apiKey === 'your_google_gemini_api_key_here') {
-            throw new Error('API key not configured');
+            throw new Error('API key not configured. Please add VITE_GEMINI_API_KEY to your .env file');
         }
         const ai = new GoogleGenAI({ apiKey });
 
