@@ -1,49 +1,25 @@
 import { useState, useEffect } from 'react';
-import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
-
-const MOCK_DATA = {
-    stats: {
-        totalRegisteredVoters: 18543210,
-        expectedTurnoutPercentage: 43.5,
-        turnoutChangeLastWeek: 1.2,
-        approvedCandidatesCount: 3249,
-        verifiedViolationsCount: 187,
-        newViolationsChangeLastWeek: 5.1,
-        greenCampaignImpact: {
-            treesSaved: 15,
-            paperPostersSaved: 1250,
-            co2EmissionsReducedKg: 45,
-        },
-        candidateDistribution: {
-            men: { count: 2310, percentage: 71.1 },
-            women: { count: 939, percentage: 28.9 },
-        },
-    },
-    participation: IRAQI_GOVERNORATES_INFO.map(gov => ({
-        governorateId: gov.id,
-        governorateName: gov.name,
-        estimatedTurnout: Math.floor(Math.random() * (65 - 30 + 1) + 30),
-    })).sort((a, b) => b.estimatedTurnout - a.estimatedTurnout),
-};
-
+import * as api from '../../../services/apiService.ts';
 
 export const useDashboardData = () => {
-    const [data, setData] = useState<typeof MOCK_DATA | null>(null);
+    const [data, setData] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            setError(null);
             try {
-                setData(MOCK_DATA);
-            } catch (e) {
-                setError(new Error("Failed to load mock data"));
+                const dashboardData = await api.getDashboardStats();
+                setData(dashboardData);
+            } catch (e: any) {
+                setError(e);
             } finally {
                 setIsLoading(false);
             }
-        }, 1000); // Simulate network delay
-
-        return () => clearTimeout(timer);
+        };
+        fetchData();
     }, []);
 
     return { data, isLoading, error };

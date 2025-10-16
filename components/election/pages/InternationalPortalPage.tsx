@@ -1,20 +1,28 @@
 
+
 import React from 'react';
 import Card from '../components/ui/Card.tsx';
 import Button from '../components/ui/Button.tsx';
 import ApiIcon from '../icons/ApiIcon.tsx';
 import DocumentTextIcon from '../icons/DocumentTextIcon.tsx';
 import UsersIcon from '../icons/UsersIcon.tsx';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 
-const InternationalPortalPage: React.FC = () => {
+interface InternationalPortalPageProps {
+    language: Language;
+}
+
+const InternationalPortalPage: React.FC<InternationalPortalPageProps> = ({ language }) => {
+    const texts = UI_TEXT[language];
     return (
         <div className="py-16">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-12">
-                        <h1 className="text-5xl font-extrabold text-white">International Observer Portal</h1>
+                        <h1 className="text-5xl font-extrabold text-white">{texts.intlPortalTitle}</h1>
                         <p className="mt-4 max-w-2xl mx-auto text-xl text-slate-300">
-                            Access real-time data, comprehensive reports, and resources to support electoral transparency and monitoring.
+                           {texts.intlPortalDesc}
                         </p>
                     </div>
                     
@@ -26,12 +34,12 @@ const InternationalPortalPage: React.FC = () => {
                                         <ApiIcon className="w-10 h-10 text-brand-teal" />
                                     </div>
                                 </div>
-                                <h2 className="text-2xl font-bold text-white text-center mb-3">Real-time Data API</h2>
+                                <h2 className="text-2xl font-bold text-white text-center mb-3">{texts.apiAccess}</h2>
                                 <p className="text-slate-300 text-center">
-                                    Access structured, real-time election data including voter turnout, incident reports, and preliminary results.
+                                    {texts.apiAccessDesc}
                                 </p>
                             </div>
-                            <Button variant="outline" className="mt-6 w-full">Request API Access</Button>
+                            <Button variant="outline" className="mt-6 w-full">{texts.requestApiAccess}</Button>
                         </Card>
                         <Card className="flex flex-col">
                            <div className="flex-grow">
@@ -40,12 +48,12 @@ const InternationalPortalPage: React.FC = () => {
                                         <DocumentTextIcon className="w-10 h-10 text-brand-teal" />
                                     </div>
                                 </div>
-                                <h2 className="text-2xl font-bold text-white text-center mb-3">Downloadable Reports</h2>
+                                <h2 className="text-2xl font-bold text-white text-center mb-3">{texts.downloadReports}</h2>
                                 <p className="text-slate-300 text-center">
-                                    Download multilingual reports on candidate registration, electoral integrity, and media monitoring.
+                                    {texts.downloadReportsDesc}
                                 </p>
                            </div>
-                            <Button variant="outline" className="mt-6 w-full">Browse Reports</Button>
+                            <Button variant="outline" className="mt-6 w-full">{texts.browseReports}</Button>
                         </Card>
                     </div>
                     
@@ -56,11 +64,11 @@ const InternationalPortalPage: React.FC = () => {
                                     <UsersIcon className="w-10 h-10 text-brand-teal" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white mb-2">Observer Resources & Briefings</h2>
+                                    <h2 className="text-2xl font-bold text-white mb-2">{texts.observerResources}</h2>
                                     <p className="text-slate-300">
-                                        Access legal frameworks, logistical information, and schedules for observer briefings. Register your organization to receive updates.
+                                        {texts.observerResourcesDesc}
                                     </p>
-                                    <Button className="mt-4">Register Organization</Button>
+                                    <Button className="mt-4">{texts.registerOrg}</Button>
                                 </div>
                             </div>
                         </Card>

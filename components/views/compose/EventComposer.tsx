@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User } from '../../../types.ts';
 import { CalendarIcon } from '../../icons/Icons.tsx';
@@ -15,7 +14,6 @@ const EventComposer: React.FC<EventComposerProps> = ({ user, onCreateEvent }) =>
 
     const handleSubmit = () => {
         if (title.trim() && date && location.trim()) {
-            // The `onCreateEvent` prop is connected to the apiService in HomeView.
             onCreateEvent({ title, date, location });
             setTitle('');
             setDate('');
@@ -23,32 +21,34 @@ const EventComposer: React.FC<EventComposerProps> = ({ user, onCreateEvent }) =>
         }
     };
 
+    const inputClasses = "w-full p-2 text-sm border border-[var(--color-glass-border)] rounded-md bg-white/10 text-theme-text-base placeholder-theme-text-muted focus:outline-none focus:ring-1 focus:ring-primary";
+
     return (
-        <div className="bg-mocha-white dark:bg-gray-800 rounded-lg shadow-sm border border-neutral-gray-medium dark:border-gray-700 p-4">
+        <div className="glass-card rounded-lg p-4">
             <div className="flex space-x-4">
-                <img className="w-12 h-12 rounded-full" src={user.avatarUrl} alt={user.name} />
+                <img className="w-12 h-12 rounded-full ring-2 ring-white/50" src={user.avatarUrl} alt={user.name} />
                 <div className="w-full space-y-3">
-                    <p className="font-semibold">Create a New Event</p>
+                    <h3 className="font-semibold text-theme-text-base">Create a New Event</h3>
                     <input
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Event Title"
-                        className="w-full p-2 text-sm border border-neutral-gray-medium dark:border-gray-600 rounded-md bg-neutral-gray-light dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-action-blue"
+                        className={inputClasses}
                     />
                     <input
                         type="datetime-local"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
                         placeholder="Event Date and Time"
-                        className="w-full p-2 text-sm border border-neutral-gray-medium dark:border-gray-600 rounded-md bg-neutral-gray-light dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-action-blue"
+                        className={inputClasses}
                     />
                     <input
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="Location (e.g., Baghdad Community Hall)"
-                        className="w-full p-2 text-sm border border-neutral-gray-medium dark:border-gray-600 rounded-md bg-neutral-gray-light dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-action-blue"
+                        className={inputClasses}
                     />
                 </div>
             </div>
@@ -56,7 +56,7 @@ const EventComposer: React.FC<EventComposerProps> = ({ user, onCreateEvent }) =>
                 <button
                     onClick={handleSubmit}
                     disabled={!title.trim() || !date || !location.trim()}
-                    className="flex items-center space-x-2 px-6 py-2 font-bold text-white bg-action-blue rounded-full hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                    className="flex items-center space-x-2 px-6 py-2 font-bold bg-primary text-on-primary rounded-full transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <CalendarIcon className="w-5 h-5" />
                     <span>Create Event</span>

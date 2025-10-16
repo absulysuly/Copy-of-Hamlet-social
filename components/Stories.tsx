@@ -3,18 +3,19 @@ import { User } from '../types.ts';
 
 interface StoriesProps {
     users: User[];
-    onSelectProfile: (profile: User) => void;
+    onSelectStory: (profile: User) => void;
 }
 
-const StoryItem: React.FC<{ user: User; onSelectProfile: (profile: User) => void; }> = ({ user, onSelectProfile }) => (
+const StoryItem: React.FC<{ user: User; onSelectStory: (profile: User) => void; }> = ({ user, onSelectStory }) => (
     <button
-        onClick={() => onSelectProfile(user)}
+        onClick={() => onSelectStory(user)}
         className="flex flex-col items-center flex-shrink-0 w-24 p-2 focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
         aria-label={`View stories by ${user.name}`}
     >
         <div className="relative">
             <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-br from-secondary via-primary to-accent">
                  <img 
+                    loading="lazy"
                     className="w-full h-full rounded-full object-cover border-2 border-[var(--color-background)]"
                     src={user.avatarUrl} 
                     alt={user.name} 
@@ -26,7 +27,7 @@ const StoryItem: React.FC<{ user: User; onSelectProfile: (profile: User) => void
 );
 
 
-const Stories: React.FC<StoriesProps> = ({ users, onSelectProfile }) => {
+const Stories: React.FC<StoriesProps> = ({ users, onSelectStory }) => {
     if (!users || users.length === 0) {
         return null;
     }
@@ -41,7 +42,7 @@ const Stories: React.FC<StoriesProps> = ({ users, onSelectProfile }) => {
                 style={{ animation: `scroll-x ${users.length * 1.5}s linear infinite` }}
             >
                 {extendedUsers.map((user, index) => (
-                    <StoryItem key={`${user.id}-${index}`} user={user} onSelectProfile={onSelectProfile} />
+                    <StoryItem key={`${user.id}-${index}`} user={user} onSelectStory={onSelectStory} />
                 ))}
             </div>
         </div>

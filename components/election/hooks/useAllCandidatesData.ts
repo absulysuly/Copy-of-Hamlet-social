@@ -1,19 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Candidate } from '../types.ts';
-
-const generateMockCandidates = (count: number): Candidate[] => {
-    const parties = ['Future Alliance', 'Progress Party', 'National Unity', 'Kurdistan Future', 'Independent'];
-    return Array.from({ length: count }, (_, i) => ({
-        id: `cand-${i + 1}`,
-        name: `المرشح ${i + 1}`,
-        party: parties[i % parties.length],
-        imageUrl: `https://picsum.photos/seed/cand${i + 1}/200/200`,
-        verified: Math.random() > 0.3,
-    }));
-};
-
-const MOCK_CANDIDATES = generateMockCandidates(50);
+import * as api from '../../../services/apiService.ts';
 
 export const useAllCandidatesData = () => {
     const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -21,17 +8,19 @@ export const useAllCandidatesData = () => {
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            setError(null);
             try {
-                setCandidates(MOCK_CANDIDATES);
-            } catch (e) {
-                setError(new Error("Failed to load candidate data"));
+                const candidateData = await api.getAllElectionCandidates();
+                setCandidates(candidateData);
+            } catch (e: any) {
+                setError(e);
             } finally {
                 setIsLoading(false);
             }
-        }, 800); // Simulate network delay
-
-        return () => clearTimeout(timer);
+        };
+        fetchData();
     }, []);
 
     return { candidates, isLoading, error };

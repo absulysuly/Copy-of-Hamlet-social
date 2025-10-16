@@ -78,7 +78,6 @@ const DataCollectionPage: React.FC<{ onNavigate: (path: string) => void }> = ({ 
                     <div className="flex-grow bg-official-900 rounded-md p-4 font-mono text-sm text-slate-200 overflow-y-auto h-96">
                         {stats.log.map((entry, i) => (
                             <p key={i} className={`${entry.startsWith('ERROR') ? 'text-red-400' : entry.startsWith('WARN') ? 'text-yellow-400' : 'text-slate-300'}`}>
-                                <span className="text-slate-500 mr-2">[{new Date().toLocaleTimeString()}]:</span>
                                 {entry}
                             </p>
                         )).reverse()}

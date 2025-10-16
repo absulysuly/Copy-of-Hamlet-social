@@ -7,13 +7,6 @@ export enum UserRole {
     Candidate = 'Candidate',
 }
 
-export enum VerificationBadge {
-    GoldFounder = 'GoldFounder',      // First 50 signups
-    SilverPioneer = 'SilverPioneer',  // Next 100 signups
-    Standard = 'Standard',            // After 150
-    PartyVerified = 'PartyVerified',  // Bulk party registration
-}
-
 export enum AppTab {
     Home = 'Home',
     Discover = 'Discover',
@@ -23,18 +16,15 @@ export enum AppTab {
     UserProfile = 'My Profile',
     CandidateProfile = 'Candidate Profile',
     Dashboard = 'Dashboard',
-    Navigate = 'Navigate',
-    InvitationConsole = 'دعوة المرشحين',
-    Portal = 'Portal',
-    ElectionCandidates = 'Election Candidates',
-    ElectionData = 'Data',
-    ElectionResources = 'Resources',
+    Analytics = 'Analytics',
+    Candidates = 'Candidates',
     // For HomeView tabs
     Posts = 'Posts',
     Reels = 'Reels',
-    Candidates = 'Candidates',
     Debates = 'Debates',
     Events = 'Events',
+    Articles = 'Articles',
+    WomenCandidates = 'Women Candidates',
 }
 
 export interface GovernorateInfo {
@@ -51,11 +41,9 @@ export type Language = 'en' | 'ar' | 'ku';
 export type Governorate = 'Baghdad' | 'Basra' | 'Nineveh' | 'Erbil' | 'Anbar' | 'Dhi Qar' | 'Salah al-Din' | 'Diyala' | 'Kirkuk' | 'Sulaymaniyah' | 'Babil' | 'Wasit' | 'Maysan' | 'Muthanna' | 'Qadisiyyah' | 'Najaf' | 'Karbala' | 'Dohuk';
 
 
-export type MainContentTab = AppTab.Posts | AppTab.Reels | AppTab.Candidates | AppTab.Debates | AppTab.Events;
+export type MainContentTab = AppTab.Posts | AppTab.Reels | AppTab.Candidates | AppTab.Debates | AppTab.TeaHouse | AppTab.Events | AppTab.Articles | AppTab.WomenCandidates;
 
 export type HomeViewMode = 'Social' | 'Election';
-
-export type PlatformMode = 'social' | 'election';
 
 export type ThemeName = keyof typeof colorThemes;
 
@@ -80,9 +68,9 @@ export interface User {
     bio?: string;
     partySlug?: string;
     governorateSlug?: string;
-    verificationBadge?: VerificationBadge;
-    registrationDate?: Date;
-    isEarlyAdopter?: boolean;
+    email?: string;
+    emailVerified?: boolean;
+    gender?: 'Male' | 'Female';
 }
 
 export interface Post {

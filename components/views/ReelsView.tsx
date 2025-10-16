@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Governorate, Post, User } from '../../types.ts';
+import { Governorate, Post, User, Language } from '../../types.ts';
 import * as api from '../../services/apiService.ts';
 import ReelCard from '../ReelCard.tsx';
+import { UI_TEXT } from '../../translations.ts';
+import Spinner from '../Spinner.tsx';
 
 interface ReelsViewProps {
   selectedGovernorate: Governorate | 'All';
@@ -9,11 +11,13 @@ interface ReelsViewProps {
   onSelectReel: (reel: Post) => void;
   user: User | null;
   requestLogin: () => void;
+  language: Language;
 }
 
-const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, selectedParty, onSelectReel, user, requestLogin }) => {
+const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, selectedParty, onSelectReel, user, requestLogin, language }) => {
   const [reelPosts, setReelPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const texts = UI_TEXT[language];
 
   useEffect(() => {
     const fetchReels = async () => {
@@ -31,7 +35,7 @@ const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, selectedPart
   }, [selectedGovernorate, selectedParty]);
 
   if (isLoading) {
-    return <div className="text-center py-16 text-slate-200">Loading Reels...</div>
+    return <Spinner />;
   }
 
   return (
@@ -47,8 +51,8 @@ const ReelsView: React.FC<ReelsViewProps> = ({ selectedGovernorate, selectedPart
             ))}
         </div>
       ) : (
-        <div className="flex items-center justify-center h-full text-center text-slate-400 py-16">
-          <p>No Reels available for<br />the selected filters.</p>
+        <div className="flex items-center justify-center h-full text-center text-theme-text-muted py-16">
+          <p>{texts.noReelsFound}</p>
         </div>
       )}
     </div>
