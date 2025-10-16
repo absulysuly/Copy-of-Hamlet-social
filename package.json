@@ -7,6 +7,8 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
+        "deploy:check": "bash scripts/deploy-check.sh",
+        "deploy:build": "npm run build && npm run preview",
         "collect": "node scripts/candidate-scraper.js",
         "import": "node scripts/data-importer.js import collected_candidates.json",
         "schedule": "node scripts/data-importer.js schedule",
