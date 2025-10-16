@@ -10,25 +10,24 @@ interface TopNavBarProps<T extends string> {
 }
 
 const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
-    'Posts': 'posts',
-    'Reels': 'reels',
+    'Feed': 'feed',
+    'Real': 'real',
     'Candidates': 'candidates',
-    'Women Candidates': 'womenCandidates',
-    'Debates': 'debates',
-    'Tea House': 'teaHouse',
-    'Events': 'events',
-    'Articles': 'articles',
+    'Whisper': 'whisper',
+    'Women': 'women',
+    'Minorities': 'minorities',
+    'Components': 'components',
 };
 
 
 function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }: TopNavBarProps<T>) {
     const texts = UI_TEXT[language];
-    const navBarClasses = 'border-b border-[var(--color-glass-border)]';
+    const navBarClasses = 'border-b border-[var(--color-glass-border)] top-nav-bar';
 
     const getTabClasses = (tab: T) => {
         const isActive = activeTab === tab;
         return isActive
-            ? 'border-primary text-primary glow'
+            ? 'border-primary text-primary'
             : 'border-transparent text-theme-text-muted hover:text-theme-text-base hover:border-theme-text-muted';
     };
 

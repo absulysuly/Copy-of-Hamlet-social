@@ -1,74 +1,99 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { User, Post } from "../types.ts";
 
-// In-memory cache to store translations { [cacheKey]: translation }
-const translationCache: { [key: string]: string } = {};
+const apiKey = (window as any).process?.env?.API_KEY;
 
-// Access environment variables from the window.process shim defined in index.html
-const apiKey = (window as any).process?.env?.VITE_API_KEY;
-
-// Check if the API key is missing or is still the placeholder value
-const isApiKeyInvalid = !apiKey || apiKey.includes('your_google_gemini_api_key_here');
-
-if (isApiKeyInvalid) {
-    console.error("API_KEY is not set or is a placeholder in index.html. AI features will be disabled.");
+let ai: GoogleGenAI | null = null;
+if (apiKey && apiKey !== 'your_google_gemini_api_key_here') {
+    ai = new GoogleGenAI({ apiKey });
 }
-
-// Initialize the Google AI client only if the API key is valid
-const ai = !isApiKeyInvalid ? new GoogleGenAI({ apiKey }) : null;
 
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
     if (!ai) {
-        return "AI features are disabled. Please configure your API_KEY in index.html.";
+        // Fallback suggestions
+        const fallbacks = [
+            `Share your thoughts about ${topic} with your community!`,
+            `What's your perspective on ${topic}? Let's discuss!`,
+            `Join the conversation about ${topic} - your voice matters!`,
+            `Share your experience with ${topic} and inspire others!`
+        ];
+        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
-
+    
     try {
-        const prompt = `Generate a concise and engaging social media post for an Iraqi political candidate about the topic: "${topic}". The post should be in Arabic, under 280 characters, and suitable for a platform that encourages civic engagement.`;
-        
-        const response = await ai.models.generateContent({
+        const response: GenerateContentResponse = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: prompt,
+            contents: `Generate a short, engaging social media post about: "${topic}"`
         });
-
         return response.text;
     } catch (error) {
-        console.error("Error getting post suggestion from Gemini API:", error);
-        return "Failed to generate content due to an API error.";
+        console.error("AI service error:", error);
     }
+    
+    // Final fallback
+    return `Share your thoughts about ${topic} with your community!`;
 };
 
 export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 'ar'): Promise<string> => {
     if (!text) return "";
     
-    const cacheKey = `${targetLanguage}:${text}`;
-    if (translationCache[cacheKey]) {
-        return translationCache[cacheKey];
+    if (!ai) {
+        return text; // Return original text if no API key or AI client
     }
     
-    if (!ai) {
-        console.warn("Translation failed. AI features are disabled due to missing API key.");
-        return text; // Fallback to original text
-    }
-
     try {
-        const langMap = {
+        const languageMap = {
             en: 'English',
+            ku: 'Kurdish (Sorani)',
             ar: 'Arabic',
-            ku: 'Kurdish (Sorani)'
         };
-        const targetLangName = langMap[targetLanguage];
-        const prompt = `Translate the following text to ${targetLangName}:\n\n"${text}"`;
         
-        const response = await ai.models.generateContent({
+        const response: GenerateContentResponse = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: prompt,
+            contents: `Translate to ${languageMap[targetLanguage]}: "${text}"`
         });
         
-        const translatedText = response.text;
-        translationCache[cacheKey] = translatedText;
-        return translatedText;
-
+        return response.text;
     } catch (error) {
-        console.error("Error translating text with Gemini API:", error);
-        return text; // Fallback to original text on error
+        console.error("Translation error:", error);
+    }
+    
+    return text; // Return original text on error
+};
+
+export const generateLikelyMpResponse = async (candidate: User, question: string, recentPosts: Partial<Post>[]): Promise<string> => {
+    if (!ai) {
+        return "Thank you for your question. As an AI simulation, I'd recommend looking at the candidate's recent posts for information on this topic. A real response would be forthcoming from their office.";
+    }
+
+    const postSnippets = recentPosts.map(p => `- "${p.content?.substring(0, 100)}..."`).join('\n');
+    const context = `
+        You are simulating a response from an Iraqi Member of Parliament (MP).
+        MP's Profile:
+        - Name: ${candidate.name}
+        - Political Party: ${candidate.party}
+        - Governorate: ${candidate.governorate}
+        - Biography: ${candidate.bio || 'Not provided.'}
+        - Snippets from recent posts:
+        ${postSnippets || '- No recent posts provided.'}
+
+        Based *only* on the information above, answer the following question from a citizen.
+        Your response should be in the first person, as if you are the MP.
+        Keep the response concise, professional, and relevant to an Iraqi political context.
+        If the information is not available to answer the question, politely state that you will look into the matter.
+    `;
+
+    try {
+        const response: GenerateContentResponse = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: `Question from citizen: "${question}"`,
+            config: {
+                systemInstruction: context
+            }
+        });
+        return response.text;
+    } catch (error) {
+        console.error("AI MP Response service error:", error);
+        return "An error occurred while generating a response. Please try again.";
     }
 };

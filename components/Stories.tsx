@@ -32,17 +32,11 @@ const Stories: React.FC<StoriesProps> = ({ users, onSelectStory }) => {
         return null;
     }
 
-    // Duplicate users for a seamless loop.
-    const extendedUsers = [...users, ...users];
-
     return (
-        <div className="w-full overflow-hidden relative stories-container">
-            <div 
-                className="flex"
-                style={{ animation: `scroll-x ${users.length * 1.5}s linear infinite` }}
-            >
-                {extendedUsers.map((user, index) => (
-                    <StoryItem key={`${user.id}-${index}`} user={user} onSelectStory={onSelectStory} />
+        <div className="w-full overflow-x-auto relative stories-container no-scrollbar">
+            <div className="flex">
+                {users.map((user) => (
+                    <StoryItem key={user.id} user={user} onSelectStory={onSelectStory} />
                 ))}
             </div>
         </div>

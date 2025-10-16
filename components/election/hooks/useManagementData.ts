@@ -24,12 +24,12 @@ const useApiData = <T>(fetcher: () => Promise<T>) => {
 export const useApiConfig = () => useApiData(api.getApiConfig);
 
 export const useDataCollection = () => {
-    // This hook can remain slightly more complex if it needs to simulate real-time updates via polling
     const [stats, setStats] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true);
             try {
                 const data = await api.getDataCollectionStats();
                 setStats(data);
@@ -40,10 +40,6 @@ export const useDataCollection = () => {
             }
         };
         fetchData();
-        
-        // Polling to simulate real-time updates
-        const interval = setInterval(fetchData, 5000);
-        return () => clearInterval(interval);
     }, []);
 
     return { data: stats, isLoading };

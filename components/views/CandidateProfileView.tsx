@@ -3,7 +3,6 @@ import { User, UserRole, Post, Language } from '../../types.ts';
 import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, ShareIcon, FemaleIcon } from '../icons/Icons.tsx';
 import PostCard from '../PostCard.tsx';
 import * as api from '../../services/apiService.ts';
-import ContactMPForm from '../ContactMPForm.tsx';
 import QRCodeModal from '../QRCodeModal.tsx';
 import { UI_TEXT } from '../../translations.ts';
 
@@ -79,8 +78,6 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
                 </div>
             </div>
             
-            {candidate.isElected && <ContactMPForm language={language} />}
-
             <div>
                 <h3 className="text-xl font-bold mb-4">{texts.postsBy.replace('{name}', candidate.name)}</h3>
                 {isLoading ? (

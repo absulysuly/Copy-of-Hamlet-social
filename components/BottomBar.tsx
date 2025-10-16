@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppTab, User, Language, HomeViewMode } from '../types.ts';
-import { HomeIcon, TeaHouseIcon, DebateIcon, UserCircleIcon, DashboardIcon, UsersIcon, ChartIcon, LifebuoyIcon } from './icons/Icons.tsx';
+import { HomeIcon, UserCircleIcon, DashboardIcon, UsersIcon, ChartIcon, LifebuoyIcon } from './icons/Icons.tsx';
 import { UI_TEXT } from '../translations.ts';
 
 interface BottomBarProps {
@@ -27,8 +27,7 @@ const BottomBar: React.FC<BottomBarProps> = ({
 
     const socialNavItems = [
         { label: texts.home, icon: HomeIcon, tab: AppTab.Home, enabled: true },
-        { label: texts.teaHouse, icon: TeaHouseIcon, tab: AppTab.TeaHouse, enabled: true },
-        { label: texts.debates, icon: DebateIcon, tab: AppTab.DebateRoom, enabled: true },
+        { label: texts.candidates, icon: UsersIcon, tab: AppTab.Discover, enabled: true },
         { label: texts.myProfile, icon: UserCircleIcon, tab: AppTab.UserProfile, enabled: user != null },
     ];
     
@@ -61,7 +60,7 @@ const BottomBar: React.FC<BottomBarProps> = ({
 
     return (
         <div className={`fixed bottom-0 left-0 right-0 z-50 h-16 lg:hidden ${barClasses}`}>
-            <div className="grid grid-cols-4 h-full max-w-lg mx-auto font-medium">
+            <div className="grid grid-cols-3 h-full max-w-lg mx-auto font-medium">
                 {socialNavItems.map(item => (item.enabled) && (
                     <button
                         key={item.label}

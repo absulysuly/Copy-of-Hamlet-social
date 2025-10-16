@@ -1,10 +1,8 @@
 import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language } from '../types.ts';
-import { MOCK_USERS, MOCK_POSTS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO } from '../constants.ts';
+import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO } from '../constants.ts';
 import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types.ts';
 
-// --- MOCK API Service ---
-// This service simulates API calls by returning mock data instantly.
-
+// INSTANT LOADING - No delays
 const simulateFetch = <T>(data: T): Promise<T> => {
     return Promise.resolve(JSON.parse(JSON.stringify(data)));
 };
@@ -47,7 +45,7 @@ export const getUsers = (filters: { role?: UserRole, governorate?: Governorate |
     return simulateFetch(users);
 };
 
-export const getPosts = (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
+export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
     let posts = MOCK_POSTS;
     if (filters.type) {
         posts = posts.filter(p => p.type === filters.type);
@@ -61,7 +59,21 @@ export const getPosts = (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', author
     if (filters.party && filters.party !== 'All') {
         posts = posts.filter(p => p.author.party === filters.party);
     }
-    return simulateFetch(posts);
+    const sortedPosts = posts.sort((a, b) => {
+        const getTime = (timestamp: string) => {
+            if (timestamp.includes('hour')) return parseInt(timestamp) * 60;
+            if (timestamp.includes('day')) return parseInt(timestamp) * 60 * 24;
+            return 0;
+        };
+        return getTime(a.timestamp) - getTime(b.timestamp);
+    });
+
+    return simulateFetch(sortedPosts);
+};
+
+export const getWhispers = (filters: {}): Promise<Post[]> => {
+    const sorted = MOCK_WHISPERS.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
+    return simulateFetch(sorted);
 };
 
 export const getEvents = (filters: { governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Event[]> => {
@@ -81,14 +93,24 @@ export const getArticles = (filters: { governorate?: Governorate | 'All' }): Pro
 
 export const getDebates = (filters: { governorate?: Governorate | 'All', party?: string | 'All', participantIds?: string[] }): Promise<Debate[]> => {
     let debates = MOCK_DEBATES;
-    // Apply filters if needed
+    
+    if (filters.governorate && filters.governorate !== 'All') {
+        debates = debates.filter(d => d.participants.some(p => p.governorate === filters.governorate));
+    }
+    if (filters.party && filters.party !== 'All') {
+        debates = debates.filter(d => d.participants.some(p => p.party === filters.party));
+    }
+    if (filters.participantIds && filters.participantIds.length > 0) {
+        debates = debates.filter(d => d.participants.some(p => filters.participantIds!.includes(p.id)));
+    }
+
     return simulateFetch(debates);
 };
 
 export const createPost = (postDetails: Partial<Post>, author: User): Promise<Post> => {
     const newPost: Post = {
         id: `post-${Date.now()}`,
-        author,
+        author: author,
         content: postDetails.content || '',
         timestamp: 'Just now',
         likes: 0,
@@ -97,33 +119,30 @@ export const createPost = (postDetails: Partial<Post>, author: User): Promise<Po
         type: 'Post',
         ...postDetails,
     };
-    MOCK_POSTS.unshift(newPost);
     return simulateFetch(newPost);
 };
 
-export const createReel = (details: { caption: string; videoFile?: File }, author: User): Promise<Post> => {
-     const newReel: Post = {
+export const createReel = (details: { caption: string }, author: User): Promise<Post> => {
+    const newReel: Post = {
         id: `reel-${Date.now()}`,
-        author,
+        author: author,
         content: details.caption,
         timestamp: 'Just now',
         likes: 0,
         comments: 0,
         shares: 0,
         type: 'Reel',
-        mediaUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // Placeholder
+        mediaUrl: 'https://picsum.photos/seed/newreel/400/700'
     };
-    MOCK_POSTS.unshift(newReel);
     return simulateFetch(newReel);
 };
 
 export const createEvent = (details: { title: string, date: string, location: string }, organizer: User): Promise<Event> => {
     const newEvent: Event = {
         id: `event-${Date.now()}`,
-        organizer,
-        ...details,
+        organizer: organizer,
+        ...details
     };
-    MOCK_EVENTS.unshift(newEvent);
     return simulateFetch(newEvent);
 };
 
@@ -131,6 +150,7 @@ export const socialLogin = (provider: 'google' | 'facebook'): Promise<User> => {
     // Return a mock voter user
     return simulateFetch(MOCK_USERS.find(u => u.role === UserRole.Voter)!);
 };
+
 
 export const registerUser = (details: { name: string; email: string; role: UserRole }): Promise<User> => {
     const newUser: User = {
@@ -147,6 +167,7 @@ export const registerUser = (details: { name: string; email: string; role: UserR
     MOCK_USERS.push(newUser);
     return simulateFetch(newUser);
 };
+
 
 export const checkVerificationStatus = (userId: string): Promise<User | null> => {
     const user = MOCK_USERS.find(u => u.id === userId);
@@ -171,16 +192,15 @@ export const updateUser = (userId: string, updates: Partial<User>): Promise<User
 };
 
 export const followCandidate = (candidateId: string): Promise<{ success: boolean }> => {
+    console.log(`(Mock API) Followed candidate: ${candidateId}`);
     return simulateFetch({ success: true });
 };
 
 export const likePost = (postId: string): Promise<{ success: boolean }> => {
+    console.log(`(Mock API) Liked post: ${postId}`);
     return simulateFetch({ success: true });
 };
 
-export const uploadVoiceNote = async (audioBlob: Blob): Promise<{ success: boolean; url: string }> => {
-    return simulateFetch({ success: true, url: URL.createObjectURL(audioBlob) });
-};
 
 // --- Tea House API ---
 export const getTeaHouseTopics = (language: Language): Promise<TeaHouseTopic[]> => {

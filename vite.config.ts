@@ -11,15 +11,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'terser',
-    target: 'es2015', // Better mobile compatibility
-    rollupOptions: {
-      output: {
-        manualChunks: undefined
-      }
-    }
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom']
+    minify: 'terser'
   }
 })

@@ -1,28 +1,18 @@
 import React, { useState } from 'react';
 import { User } from '../../../types.ts';
-import { VideoIcon } from '../../icons/Icons.tsx';
 
 interface ReelComposerProps {
     user: User;
-    onCreateReel: (reelDetails: { caption: string; videoFile?: File }) => void;
+    onCreateReel: (reelDetails: { caption: string; }) => void;
 }
 
 const ReelComposer: React.FC<ReelComposerProps> = ({ user, onCreateReel }) => {
     const [caption, setCaption] = useState('');
-    const [fileName, setFileName] = useState('');
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
-            setFileName(event.target.files[0].name);
-            // In a real app, you would handle the file object itself.
-        }
-    };
-    
     const handleSubmit = () => {
         if (caption.trim()) {
             onCreateReel({ caption });
             setCaption('');
-            setFileName('');
         }
     };
 
@@ -39,12 +29,6 @@ const ReelComposer: React.FC<ReelComposerProps> = ({ user, onCreateReel }) => {
                         rows={2}
                         placeholder="Reel caption..."
                     />
-                    <div className="border-t border-[var(--color-glass-border)] my-2"></div>
-                    <label className="flex items-center justify-center space-x-2 px-3 py-2 text-sm font-semibold text-primary bg-primary/10 rounded-md hover:bg-primary/20 cursor-pointer">
-                        <VideoIcon className="w-5 h-5"/>
-                        <span className="truncate">{fileName || 'Upload Video'}</span>
-                        <input type="file" accept="video/*" className="hidden" onChange={handleFileChange} />
-                    </label>
                 </div>
             </div>
             <div className="flex justify-end items-center mt-4">
