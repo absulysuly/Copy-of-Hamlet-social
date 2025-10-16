@@ -38,6 +38,8 @@ interface HomeViewProps {
     activeTab: MainContentTab;
     onTabChange: (tab: MainContentTab) => void;
     onCompose: () => void;
+    newlyCreatedPost?: Post | null;
+    onPostConsumed?: () => void;
 }
 
 const SUB_TABS: MainContentTab[] = [AppTab.Feed, AppTab.Real, AppTab.Candidates, AppTab.Women, AppTab.Minorities, AppTab.Whisper, AppTab.Components];
@@ -51,7 +53,7 @@ const getThemeClassForTab = (tab: MainContentTab) => {
     }
 };
 
-const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose }) => {
+const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose, newlyCreatedPost, onPostConsumed }) => {
     
     // --- STATE FOR ASYNC DATA ---
     const [socialPosts, setSocialPosts] = useState<Post[]>([]);
@@ -80,15 +82,36 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
         }
     }, [activeTab, selectedGovernorate, selectedParty]);
 
+    // --- HANDLE NEWLY CREATED POST FROM COMPOSE MODAL ---
+    useEffect(() => {
+        if (newlyCreatedPost && activeTab === AppTab.Feed) {
+            setSocialPosts(prevPosts => [newlyCreatedPost, ...prevPosts]);
+            if (onPostConsumed) {
+                onPostConsumed();
+            }
+        }
+    }, [newlyCreatedPost, activeTab, onPostConsumed]);
+
     // --- API HANDLERS ---
-    const handlePost = (postDetails: Partial<Post>) => {
+    const handlePost = async (postDetails: Partial<Post>) => {
         if (!user) return;
-        api.createPost(postDetails, user).then(newPost => {
+        try {
+            const newPost = await api.createPost(postDetails, user);
             if (activeTab === AppTab.Feed) {
                 setSocialPosts(prevPosts => [newPost, ...prevPosts]);
             }
-            alert("Post created successfully (simulation).");
-        });
+            // Don't show alert - the post appearing in the feed is confirmation enough
+        } catch (error) {
+            console.error('Failed to create post:', error);
+            alert("Failed to create post. Please try again.");
+        }
+    };
+    
+    // Handler to add newly created post from ComposeModal
+    const handlePostCreated = (newPost: Post) => {
+        if (activeTab === AppTab.Feed) {
+            setSocialPosts(prevPosts => [newPost, ...prevPosts]);
+        }
     };
     
     const handleCreateReel = (reelDetails: { caption: string; videoFile?: File }) => {

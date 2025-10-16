@@ -8,13 +8,29 @@ interface ComposeModalProps {
     onClose: () => void;
     // Fix: Added language prop to be passed down to ComposeView.
     language: Language;
+    onPostCreated?: (post: Post) => void;
 }
 
-const ComposeModal: React.FC<ComposeModalProps> = ({ user, onClose, language }) => {
+const ComposeModal: React.FC<ComposeModalProps> = ({ user, onClose, language, onPostCreated }) => {
     const handlePost = (postDetails: Partial<Post>) => {
         console.log("New post created:", postDetails);
         // In a real app, this would call an API to save the post.
         // For this prototype, it correctly receives the data and closes.
+        if (onPostCreated) {
+            // Create a full post object with all required fields
+            const newPost: Post = {
+                id: `post-${Date.now()}`,
+                author: user,
+                content: postDetails.content || '',
+                timestamp: 'Just now',
+                likes: 0,
+                comments: 0,
+                shares: 0,
+                type: 'Post',
+                ...postDetails,
+            };
+            onPostCreated(newPost);
+        }
         onClose();
     };
 

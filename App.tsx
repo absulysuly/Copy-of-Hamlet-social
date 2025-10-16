@@ -78,6 +78,7 @@ const App: React.FC = () => {
     const [selectedStoryUser, setSelectedStoryUser] = useState<User | null>(null);
     const [electionPath, setElectionPath] = useState('/');
     const [mainHomeTab, setMainHomeTab] = useState<MainContentTab>(AppTab.Feed);
+    const [newlyCreatedPost, setNewlyCreatedPost] = useState<Post | null>(null);
     
     // --- ROUTING ---
     const [isPublicDiscoverPage, setIsPublicDiscoverPage] = useState(false);
@@ -204,6 +205,10 @@ const App: React.FC = () => {
         setSelectedPostForDetail(null);
     };
     
+    const handlePostCreated = (post: Post) => {
+        setNewlyCreatedPost(post);
+    };
+    
     // --- RENDER LOGIC ---
     if (isPublicDiscoverPage) {
         return (
@@ -236,6 +241,8 @@ const App: React.FC = () => {
             activeTab: mainHomeTab,
             onTabChange: setMainHomeTab,
             onCompose: () => setComposeModalOpen(true),
+            newlyCreatedPost: newlyCreatedPost,
+            onPostConsumed: () => setNewlyCreatedPost(null),
         };
 
         switch (activeTab) {
@@ -312,7 +319,7 @@ const App: React.FC = () => {
             />
 
             {isLoginModalOpen && <LoginModal onLogin={handleLogin} onClose={() => setLoginModalOpen(false)} language={language} onLanguageChange={setLanguage} />}
-            {isComposeModalOpen && user && <ComposeModal user={user} onClose={() => setComposeModalOpen(false)} language={language} />}
+            {isComposeModalOpen && user && <ComposeModal user={user} onClose={() => setComposeModalOpen(false)} language={language} onPostCreated={handlePostCreated} />}
             {selectedPostForDetail && <PostDetailModal post={selectedPostForDetail} user={user} onClose={handleClosePostDetail} requestLogin={() => setLoginModalOpen(true)} language={language} />}
             {selectedStoryUser && (
                 <Suspense fallback={null}>
