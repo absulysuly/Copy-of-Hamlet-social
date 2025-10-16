@@ -1,0 +1,7 @@
+COPY THESE COMMANDS FROM THIS FILE:
+
+npm install
+
+npm run build
+
+npm run preview
