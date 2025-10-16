@@ -1,20 +1,22 @@
 // Fix: Populating components/CandidatePill.tsx with a reusable candidate component.
 import React, { useState } from 'react';
-import { User } from '../types.ts';
-import { VerifiedIcon, PlusIcon, CheckIcon } from './icons/Icons.tsx';
-import VerificationBadge from './VerificationBadge.tsx';
+import { User, Language } from '../types.ts';
+import { VerifiedIcon, PlusIcon, CheckIcon, FemaleIcon } from './icons/Icons.tsx';
 import * as api from '../services/apiService.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface CandidatePillProps {
     candidate: User;
     onSelect: (candidate: User) => void;
     user: User | null;
     requestLogin: () => void;
+    language: Language;
 }
 
-const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user, requestLogin }) => {
+const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user, requestLogin, language }) => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const texts = UI_TEXT[language];
 
     const handleFollow = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent card click-through to profile
@@ -45,18 +47,14 @@ const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user
             className="glass-card rounded-lg p-4 flex items-center justify-between cursor-pointer"
         >
             <div className="flex items-center space-x-4 overflow-hidden">
-                <img className="w-12 h-12 rounded-full ring-2 ring-white/50 flex-shrink-0" src={candidate.avatarUrl} alt={candidate.name} />
+                <img loading="lazy" className="w-12 h-12 rounded-full ring-2 ring-white/50 flex-shrink-0" src={candidate.avatarUrl} alt={candidate.name} />
                 <div className="overflow-hidden">
                     <p className="font-bold flex items-center text-theme-text-base truncate">
                         {candidate.name}
                         {candidate.verified && <VerifiedIcon className="w-4 h-4 text-primary ml-1.5 flex-shrink-0" />}
+                        {candidate.gender === 'Female' && <FemaleIcon className="w-4 h-4 text-brand-hot-pink ml-1.5 flex-shrink-0" />}
                     </p>
                     <p className="text-sm text-theme-text-muted truncate">{candidate.party}</p>
-                    {candidate.verificationBadge && (
-                        <div className="mt-1">
-                            <VerificationBadge badge={candidate.verificationBadge} size="sm" />
-                        </div>
-                    )}
                 </div>
             </div>
             <button 
@@ -67,12 +65,12 @@ const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user
                 {isFollowing ? (
                     <>
                         <CheckIcon className="w-3 h-3"/>
-                        <span>Following</span>
+                        <span>{texts.following}</span>
                     </>
                 ) : (
                      <>
                         <PlusIcon className="w-3 h-3"/>
-                        <span>Follow</span>
+                        <span>{texts.follow}</span>
                     </>
                 )}
             </button>

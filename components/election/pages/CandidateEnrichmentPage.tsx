@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
 import { SparklesIcon } from '../../icons/Icons.tsx';
-import { useEnrichmentData } from '../hooks/useManagementData.ts';
-import { MOCK_USERS } from '../../../constants.ts';
-import { UserRole } from '../../../types.ts';
-
-const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate);
+import { useEnrichmentData, useAllCandidates } from '../hooks/useManagementData.ts';
 
 const StatCard: React.FC<{ title: string; value: string | number; }> = ({ title, value }) => (
     <div className="bg-formal-primary-100 p-4 rounded-lg text-center border-l-4 border-formal-primary-500">
@@ -15,12 +11,19 @@ const StatCard: React.FC<{ title: string; value: string | number; }> = ({ title,
 );
 
 const CandidateEnrichmentPage: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
-    const [selectedCandidateId, setSelectedCandidateId] = useState<string>('user1');
-    const { data: enrichmentData, isLoading } = useEnrichmentData();
+    const candidates = useAllCandidates();
+    const [selectedCandidateId, setSelectedCandidateId] = useState<string>('');
+    const { data: enrichmentData, isLoading } = useEnrichmentData(selectedCandidateId);
+
+    // Set default selection once candidates load
+    useState(() => {
+        if (candidates.length > 0 && !selectedCandidateId) {
+            setSelectedCandidateId(candidates[0].id);
+        }
+    });
 
     const selectedCandidate = candidates.find(c => c.id === selectedCandidateId);
-    const enriched = enrichmentData ? enrichmentData[selectedCandidateId] : null;
-
+    
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <ManagementPageHeader
@@ -37,13 +40,14 @@ const CandidateEnrichmentPage: React.FC<{ onNavigate: (path: string) => void }> 
                     value={selectedCandidateId}
                     onChange={e => setSelectedCandidateId(e.target.value)}
                     className="w-full p-3 border border-official-300 rounded-md bg-official-100 text-official-900 focus:outline-none focus:ring-2 focus:ring-formal-primary-500"
+                    disabled={candidates.length === 0}
                 >
                     {candidates.map(c => <option key={c.id} value={c.id}>{c.name} - {c.party}</option>)}
                 </select>
             </div>
 
             {isLoading ? <p className="text-center">Loading enrichment data...</p> : (
-            selectedCandidate && enriched ? (
+            selectedCandidate && enrichmentData ? (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column: Profile */}
                     <div className="lg:col-span-1 management-glass-card rounded-lg p-6 text-center">
@@ -55,12 +59,12 @@ const CandidateEnrichmentPage: React.FC<{ onNavigate: (path: string) => void }> 
                     {/* Middle Column: Enriched Data */}
                     <div className="lg:col-span-2 management-glass-card rounded-lg p-6">
                         <h3 className="font-bold text-lg mb-2 border-b border-official-300 pb-2">Political Profile</h3>
-                        <p className="text-sm mb-6">{enriched.politicalProfile}</p>
+                        <p className="text-sm mb-6">{enrichmentData.politicalProfile}</p>
                          <h3 className="font-bold text-lg mb-2 border-b border-official-300 pb-2">Influence Score</h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            <StatCard title="Social Reach" value={enriched.influence.socialReach.toLocaleString()} />
-                            <StatCard title="Engagement" value={enriched.influence.engagementRate} />
-                            <StatCard title="Sentiment" value={enriched.influence.sentiment} />
+                            <StatCard title="Social Reach" value={enrichmentData.influence.socialReach.toLocaleString()} />
+                            <StatCard title="Engagement" value={enrichmentData.influence.engagementRate} />
+                            <StatCard title="Sentiment" value={enrichmentData.influence.sentiment} />
                         </div>
                     </div>
                 </div>

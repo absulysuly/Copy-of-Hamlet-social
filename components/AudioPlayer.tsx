@@ -1,160 +1,172 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { PlayButtonIcon, PauseIcon } from './icons/Icons.tsx';
+import React, { useState, useRef, useEffect } from 'react';
 import { Governorate } from '../types.ts';
+import { PlayButtonIcon, PauseIcon } from './icons/Icons.tsx';
+import { getWaveformData, drawWaveform } from '../utils/waveform.ts';
+import { GOVERNORATE_AR_MAP } from '../constants.ts';
 
 interface AudioPlayerProps {
     src: string;
-    governorate?: Governorate;
+    governorate: Governorate;
+    compact?: boolean;
 }
 
 const formatTime = (time: number) => {
-    if (isNaN(time)) return '0:00';
+    if (isNaN(time) || time === Infinity) {
+        return '0:00';
+    }
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate }) => {
+/**
+ * Draws a generic, static waveform as a fallback when the real audio data cannot be fetched.
+ */
+const drawFallbackWaveform = (canvas: HTMLCanvasElement, color: string) => {
+    const samples = 100;
+    // A simple sine wave pattern for a visually appealing fallback
+    const fakeData = Array.from({length: samples}, (_, i) => {
+        const x = i / (samples - 1); // progress from 0 to 1
+        const sine = Math.sin(x * Math.PI * 2 * 2.5); // 2.5 full waves
+        const envelope = Math.pow(Math.sin(x * Math.PI), 0.7); // Envelope to make ends taper
+        return (Math.abs(sine) * envelope * 0.8) + 0.15; // Combine and add base height
+    });
+    drawWaveform(canvas, fakeData, color);
+};
+
+
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate, compact = false }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
-    const progressBarRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    // Effect to setup audio element and its event listeners
     useEffect(() => {
+        const canvas = canvasRef.current;
+        const waveformColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#0D9488';
+        
+        if (canvas && src && !isLoaded) {
+            getWaveformData(src)
+              .then(audioData => {
+                  if (audioData) {
+                      drawWaveform(canvas, audioData, waveformColor);
+                  } else {
+                      // If fetching/processing fails (e.g., CORS), draw a fallback
+                      drawFallbackWaveform(canvas, waveformColor);
+                  }
+                  setIsLoaded(true);
+              });
+        }
+
         const audio = audioRef.current;
-        if (!audio) return;
+        if (audio) {
+            const setAudioData = () => {
+                setDuration(audio.duration);
+                setCurrentTime(audio.currentTime);
+            }
 
-        const setAudioData = () => {
-            setDuration(audio.duration);
-            setCurrentTime(audio.currentTime);
-        };
+            const setAudioTime = () => setCurrentTime(audio.currentTime);
 
-        const setAudioTime = () => setCurrentTime(audio.currentTime);
-        const handlePlay = () => setIsPlaying(true);
-        const handlePause = () => setIsPlaying(false);
-        const handleEnded = () => {
-            setIsPlaying(false);
-            setCurrentTime(0); // Reset on end for replayability
-        };
+            audio.addEventListener("loadeddata", setAudioData);
+            audio.addEventListener("timeupdate", setAudioTime);
 
-        audio.addEventListener('loadedmetadata', setAudioData);
-        audio.addEventListener('timeupdate', setAudioTime);
-        audio.addEventListener('play', handlePlay);
-        audio.addEventListener('pause', handlePause);
-        audio.addEventListener('ended', handleEnded);
-
-        // Preload metadata to get duration
-        audio.load();
-
-        return () => {
-            audio.removeEventListener('loadedmetadata', setAudioData);
-            audio.removeEventListener('timeupdate', setAudioTime);
-            audio.removeEventListener('play', handlePlay);
-            audio.removeEventListener('pause', handlePause);
-            audio.removeEventListener('ended', handleEnded);
-        };
-    }, [src]);
+            return () => {
+                audio.removeEventListener("loadeddata", setAudioData);
+                audio.removeEventListener("timeupdate", setAudioTime);
+            }
+        }
+    }, [src, isLoaded]);
 
     const togglePlayPause = () => {
-        if (isPlaying) {
-            audioRef.current?.pause();
-        } else {
-            audioRef.current?.play().catch(error => console.error("Audio play failed:", error));
+        const audio = audioRef.current;
+        if (audio) {
+            if (!audio.src || audio.currentSrc === "") {
+                console.error("AudioPlayer: No source URL provided.");
+                return;
+            }
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play().catch(error => console.error("Error playing audio:", error));
+            }
+            setIsPlaying(!isPlaying);
         }
-        setIsPlaying(!isPlaying);
     };
     
-    const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        const progressBar = progressBarRef.current;
+    useEffect(() => {
         const audio = audioRef.current;
-        if (!progressBar || !audio) return;
+        if (audio) {
+            const handlePlay = () => setIsPlaying(true);
+            const handlePause = () => setIsPlaying(false);
 
-        const rect = progressBar.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const width = rect.width;
-        const newTime = (clickX / width) * duration;
-        
-        if (isFinite(newTime)) {
-            audio.currentTime = newTime;
-            setCurrentTime(newTime);
+            audio.addEventListener('play', handlePlay);
+            audio.addEventListener('pause', handlePause);
+            audio.addEventListener('ended', handlePause);
+
+            return () => {
+                audio.removeEventListener('play', handlePlay);
+                audio.removeEventListener('pause', handlePause);
+                audio.removeEventListener('ended', handlePause);
+            };
         }
-    };
+    }, []);
 
-    const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+    const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
-    return (
-        <div className="my-4 p-3 bg-black/20 rounded-lg flex items-center space-x-4">
-            {/* Hidden audio element */}
-            <audio ref={audioRef} src={src} preload="metadata" />
-            
-            <span className="text-2xl">🔊</span>
-            <div className="flex-shrink-0">
-                 <button 
-                    onClick={togglePlayPause} 
-                    className="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+    if (compact) {
+        return (
+            <div className="flex items-center space-x-2 w-full max-w-[250px] text-on-primary">
+                <audio ref={audioRef} src={src} preload="metadata"></audio>
+                <button
+                    onClick={togglePlayPause}
+                    className="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center bg-white/20 text-on-primary transition-transform hover:scale-105"
                     aria-label={isPlaying ? 'Pause' : 'Play'}
-                    disabled={!src || duration === 0}
                 >
                     {isPlaying ? <PauseIcon className="w-5 h-5" /> : <PlayButtonIcon className="w-5 h-5" />}
                 </button>
-            </div>
-            <div className="flex-grow flex flex-col justify-center">
-                 <p className="text-sm font-semibold font-arabic text-theme-text-muted">
-                    {governorate ? `رسالة صوتية من ${governorate}` : 'رسالة صوتية'}
-                </p>
-                {/* Waveform and progress bar */}
-                <div 
-                    ref={progressBarRef}
-                    onClick={handleProgressClick}
-                    className="w-full bg-white/20 rounded-full h-2 relative overflow-hidden mt-1 cursor-pointer group"
-                >
-                    <div 
-                        className="bg-primary h-full rounded-full transition-all duration-100"
-                        style={{ width: `${progressPercentage}%` }}
-                    />
-                     {/* Fake waveform SVG */}
-                    <svg className="absolute inset-0 w-full h-full text-white/30" width="100%" height="100%" preserveAspectRatio="none">
-                        <rect y="4" width="2" height="6" fill="currentColor" x="2%"></rect>
-                        <rect y="2" width="2" height="10" fill="currentColor" x="5%"></rect>
-                        <rect y="5" width="2" height="4" fill="currentColor" x="8%"></rect>
-                        <rect y="1" width="2" height="12" fill="currentColor" x="11%"></rect>
-                        <rect y="3" width="2" height="8" fill="currentColor" x="14%"></rect>
-                        <rect y="0" width="2" height="14" fill="currentColor" x="17%"></rect>
-                        <rect y="4" width="2" height="6" fill="currentColor" x="20%"></rect>
-                        <rect y="2" width="2" height="10" fill="currentColor" x="23%"></rect>
-                        <rect y="5" width="2" height="4" fill="currentColor" x="26%"></rect>
-                        <rect y="1" width="2" height="12" fill="currentColor" x="29%"></rect>
-                        <rect y="3" width="2" height="8" fill="currentColor" x="32%"></rect>
-                        <rect y="0" width="2" height="14" fill="currentColor" x="35%"></rect>
-                        <rect y="4" width="2" height="6" fill="currentColor" x="38%"></rect>
-                        <rect y="2" width="2" height="10" fill="currentColor" x="41%"></rect>
-                        <rect y="5" width="2" height="4" fill="currentColor" x="44%"></rect>
-                        <rect y="1" width="2" height="12" fill="currentColor" x="47%"></rect>
-                        <rect y="3" width="2" height="8" fill="currentColor" x="50%"></rect>
-                        <rect y="0" width="2" height="14" fill="currentColor" x="53%"></rect>
-                         <rect y="4" width="2" height="6" fill="currentColor" x="56%"></rect>
-                        <rect y="2" width="2" height="10" fill="currentColor" x="59%"></rect>
-                        <rect y="5" width="2" height="4" fill="currentColor" x="62%"></rect>
-                        <rect y="1" width="2" height="12" fill="currentColor" x="65%"></rect>
-                        <rect y="3" width="2" height="8" fill="currentColor" x="68%"></rect>
-                        <rect y="0" width="2" height="14" fill="currentColor" x="71%"></rect>
-                        <rect y="4" width="2" height="6" fill="currentColor" x="74%"></rect>
-                        <rect y="2" width="2" height="10" fill="currentColor" x="77%"></rect>
-                        <rect y="5" width="2" height="4" fill="currentColor" x="80%"></rect>
-                        <rect y="1" width="2" height="12" fill="currentColor" x="83%"></rect>
-                        <rect y="3" width="2" height="8" fill="currentColor" x="86%"></rect>
-                        <rect y="0" width="2" height="14" fill="currentColor" x="89%"></rect>
-                        <rect y="4" width="2" height="6" fill="currentColor" x="92%"></rect>
-                        <rect y="2" width="2" height="10" fill="currentColor" x="95%"></rect>
-                        <rect y="5" width="2" height="4" fill="currentColor" x="98%"></rect>
-                    </svg>
+                <div className="flex-grow">
+                    <div className="relative h-8 w-full">
+                        <canvas ref={canvasRef} className="w-full h-full" />
+                        <div
+                            className="absolute top-0 left-0 h-full bg-white/30"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+                     <div className="flex justify-between items-center mt-1 text-xs opacity-70">
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                    </div>
                 </div>
             </div>
-            <div className="text-xs font-mono text-theme-text-muted">
-                {formatTime(currentTime)}/{formatTime(duration)}
+        );
+    }
+
+    return (
+        <div className="my-4 glass-card rounded-lg p-4 flex items-center space-x-4">
+            <audio ref={audioRef} src={src} preload="metadata"></audio>
+            <button
+                onClick={togglePlayPause}
+                className="w-12 h-12 flex-shrink-0 rounded-full flex items-center justify-center bg-primary text-on-primary transition-transform hover:scale-105"
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+            >
+                {isPlaying ? <PauseIcon className="w-6 h-6" /> : <PlayButtonIcon className="w-6 h-6" />}
+            </button>
+            <div className="flex-grow">
+                <div className="relative h-12 w-full">
+                    <canvas ref={canvasRef} className="w-full h-full" />
+                    <div
+                        className="absolute top-0 left-0 h-full bg-primary/30"
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+                 <div className="flex justify-between items-center mt-1 text-xs text-theme-text-muted">
+                    <span>{formatTime(currentTime)}</span>
+                     <span className="font-arabic font-bold">{GOVERNORATE_AR_MAP[governorate] || governorate}</span>
+                    <span>{formatTime(duration)}</span>
+                </div>
             </div>
         </div>
     );

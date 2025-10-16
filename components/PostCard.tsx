@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Post, User, Language } from '../types.ts';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon } from './icons/Icons.tsx';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon, FemaleIcon } from './icons/Icons.tsx';
 import * as api from '../services/apiService.ts';
 import { translateText } from '../services/geminiService.ts';
 import AudioPlayer from './AudioPlayer.tsx';
+import { UI_TEXT } from '../translations.ts';
 
 interface PostCardProps {
     post: Post;
@@ -19,10 +20,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
     const [translatedContent, setTranslatedContent] = useState<string | null>(null);
     const [isTranslating, setIsTranslating] = useState(false);
     const [isShowingTranslation, setIsShowingTranslation] = useState(false);
-
+    // Assuming mock data is in Arabic for this feature
     const originalLanguage: Language = 'ar';
+    const texts = UI_TEXT[language];
 
     useEffect(() => {
+        // Reset translation state when the post or language changes
         setIsShowingTranslation(false);
         setTranslatedContent(null);
         setIsTranslating(false);
@@ -32,13 +35,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 setIsTranslating(true);
                 try {
                     const translation = await translateText(post.content, language);
+                    // Only store the translation if it's successful and different from the original text.
+                    // This prevents showing a do-nothing "Show translation" button if the API fails or returns the same text.
                     if (translation && translation.trim() !== post.content.trim()) {
                         setTranslatedContent(translation);
                     } else {
                         setTranslatedContent(null);
                     }
                 } catch (error) {
-                    console.error('Translation failed', error);
+                    console.error("Translation failed", error);
                     setTranslatedContent(null);
                 } finally {
                     setIsTranslating(false);
@@ -60,7 +65,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
             action();
         }
     };
-
+    
     const handleLike = () => api.likePost(post.id).then(() => console.log('Liked post'));
     const handleComment = () => console.log('Comment action placeholder');
 
@@ -69,7 +74,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
         const shareData = {
             title: `Post by ${post.author.name} on Smart Campaign`,
             text: post.content,
-            url: window.location.href,
+            // In a real app with routing for individual posts, this would be a direct link.
+            url: window.location.href, 
         };
 
         if (navigator.share) {
@@ -80,12 +86,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 console.error('Error sharing post:', error);
             }
         } else {
+            // Fallback for browsers that don't support the Web Share API
             try {
                 await navigator.clipboard.writeText(shareData.url);
-                alert('Link to post copied to clipboard!');
+                alert(texts.shareLinkCopied);
             } catch (err) {
                 console.error('Failed to copy post link:', err);
-                alert('Sharing is not supported on this browser.');
+                alert(texts.shareNotSupported);
             }
         }
     };
@@ -99,84 +106,65 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
         console.log(`Post ${post.id} reported.`);
         setMenuOpen(false);
     };
-
+    
     const handleMoreClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setMenuOpen((prev) => !prev);
+        setMenuOpen(!isMenuOpen);
     };
 
     const displayedContent = isShowingTranslation && translatedContent ? translatedContent : post.content;
-    const canToggleTranslation = !!translatedContent && language !== originalLanguage;
+    const canToggleTranslation = translatedContent && language !== originalLanguage;
 
     return (
         <div onClick={() => onSelectPost(post)} className="glass-card rounded-xl shadow-lg mb-6 overflow-hidden cursor-pointer">
             <div className="p-4">
-                {post.author.isElected && (
-                    <div className="mb-2 text-center">
-                        <span className="elected-tag">Elected MP</span>
+                 {post.isSponsored && (
+                    <div className="flex items-center text-xs font-bold text-theme-text-muted mb-2">
+                        <SparklesIcon className="w-4 h-4 mr-1 text-primary"/>
+                        <span>{texts.boostedPost}</span>
                     </div>
                 )}
                 <div className="flex items-center justify-between">
-                    <div
+                    <div 
                         className="flex items-center space-x-3 group"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectAuthor && onSelectAuthor(post.author);
-                        }}
+                        onClick={(e) => { e.stopPropagation(); onSelectAuthor && onSelectAuthor(post.author); }}
                     >
-                        <img className="w-11 h-11 rounded-full ring-2 ring-white/50 post-card-author-img" src={post.author.avatarUrl} alt={post.author.name} />
+                        <img loading="lazy" className="w-11 h-11 rounded-full ring-2 ring-white/50 post-card-author-img" src={post.author.avatarUrl} alt={post.author.name} />
                         <div>
                             <p className="text-sm font-semibold text-theme-text-base flex items-center group-hover:underline">
                                 {post.author.name}
                                 {post.author.verified && <VerifiedIcon className="w-4 h-4 text-primary ml-1.5" />}
+                                {post.author.gender === 'Female' && <FemaleIcon className="w-4 h-4 text-brand-hot-pink ml-1.5" />}
                             </p>
                             <p className="text-xs text-theme-text-muted">{post.timestamp}</p>
                         </div>
                     </div>
-
                     <div className="relative">
                         <button onClick={handleMoreClick} className="p-2 rounded-full hover:bg-white/10">
                             <MoreIcon className="w-5 h-5 text-theme-text-muted" />
                         </button>
-
                         {isMenuOpen && (
-                            <div className="absolute right-0 mt-2 w-40 glass-card rounded-lg shadow-lg z-10">
-                                <div className="py-1">
-                                    <button
-                                        onClick={handleReport}
-                                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-muted hover:text-theme-text-base hover:bg-white/10"
-                                    >
-                                        Report Post
-                                    </button>
-                                </div>
-                                <div className="py-1 border-t border-white/10">
-                                    <button
-                                        onClick={(e) => handleInteraction(e, () => console.log('Save post'))}
-                                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-muted hover:text-theme-text-base hover:bg-white/10"
-                                    >
-                                        Save
-                                    </button>
-                                </div>
+                            <div className="absolute right-0 mt-2 w-48 glass-card rounded-md shadow-lg z-10">
+                                <button onClick={handleReport} className="block w-full text-left px-4 py-2 text-sm text-theme-text-muted hover:bg-white/10">
+                                    {texts.reportPost}
+                                </button>
                             </div>
                         )}
                     </div>
                 </div>
-
+                
                 {post.type === 'VoiceNote' ? (
                     <AudioPlayer src={post.mediaUrl || ''} governorate={post.author.governorate} />
                 ) : (
                     <div className="my-4 glass-card rounded-lg p-4 post-content-wrapper">
                         <p className="text-theme-text-base text-sm whitespace-pre-line font-arabic">{displayedContent}</p>
-                        {isTranslating && <p className="text-xs text-theme-text-muted animate-pulse mt-2">Translating...</p>}
+                        {isTranslating && <p className="text-xs text-theme-text-muted animate-pulse mt-2">{texts.translating}</p>}
                         {canToggleTranslation && !isTranslating && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setIsShowingTranslation((prev) => !prev);
-                                }}
+                             <button
+                                onClick={(e) => { e.stopPropagation(); setIsShowingTranslation(prev => !prev); }}
                                 className="text-xs font-semibold text-primary hover:underline mt-2"
                             >
-                                {isShowingTranslation ? 'Show original' : 'Show translation'}
+                                {isShowingTranslation ? texts.showOriginal : texts.showTranslation}
                             </button>
                         )}
                     </div>
@@ -185,7 +173,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
 
             {post.mediaUrl && post.type !== 'VoiceNote' && (
                 <div className="px-2 pb-2">
-                    <img className="w-full object-cover max-h-96 rounded-lg ring-1 ring-white/10" src={post.mediaUrl} alt="Post media" />
+                     <img loading="lazy" className="w-full object-cover max-h-96 rounded-lg ring-1 ring-white/10" src={post.mediaUrl} alt="Post media" />
                 </div>
             )}
 
@@ -193,11 +181,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 <div className="flex justify-between text-theme-text-muted">
                     <div className="flex items-center space-x-1">
                         <HeartIcon className="w-4 h-4 text-theme-text-base" />
-                        <span className="text-xs">{post.likes ?? 0} likes</span>
+                        <span className="text-xs">{post.likes}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-xs">
-                        <span>{post.comments ?? 0} comments</span>
-                        <span>{post.shares ?? 0} shares</span>
+                        <span>{post.comments} {texts.comment.toLowerCase()}s</span>
+                        <span>{post.shares} {texts.share.toLowerCase()}s</span>
                     </div>
                 </div>
 
@@ -206,15 +194,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 <div className="flex justify-around items-center text-theme-text-base">
                     <button onClick={(e) => handleInteraction(e, handleLike)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
                         <HeartIcon className="w-6 h-6" />
-                        <span className="font-semibold text-xs">Like</span>
+                        <span className="font-semibold text-xs">{texts.like}</span>
                     </button>
-                    <button onClick={(e) => handleInteraction(e, handleComment)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
+                     <button onClick={(e) => handleInteraction(e, handleComment)} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
                         <CommentIcon className="w-6 h-6" />
-                        <span className="font-semibold text-xs">Comment</span>
+                        <span className="font-semibold text-xs">{texts.comment}</span>
                     </button>
-                    <button onClick={handleShare} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
+                     <button onClick={handleShare} className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-primary/10 w-full justify-center">
                         <ShareIcon className="w-6 h-6" />
-                        <span className="font-semibold text-xs">Share</span>
+                        <span className="font-semibold text-xs">{texts.share}</span>
                     </button>
                 </div>
             </div>

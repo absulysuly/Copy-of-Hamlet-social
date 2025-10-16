@@ -1,6 +1,6 @@
-# Hamlet – Social Shell & Serious Experience Embed
+# Hamlet - Civic Social Platform
 
-This project now hosts the **social experience** and, under the "Serious" tab, embeds the full civic application copied from `hamlat-forntend-6-10/`. The serious view loads inside the social shell via `components/serious/SeriousExperience.tsx`, preserving the civic branding while sharing the same API client and schema contracts.
+Hamlet is a single-page civic social platform designed to surface verified candidate content by governorate for Iraq’s 2025 national election. It supports various content formats (posts, reels, events, debates), integrates social media features, and is designed to be fully accessible and bilingual (English, Arabic, Sorani Kurdish).
 
 ## Project Structure
 
@@ -48,15 +48,33 @@ The application is a modern, single-page application built with React and TypeSc
 -   **`translations.ts`**: A simple but effective internationalization (i18n) solution. All display text is pulled from this file based on the selected language.
 -   **Guest Mode & Login Flow**: The app starts in a "guest" mode where content is viewable. Interactions (liking, commenting, viewing reels) are intercepted by the `requestLogin` function, which opens the `LoginModal` to encourage sign-ups.
 
+## Next Steps: Integrating a Backend
 
-## Serious Experience Integration
+This foundational code is designed for easy integration with a real backend API. Here are the recommended steps:
 
-- `components/views/SeriousnessView.tsx` now wraps the full civic app by rendering `components/serious/SeriousExperience.tsx`.
-- The civic modules (pages, hooks, services) live under `components/serious/` and reuse the shared API client via `components/serious/services/apiClient.ts`.
-- Language direction and styling remain scoped within the memory router, so switching to the Serious tab leaves the social UI unchanged while presenting the civic design.
+1.  **Replace Mock Data with API Calls:**
+    -   In components like `HomeView.tsx`, `CandidatesView.tsx`, etc., replace direct imports from `constants.ts` with `useEffect` hooks that fetch data from your API.
+    -   Create a dedicated `apiService.ts` file to centralize `fetch` or `axios` logic for endpoints like `/posts`, `/users`, `/events`, etc.
+    -   Example: In `HomeView.tsx`, instead of `const socialPosts = MOCK_POSTS.filter(...)`, you would have:
+        ```typescript
+        const [posts, setPosts] = useState<Post[]>([]);
+        useEffect(() => {
+          // apiService.getPosts(selectedGovernorate).then(setPosts);
+        }, [selectedGovernorate]);
+        ```
 
-## Environment & API Client Setup
+2.  **Implement Real Authentication:**
+    -   In `LoginModal.tsx`, modify `handleSelectRole` to call your API's `/login` or `/register` endpoint.
+    -   Upon successful login, the API should return a user object and a token (e.g., JWT).
+    -   Store the token securely (e.g., in an HttpOnly cookie or `localStorage`) and update the `user` state in `App.tsx`.
+    -   Implement a `useEffect` hook in `App.tsx` to check for a valid token on initial load to keep the user logged in.
 
-- **Environment variables**: Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` to your backend (default `http://localhost:4001/api` since the dev server now runs on port `4001`). Toggle real vs mock data by setting `VITE_USE_MOCKS=false`.
-- **API client**: Social and serious modules both rely on `services/apiClient.ts::apiRequest()`. It attempts real HTTP calls first and falls back to civic mock generators (`components/serious/services/api.ts`) when mocks are enabled or requests fail.
-- **Shared schema**: Types are imported from `../shared-schema/types.ts` via `types.ts` to keep both experiences aligned with backend contracts.
+3.  **Connect "Compose" Functionality:**
+    -   In `ComposeView.tsx`, `ReelComposer.tsx`, and `EventComposer.tsx`, the `onPost`, `onCreateReel`, and `onCreateEvent` handlers should be wired to make `POST` requests to your backend API.
+    -   Handle form data, including file uploads for reels, and send it to the appropriate endpoints.
+
+4.  **Secure the Gemini API Key:**
+    -   The `geminiService.ts` currently expects `process.env.API_KEY`. In a production environment, this client-side call is insecure.
+    -   **Action:** Create a backend endpoint (e.g., `/api/generate-suggestion`) that securely calls the Gemini API from the server. The client-side `generatePostSuggestion` function should then call this new backend endpoint instead of the Gemini API directly.
+
+By following these steps, you can transition the application from a mock-data prototype to a fully functional, data-driven platform.

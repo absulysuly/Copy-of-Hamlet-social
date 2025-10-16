@@ -1,4 +1,5 @@
 import React from 'react';
+import { Language } from '../../types.ts';
 
 // Election portal components
 import LandingPage from '../election/pages/LandingPage.tsx';
@@ -24,57 +25,59 @@ import QualityAnalyticsPage from '../election/pages/QualityAnalyticsPage.tsx';
 interface ElectionManagementViewProps {
     path: string;
     onNavigate: (path: string) => void;
+    language: Language;
 }
 
-const ElectionManagementView: React.FC<ElectionManagementViewProps> = ({ path, onNavigate }) => {
+const ElectionManagementView: React.FC<ElectionManagementViewProps> = ({ path, onNavigate, language }) => {
 
     const renderPage = () => {
+        const pageProps = { onNavigate, language };
         // A simple router based on the path prop
         if (path.startsWith('/governorate/')) {
             const name = path.split('/')[2];
-            return <GovernoratePage name={name} onNavigate={onNavigate} />;
+            return <GovernoratePage name={name} {...pageProps} />;
         }
          if (path.startsWith('/party/')) {
             const id = path.split('/')[2];
-            return <PoliticalPartyPage id={id} onNavigate={onNavigate} />;
+            return <PoliticalPartyPage id={id} {...pageProps} />;
         }
         
         switch (path) {
             case '/':
-                return <LandingPage onNavigate={onNavigate} />;
+                return <LandingPage {...pageProps} />;
             case '/dashboard':
-                return <DashboardPage />;
+                return <DashboardPage {...pageProps} />;
             case '/integrity-hub':
-                return <IntegrityHubPage />;
+                return <IntegrityHubPage {...pageProps} />;
             case '/international-portal':
-                return <InternationalPortalPage />;
+                return <InternationalPortalPage {...pageProps} />;
             case '/parties':
-                return <PartiesPage onNavigate={onNavigate} />;
+                return <PartiesPage {...pageProps} />;
             case '/election-hub':
-                return <ElectionHubPage />;
+                return <ElectionHubPage {...pageProps} />;
              case '/privacy-policy':
-                return <PrivacyPolicyPage />;
+                return <PrivacyPolicyPage {...pageProps} />;
             case '/terms-of-service':
-                return <TermsOfServicePage />;
+                return <TermsOfServicePage {...pageProps} />;
             case '/pricing':
-                return <PricingPage />;
+                return <PricingPage {...pageProps} />;
             case '/compare':
-                return <CandidateComparisonPage />;
+                return <CandidateComparisonPage {...pageProps} />;
              case '/voter-registration':
-                return <VoterRegistrationPage />;
+                return <VoterRegistrationPage {...pageProps} />;
             // New Data Management Routes
             case '/api-config':
-                return <ApiConfigPage onNavigate={onNavigate} />;
+                return <ApiConfigPage {...pageProps} />;
             case '/data-collection':
-                return <DataCollectionPage onNavigate={onNavigate} />;
+                return <DataCollectionPage {...pageProps} />;
             case '/contact-validation':
-                return <ContactValidationPage onNavigate={onNavigate} />;
+                return <ContactValidationPage {...pageProps} />;
             case '/candidate-enrichment':
-                return <CandidateEnrichmentPage onNavigate={onNavigate} />;
+                return <CandidateEnrichmentPage {...pageProps} />;
             case '/quality-analytics':
-                return <QualityAnalyticsPage onNavigate={onNavigate} />;
+                return <QualityAnalyticsPage {...pageProps} />;
             default:
-                return <LandingPage onNavigate={onNavigate} />;
+                return <LandingPage {...pageProps} />;
         }
     }
 

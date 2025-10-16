@@ -1,53 +1,61 @@
-import { GoogleGenAI } from "@google/genai";
+// In-memory cache to store translations { [cacheKey]: translation }
+const translationCache: { [key: string]: string } = {};
 
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
     try {
-        // Get API key from environment variable shim
-        const apiKey = (window as any).process?.env?.VITE_API_KEY;
-        if (!apiKey || apiKey === 'your_google_gemini_api_key_here') {
-            throw new Error('API key not configured');
-        }
-        const ai = new GoogleGenAI({ apiKey });
-
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Generate a short, engaging social media post about the following topic for an Iraqi political candidate. Keep it under 280 characters. The topic is: "${topic}"`,
+        const response = await fetch('/api/generate-suggestion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic }),
         });
 
-        return response.text;
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.suggestion;
     } catch (error) {
-        console.error("Error generating content with Gemini:", error);
-        return "Failed to generate content. Please check the connection and try again.";
+        console.error("Error getting post suggestion:", error);
+        // In a real app, you might want a more user-friendly error.
+        // For this simulation, we return a clear error message.
+        return "Failed to generate content. The backend API is not available in this demo.";
     }
 };
 
 export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 'ar'): Promise<string> => {
     if (!text) return "";
 
+    const cacheKey = `${targetLanguage}:${text}`;
+    // If the translation is already in our cache, return it immediately.
+    if (translationCache[cacheKey]) {
+        return translationCache[cacheKey];
+    }
+
     try {
-        // Get API key from environment variable shim
-        const apiKey = (window as any).process?.env?.VITE_API_KEY;
-        if (!apiKey || apiKey === 'your_google_gemini_api_key_here') {
-            throw new Error('API key not configured');
-        }
-        const ai = new GoogleGenAI({ apiKey });
-
-        const languageMap = {
-            en: 'English',
-            ku: 'Kurdish (Sorani)',
-            ar: 'Arabic',
-        };
-        const targetLanguageFullName = languageMap[targetLanguage];
-
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Translate the following text to ${targetLanguageFullName}. Provide only the translated text, with no additional commentary or formatting. The text to translate is: "${text}"`,
+        const response = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, targetLanguage }),
         });
 
-        return response.text;
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const translatedText = data.translation;
+        
+        // Store the new translation in the cache before returning it.
+        translationCache[cacheKey] = translatedText;
+
+        return translatedText;
+
     } catch (error) {
-        console.error("Error translating text with Gemini:", error);
+        console.error("Error translating text:", error);
         // Fallback to original text in case of an API error
+        // Also inform the user that the backend is a simulation.
+        console.warn("Translation failed. The backend API is not available in this demo.");
         return text;
     }
 };

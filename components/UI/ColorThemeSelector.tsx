@@ -1,9 +1,13 @@
 import React from 'react';
+// Fix: The 'Language' type is defined in 'types.ts', not 'colorThemes.ts'. This resolves the module export error.
 import { colorThemes, ThemeName } from '../../utils/colorThemes.ts';
+import { Language } from '../../types.ts';
+import { UI_TEXT } from '../../translations.ts';
 
 interface ColorThemeSelectorProps {
     currentTheme: ThemeName;
     onChangeTheme: (theme: ThemeName) => void;
+    language: Language;
 }
 
 const themeNames: { id: ThemeName; name: string }[] = [
@@ -15,10 +19,11 @@ const themeNames: { id: ThemeName; name: string }[] = [
     { id: 'sandstoneNeutral', name: 'Sandstone' },
 ];
 
-const ColorThemeSelector: React.FC<ColorThemeSelectorProps> = ({ currentTheme, onChangeTheme }) => {
+const ColorThemeSelector: React.FC<ColorThemeSelectorProps> = ({ currentTheme, onChangeTheme, language }) => {
+    const texts = UI_TEXT[language];
     return (
         <div>
-            <h4 className="font-semibold mb-3">Color Theme</h4>
+            <h4 className="font-semibold mb-3">{texts.colorTheme}</h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {themeNames.map(({ id, name }) => (
                     <button

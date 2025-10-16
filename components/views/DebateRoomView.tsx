@@ -1,13 +1,20 @@
 // Fix: Populating components/views/DebateRoomView.tsx with a placeholder component.
 import React from 'react';
+import { Language } from '../../types.ts';
+import { UI_TEXT } from '../../translations.ts';
 
-const DebateRoomView: React.FC = () => {
+interface DebateRoomViewProps {
+    language: Language;
+}
+
+const DebateRoomView: React.FC<DebateRoomViewProps> = ({ language }) => {
+    const texts = UI_TEXT[language];
     return (
         <div className="p-4 sm:p-6">
-            <h1 className="text-2xl font-bold">Debate Room</h1>
-            <div className="mt-4 bg-mocha-white dark:bg-gray-800 rounded-lg p-6 text-center">
-                <p className="text-neutral-gray-dark dark:text-gray-400">This feature is under construction.</p>
-                <p>Live debates will be available here soon!</p>
+            <h1 className="text-2xl font-bold">{texts.debates}</h1>
+            <div className="mt-4 glass-card rounded-lg p-6 text-center">
+                <p className="text-theme-text-muted">{texts.underConstruction}</p>
+                <p>{texts.featureComingSoon}</p>
             </div>
         </div>
     );

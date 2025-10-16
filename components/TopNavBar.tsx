@@ -1,43 +1,57 @@
 import React from 'react';
+import { Language } from '../types.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface TopNavBarProps<T extends string> {
     tabs: T[];
     activeTab: T;
     onTabChange: (tab: T) => void;
+    language: Language;
 }
 
-function TopNavBar<T extends string>({ tabs, activeTab, onTabChange }: TopNavBarProps<T>) {
+const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
+    'Posts': 'posts',
+    'Reels': 'reels',
+    'Candidates': 'candidates',
+    'Women Candidates': 'womenCandidates',
+    'Debates': 'debates',
+    'Tea House': 'teaHouse',
+    'Events': 'events',
+    'Articles': 'articles',
+};
+
+
+function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }: TopNavBarProps<T>) {
+    const texts = UI_TEXT[language];
+    const navBarClasses = 'border-b border-[var(--color-glass-border)]';
+
+    const getTabClasses = (tab: T) => {
+        const isActive = activeTab === tab;
+        return isActive
+            ? 'border-primary text-primary glow'
+            : 'border-transparent text-theme-text-muted hover:text-theme-text-base hover:border-theme-text-muted';
+    };
+
     return (
-        <div className="glass-nav sticky top-0 z-40">
+        <div className={navBarClasses}>
             <nav className="-mb-px flex justify-center space-x-6 px-4 sm:px-6" aria-label="Tabs">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => onTabChange(tab)}
-                        className={`
-                            relative group whitespace-nowrap py-4 px-3 font-medium text-sm transition-all duration-300 font-arabic
-                            ${activeTab === tab
-                                ? 'text-glass-primary-200 glass-text'
-                                : 'text-glass-neutral-300 hover:text-glass-primary-200 hover:scale-105'}
-                        `}
-                    >
-                        <span className="relative z-10">{tab}</span>
+                {tabs.map((tab) => {
+                    const translationKey = tabTranslationKeys[tab];
+                    const label = translationKey ? texts[translationKey] : tab;
 
-                        {activeTab === tab && (
-                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-glass-primary-400 to-glass-secondary-400 rounded-full glow-effect"></div>
-                        )}
-
-                        <div className={`
-                            absolute inset-0 rounded-lg transition-all duration-300
-                            ${activeTab === tab
-                                ? 'bg-glass-primary-500/10 shadow-lg'
-                                : 'group-hover:bg-glass-primary-500/5'}
-                        `}></div>
-                    </button>
-                ))}
+                    return (
+                        <button
+                            key={tab}
+                            onClick={() => onTabChange(tab)}
+                            className={`whitespace-nowac py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
+                        >
+                            {label}
+                        </button>
+                    );
+                })}
             </nav>
         </div>
     );
-}
+};
 
 export default TopNavBar;

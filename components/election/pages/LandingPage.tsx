@@ -1,4 +1,6 @@
 import React from 'react';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 // Fix: Import IconProps to correctly type the icon prop in FeatureCard.
 import { IconProps, UsersIcon, UserCircleIcon, EyeIcon, ChartIcon, LifebuoyIcon, ScaleIcon, SparklesIcon, IdentificationIcon, DatabaseIcon } from '../../icons/Icons.tsx';
 import ApiIcon from '../icons/ApiIcon.tsx';
@@ -6,14 +8,16 @@ import ApiIcon from '../icons/ApiIcon.tsx';
 
 interface LandingPageProps {
   onNavigate: (path: string) => void;
+  language: Language;
 }
 
 const PortalCard: React.FC<{
     icon: React.ReactNode;
     title: string;
     description: string;
+    buttonText: string;
     onClick: () => void;
-}> = ({ icon, title, description, onClick }) => (
+}> = ({ icon, title, description, buttonText, onClick }) => (
     <div className="management-glass-card rounded-lg p-6 text-right flex flex-col items-center text-center">
         <div className="text-5xl text-official-800 mb-3">{icon}</div>
         <h2 className="text-2xl font-bold text-official-900">{title}</h2>
@@ -22,7 +26,7 @@ const PortalCard: React.FC<{
             onClick={onClick}
             className="w-full formal-button"
         >
-            تسجيل الدخول / إنشاء حساب
+            {buttonText}
         </button>
     </div>
 );
@@ -50,48 +54,51 @@ const FeatureCard: React.FC<{
 );
 
 
-const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, language }) => {
+  const texts = UI_TEXT[language];
   return (
     <div dir="rtl" className="p-4 sm:p-6 lg:p-8">
         <main className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <PortalCard
                 icon={<UsersIcon className="w-12 h-12" />}
-                title="بوابة الناخب"
-                description="تحقق من تسجيلك، ابحث عن مركزك، وتعرف على المرشحين."
+                title={texts.voterCenter}
+                description={texts.voterCenterDesc}
+                buttonText={texts.loginToVoterPortal}
                 onClick={() => onNavigate('/voter-registration')}
             />
             <PortalCard
                 icon={<UserCircleIcon className="w-12 h-12" />}
-                title="بوابة المرشح"
-                description="أدوات لإدارة حملتك الرقمية، وتقديم المستندات، ومتابعة الامتثال."
+                title={texts.candidateHub}
+                description={texts.candidateHubDesc}
+                buttonText={texts.loginToCandidatePortal}
                 onClick={() => onNavigate('/dashboard')}
             />
         </main>
 
         <section className="mt-12">
-            <h2 className="text-2xl font-bold text-center text-official-900 mb-2">لوحة التحكم الرئيسية</h2>
-            <p className="text-center text-official-700 mb-6">انقر على أي قسم لاستكشاف الأدوات والموارد المتاحة.</p>
+            <h2 className="text-2xl font-bold text-center text-official-900 mb-2">{texts.mainDashboard}</h2>
+            <p className="text-center text-official-700 mb-6">{texts.mainDashboardDesc}</p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <FeatureCard title="مركز الناخبين" description="جميع الموارد لمواطنين للمشاركة بفعالية." icon={<UsersIcon />} color="#3182ce" onClick={() => onNavigate('/voter-registration')} />
-                <FeatureCard title="بوابة المرشح" description="أدوات وإرشادات لحملة انتخابية ناجحة." icon={<UserCircleIcon />} color="#38a169" onClick={() => onNavigate('/dashboard')} />
-                <FeatureCard title="محور المراقبين" description="موارد للمراقبين المحليين والدوليين." icon={<EyeIcon />} color="#d69e2e" onClick={() => onNavigate('/international-portal')} />
-                <FeatureCard title="القانون والامتثال" description="الوصول إلى القوانين واللوائح وعمليات الإبلاغ." icon={<ScaleIcon />} color="#805ad5" onClick={() => onNavigate('/terms-of-service')} />
-                <FeatureCard title="بيانات الانتخابات" description="استكشف الإحصاءات الحية وبيانات الانتخابات التاريخية." icon={<ChartIcon />} color="#319795" onClick={() => onNavigate('/compare')} />
-                <FeatureCard title="الدعم والموارد" description="ابحث عن المساعدة ومعلومات الاتصال والمواد القابلة للتنزيل." icon={<LifebuoyIcon />} color="#e53e3e" onClick={() => onNavigate('/integrity-hub')} />
+                <FeatureCard title={texts.voterCenter} description={texts.voterCenterDesc} icon={<UsersIcon />} color="#3182ce" onClick={() => onNavigate('/voter-registration')} />
+                <FeatureCard title={texts.candidateHub} description={texts.candidateHubDesc} icon={<UserCircleIcon />} color="#38a169" onClick={() => onNavigate('/dashboard')} />
+                <FeatureCard title={texts.observerHub} description={texts.observerHubDesc} icon={<EyeIcon />} color="#d69e2e" onClick={() => onNavigate('/international-portal')} />
+                <FeatureCard title={texts.lawCompliance} description={texts.lawComplianceDesc} icon={<ScaleIcon />} color="#805ad5" onClick={() => onNavigate('/terms-of-service')} />
+                <FeatureCard title={texts.electionDataBig} description={texts.electionDataDesc} icon={<ChartIcon />} color="#319795" onClick={() => onNavigate('/compare')} />
+                <FeatureCard title={texts.supportResources} description={texts.supportResourcesDesc} icon={<LifebuoyIcon />} color="#e53e3e" onClick={() => onNavigate('/integrity-hub')} />
             </div>
         </section>
 
         <section className="mt-12">
-            <h2 className="text-2xl font-bold text-center text-official-900 mb-2">إدارة البيانات والجمع</h2>
-            <p className="text-center text-official-700 mb-6">أدوات لمشرفي المنصة لإدارة عملية جمع البيانات والتحقق من جودتها.</p>
+            <h2 className="text-2xl font-bold text-center text-official-900 mb-2">{texts.dataManagement}</h2>
+            <p className="text-center text-official-700 mb-6">{texts.dataManagementDesc}</p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-                <FeatureCard title="إعدادات API" description="إدارة واختبار اتصالات API لوسائل التواصل الاجتماعي." icon={<ApiIcon />} color="#0284c7" onClick={() => onNavigate('/api-config')} />
-                <FeatureCard title="لوحة جمع البيانات" description="مراقبة والتحكم في جمع بيانات المرشحين." icon={<DatabaseIcon />} color="#059669" onClick={() => onNavigate('/data-collection')} />
-                <FeatureCard title="التحقق من جهات الاتصال" description="مراجعة جودة بيانات الاتصال التي تم جمعها." icon={<IdentificationIcon />} color="#d97706" onClick={() => onNavigate('/contact-validation')} />
-                <FeatureCard title="تحسين بيانات المرشحين" description="عرض البيانات المثرية والتحليلات للملفات الشخصية." icon={<SparklesIcon />} color="#9333ea" onClick={() => onNavigate('/candidate-enrichment')} />
-                <FeatureCard title="تحليلات الجودة" description="تصور مقاييس جودة البيانات عبر المحافظات." icon={<ChartIcon />} color="#db2777" onClick={() => onNavigate('/quality-analytics')} />
+                <FeatureCard title={texts.apiConfig} description={texts.apiConfigDesc} icon={<ApiIcon />} color="#0284c7" onClick={() => onNavigate('/api-config')} />
+                <FeatureCard title={texts.dataCollection} description={texts.dataCollectionDesc} icon={<DatabaseIcon />} color="#059669" onClick={() => onNavigate('/data-collection')} />
+                <FeatureCard title={texts.contactValidation} description={texts.contactValidationDesc} icon={<IdentificationIcon />} color="#d97706" onClick={() => onNavigate('/contact-validation')} />
+                <FeatureCard title={texts.candidateEnrichment} description={texts.candidateEnrichmentDesc} icon={<SparklesIcon />} color="#9333ea" onClick={() => onNavigate('/candidate-enrichment')} />
+                <FeatureCard title={texts.qualityAnalytics} description={texts.qualityAnalyticsDesc} icon={<ChartIcon />} color="#db2777" onClick={() => onNavigate('/quality-analytics')} />
             </div>
         </section>
     </div>

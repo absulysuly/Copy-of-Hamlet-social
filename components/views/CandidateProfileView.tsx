@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole, Post, Language } from '../../types.ts';
-import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, ShareIcon } from '../icons/Icons.tsx';
+import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, ShareIcon, FemaleIcon } from '../icons/Icons.tsx';
 import PostCard from '../PostCard.tsx';
 import * as api from '../../services/apiService.ts';
 import ContactMPForm from '../ContactMPForm.tsx';
 import QRCodeModal from '../QRCodeModal.tsx';
+import { UI_TEXT } from '../../translations.ts';
 
 interface CandidateProfileViewProps {
     candidate: User;
@@ -19,6 +20,7 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
     const [candidatePosts, setCandidatePosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isQrModalOpen, setQrModalOpen] = useState(false);
+    const texts = UI_TEXT[language];
 
     useEffect(() => {
         if (candidate.role !== UserRole.Candidate) return;
@@ -38,9 +40,9 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
     }, [candidate.id, candidate.role]);
 
     if (candidate.role !== UserRole.Candidate) {
-        return <p className="p-6 text-center">This profile is not a candidate.</p>;
+        return <p className="p-6 text-center">{texts.notACandidate}</p>;
     }
-
+    
     const handleInteraction = (e: React.MouseEvent) => {
         if (!user) {
             e.preventDefault();
@@ -56,14 +58,15 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
             <div className="glass-card rounded-lg shadow-lg overflow-hidden mb-6">
                 <div className="p-6">
                     <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
-                        <img className="w-24 h-24 rounded-full ring-4 ring-white/50 shadow-md" src={candidate.avatarUrl} alt={candidate.name} />
+                        <img loading="lazy" className="w-24 h-24 rounded-full ring-4 ring-white/50 shadow-md" src={candidate.avatarUrl} alt={candidate.name} />
                         <div>
                             <h2 className="text-2xl font-bold flex items-center">
                                 {candidate.name}
                                 {candidate.verified && <VerifiedIcon className="w-6 h-6 text-brand-hot-pink ml-2" />}
+                                {candidate.gender === 'Female' && <FemaleIcon className="w-6 h-6 text-brand-hot-pink ml-2" />}
                             </h2>
                             <p className="text-md text-slate-400">{candidate.party} - {candidate.governorate}</p>
-                            <p className="text-sm mt-2 text-slate-200">{candidate.bio || 'This candidate has not provided a bio.'}</p>
+                            <p className="text-sm mt-2 text-slate-200">{candidate.bio || texts.noBio}</p>
                             <div className="flex space-x-2 mt-4 text-slate-200">
                                 <button onClick={handleInteraction} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><WhatsAppIcon className="w-5 h-5" /></button>
                                 <button onClick={handleInteraction} className="p-2 bg-white/10 rounded-full hover:bg-white/20"><PhoneIcon className="w-5 h-5" /></button>
@@ -76,16 +79,16 @@ const CandidateProfileView: React.FC<CandidateProfileViewProps> = ({ candidate, 
                 </div>
             </div>
             
-            {candidate.isElected && <ContactMPForm />}
+            {candidate.isElected && <ContactMPForm language={language} />}
 
             <div>
-                <h3 className="text-xl font-bold mb-4">Posts by {candidate.name}</h3>
+                <h3 className="text-xl font-bold mb-4">{texts.postsBy.replace('{name}', candidate.name)}</h3>
                 {isLoading ? (
-                    <p className="text-center py-10 text-slate-400">Loading posts...</p>
+                    <p className="text-center py-10 text-slate-400">{texts.loadingPosts}</p>
                 ) : candidatePosts.length > 0 ? (
                     candidatePosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
                 ) : (
-                    <p className="text-center py-10 text-slate-400">This candidate has not posted yet.</p>
+                    <p className="text-center py-10 text-slate-400">{texts.noPostsYetCandidate}</p>
                 )}
             </div>
              {isQrModalOpen && (
