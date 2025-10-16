@@ -10,7 +10,7 @@ export const generatePostSuggestion = async (topic: string): Promise<string> => 
         const ai = new GoogleGenAI({ apiKey });
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-exp',
             contents: `Generate a short, engaging social media post about the following topic for an Iraqi political candidate. Keep it under 280 characters. The topic is: "${topic}"`,
         });
 
@@ -40,7 +40,7 @@ export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 
         const targetLanguageFullName = languageMap[targetLanguage];
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-exp',
             contents: `Translate the following text to ${targetLanguageFullName}. Provide only the translated text, with no additional commentary or formatting. The text to translate is: "${text}"`,
         });
 
