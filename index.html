@@ -1,175 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Campaign</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Beautiful Glass-morphism Styles -->
-    <style>
-        :root {
-            --color-primary: #0D9488;
-            --color-primary-rgb: 13, 148, 136;
-            --color-primary-dark: #096B61;
-            --color-primary-darker: #07524B;
-            --color-primary-100: #CCFBF1;
-            --color-secondary: #2DD4BF;
-            --color-accent: #F000B8;
-            --color-background: #100C1C;
-            --color-background-soft: #1A1625;
-            --color-background-image: radial-gradient(circle at 15% 50%, rgba(240, 0, 184, 0.6), transparent 35%),
-                radial-gradient(circle at 85% 30%, rgba(45, 212, 191, 0.4), transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(91, 33, 182, 0.5), transparent 45%);
-            --color-glass-bg: rgba(26, 22, 37, 0.6);
-            --color-glass-border: rgba(255, 255, 255, 0.1);
-            --color-card-bg: rgba(26, 22, 37, 0.7);
-            --color-card-text: #F1F5F9;
-            --color-text-base: #F1F5F9;
-            --color-text-muted: #CBD5E1;
-            --color-text-deep: #F1F5F9;
-            --color-text-on-primary: #FFFFFF;
-            --color-primary-glow: rgba(13, 148, 136, 0.6);
-            --color-border: rgba(255, 255, 255, 0.1);
-            --color-border-dark: rgba(255, 255, 255, 0.15);
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0ea5a4" />
+<meta name="description" content="Hamlet - social platform" />
+<title>Hamlet</title>
 
-        body {
-            background-color: var(--color-background);
-            background-image: var(--color-background-image);
-            background-attachment: fixed;
-            color: var(--color-text-base);
-            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
-        }
+<!-- Google Fonts (Arabic support included in original file) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
 
-        .glass-card {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--color-glass-border);
-            color: var(--color-card-text);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
-        }
+<!-- Tailwind (kept as original) -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.07);
-            border-color: var(--color-primary);
-        }
+<!-- small mobile compatibility / base styles -->
+<style>
+  html,body,#root { height:100%; }
+  body { margin:0; font-family: 'Inter', 'Noto Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  @media (max-width:768px){ body{ -webkit-text-size-adjust:100%; } }
+</style>
 
-        .hero-election-bg {
-            background-color: var(--color-primary-darker);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M50 0 L61.2 34.5 H100 L70 55.9 L79.4 90.5 L50 69.1 L20.6 90.5 L30 55.9 L0 34.5 H38.8 z' /%3E%3C/g%3E%3C/svg%3E");
-            background-size: 50px 50px;
-        }
-
-        .btn-primary {
-            background-color: var(--color-primary);
-            color: var(--color-text-on-primary);
-            font-weight: bold;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            filter: brightness(1.1);
-        }
-
-        .glass-nav {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--color-glass-border);
-        }
-        
-        .theme-reels {
-            --color-background-image: radial-gradient(circle at 90% 90%, rgba(240, 0, 184, 0.5), transparent 40%), radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.3), transparent 35%);
-        }
-        .theme-candidates {
-            --color-background-image: radial-gradient(circle at 50% 10%, rgba(13, 148, 136, 0.7), transparent 40%);
-        }
-        .theme-whisper {
-            --color-background: #F7FAFC;
-            --color-background-image: none;
-            --color-text-base: #2D3748;
-            --color-text-muted: #718096;
-            --color-primary: #2B6CB0;
-            --color-secondary: #4299E1;
-            --color-text-on-primary: #FFFFFF;
-        }
-        .theme-whisper .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(0, 0, 0, 0.08);
-            color: #1A202C;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-         .theme-whisper .glass-card:hover {
-            border-color: var(--color-primary);
-        }
-        .theme-whisper .text-white { 
-            color: var(--color-text-base);
-        }
-         .theme-whisper .top-nav-bar {
-            border-bottom-color: #E2E8F0;
-        }
-
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 15px -5px var(--color-primary-glow);
-                border-color: var(--color-primary);
-            }
-            to {
-                box-shadow: 0 0 25px 5px var(--color-primary-glow);
-                border-color: var(--color-primary);
-            }
-        }
-
-        .glow {
-            animation: glow 1.5s ease-in-out infinite alternate;
-        }
-
-        /* Mobile compatibility */
-        @media (max-width: 768px) {
-            .glass-card {
-                backdrop-filter: none;
-                background: rgba(26, 22, 37, 0.9);
-            }
-             .theme-whisper .glass-card {
-                background: #FFFFFF;
-            }
-            .hero-election-bg {
-                background-attachment: scroll;
-            }
-        }
-
-        /* Accessibility */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation: none !important;
-                transition: none !important;
-            }
-        }
-        
-        /* For hiding scrollbars */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-    </style>
+<!-- Preserve original importmap from AI Studio updates -->
 <script type="importmap">
 {
   "imports": {
@@ -184,18 +37,82 @@
 </script>
 </head>
 <body class="bg-neutral-gray-light">
-    <!-- Environment Variables -->
-    <script>
-        window.process = {
-            env: {
-                VITE_USE_MOCKS: 'true',
-                API_KEY: 'your_google_gemini_api_key_here',
-                VITE_ELECTION_DATE: '2025-11-11T08:00:00Z'
-            }
-        };
-    </script>
-    
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+<div id="root"></div>
+
+<!-- Keep any existing explicit env shim but make it safe and non-destructive -->
+<script>
+  // If a simple stub existed previously, preserve it but avoid overwriting _real_ env if set.
+  window.process = window.process || {};
+  window.process.env = window.process.env || {};
+  // Preserve any explicit values previously put in HTML while not clobbering mapped values later
+  // (example placeholders from the remote changes)
+  window.process.env.VITE_USE_MOCKS = window.process.env.VITE_USE_MOCKS ?? 'true';
+  window.process.env.API_KEY = window.process.env.API_KEY ?? 'your_google_gemini_api_key_here';
+  window.process.env.VITE_ELECTION_DATE = window.process.env.VITE_ELECTION_DATE ?? '2025-11-11T08:00:00Z';
+</script>
+
+<!-- Vite-friendly mapping: map import.meta.env into window.process.env for libraries expecting process.env -->
+<script type="module">
+  (function() {
+    try {
+      window.process = window.process || {};
+      window.process.env = window.process.env || {};
+      const env = import.meta && import.meta.env ? import.meta.env : {};
+      const allowed = Object.keys(env || {}).filter(k => k.startsWith('VITE_') || ['MODE','DEV','PROD','BASE_URL'].includes(k));
+      for (const k of allowed) {
+        // keep existing explicit window.process.env values (do not overwrite secret placeholders)
+        if (window.process.env[k] === undefined) window.process.env[k] = env[k];
+      }
+      // convenience typed helpers
+      window.getViteEnv = (name, fallback) => (window.process.env && window.process.env[name] !== undefined) ? window.process.env[name] : (env[name] !== undefined ? env[name] : fallback);
+
+      if (import.meta.env && import.meta.env.DEV) {
+        const mapped = Object.keys(window.process.env || {});
+        console.info('[index.html] mapped env keys:', mapped);
+      }
+    } catch (e) {
+      console.warn('Env mapping failed', e);
+    }
+  })();
+</script>
+
+<!-- Robust module boot: prefer typical Vite entry (/src/main.tsx), fallback to /index.tsx -->
+<script type="module">
+  (async () => {
+    try {
+      const tryPaths = ['/src/main.tsx', '/src/main.jsx', '/index.tsx', '/index.jsx'];
+      let module;
+      for (const p of tryPaths) {
+        try {
+          module = await import(p);
+          if (module) {
+            console.info('[index.html] boot module found:', p);
+            break;
+          }
+        } catch (e) {
+          // continue to next candidate
+        }
+      }
+      if (!module) {
+        throw new Error('No app entry module found. Ensure /src/main.tsx or /index.tsx exists.');
+      }
+      // If the module exports a default mount function, call it; otherwise assume it self-mounts.
+      const maybeDefault = module && module.default;
+      if (typeof maybeDefault === 'function') {
+        await maybeDefault();
+      } else if (typeof module.mount === 'function') {
+        await module.mount();
+      } else {
+        // normal case: main module performs ReactDOM.createRoot(...).render(<App/>)
+      }
+    } catch (err) {
+      console.error('[index.html] App failed to start:', err);
+      const root = document.getElementById('root');
+      if (root) root.innerHTML = '<div style="padding:20px;font-family:system-ui,Arial;color:#111;background:#fff;"><h2>Application failed to start</h2><pre style="white-space:pre-wrap;color:#a00;">' + (err && err.stack ? err.stack : String(err)) + '</pre></div>';
+    }
+  })();
+</script>
+
+<noscript>Please enable JavaScript to run this app.</noscript>
 </body>
 </html>
