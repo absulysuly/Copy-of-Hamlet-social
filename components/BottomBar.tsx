@@ -17,7 +17,7 @@ interface BottomBarProps {
     platformMode: PlatformMode;
 }
 
-const BottomBar: React.FC<BottomBarProps> = ({ items, activeTab, onSelectTab, language, platformMode }) => {
+const BottomBar: React.FC<BottomBarProps> = ({ items = [], activeTab, onSelectTab, language, platformMode }) => {
     const isRtl = language === 'ar' || language === 'ku';
 
     const barClasses = 'bg-[var(--color-glass-bg)] backdrop-blur-lg border-t border-[var(--color-glass-border)]';
@@ -30,7 +30,7 @@ const BottomBar: React.FC<BottomBarProps> = ({ items, activeTab, onSelectTab, la
     return (
         <div className={`fixed bottom-0 left-0 right-0 z-50 h-16 lg:hidden ${barClasses}`} dir={isRtl ? 'rtl' : 'ltr'}>
             <div className="flex h-full max-w-lg mx-auto font-medium">
-                {items
+                {(Array.isArray(items) ? items : [])
                     .filter(item => item.enabled !== false)
                     .map(item => (
                         <button

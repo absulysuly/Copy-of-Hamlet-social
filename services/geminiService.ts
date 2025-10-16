@@ -2,8 +2,12 @@ import { GoogleGenAI } from "@google/genai";
 
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
     try {
-        // This assumes process.env.API_KEY is available in the execution environment.
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        // Get API key from environment variable shim
+        const apiKey = (window as any).process?.env?.VITE_API_KEY;
+        if (!apiKey || apiKey === 'your_google_gemini_api_key_here') {
+            throw new Error('API key not configured');
+        }
+        const ai = new GoogleGenAI({ apiKey });
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -21,7 +25,12 @@ export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 
     if (!text) return "";
 
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        // Get API key from environment variable shim
+        const apiKey = (window as any).process?.env?.VITE_API_KEY;
+        if (!apiKey || apiKey === 'your_google_gemini_api_key_here') {
+            throw new Error('API key not configured');
+        }
+        const ai = new GoogleGenAI({ apiKey });
 
         const languageMap = {
             en: 'English',

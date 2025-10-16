@@ -1,4 +1,4 @@
-import { User, UserRole, Post, Governorate, Event, Article, Debate, GovernorateInfo, TeaHouseTopic, TeaHouseMessage } from './types.ts';
+import { User, UserRole, Post, Governorate, Event, Article, Debate, GovernorateInfo, TeaHouseTopic, TeaHouseMessage, VerificationBadge } from './types.ts';
 
 // --- GOVERNORATE DATA (Single Source of Truth) ---
 export const IRAQI_GOVERNORATES_INFO: GovernorateInfo[] = [
@@ -84,9 +84,12 @@ export const SLUG_GOVERNORATE_MAP: Record<string, Governorate> = Object.fromEntr
 );
 
 export const MOCK_USERS: User[] = [
-  { id: '4200', name: 'زياد طارق احمد ذرب الحدادي', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4200/150/150', verified: true, party: 'الجسم الوطني', governorate: 'Baghdad', bio: 'Candidate for الجسم الوطني' },
-  { id: '4201', name: 'عمر حبيب عبدالرزاق حبيب العاني', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4201/150/150', verified: true, party: 'الجسم الوطني', governorate: 'Baghdad', bio: 'Candidate for الجسم الوطني' },
-  { id: '4202', name: 'صادق صالح حمزه علي الغريري', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4202/150/150', verified: true, party: 'الجسم الوطني', governorate: 'Baghdad', bio: 'Candidate for الجسم الوطني' },
+  { id: '4200', name: 'زياد طارق احمد ذرب الحدادي', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4200/150/150', verified: true, party: 'الجسم الوطني', governorate: 'Baghdad', bio: 'Candidate for الجسم الوطني', verificationBadge: VerificationBadge.GoldFounder, registrationDate: new Date('2025-01-01'), isEarlyAdopter: true },
+  { id: '4201', name: 'عمر حبيب عبدالرزاق حبيب العاني', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4201/150/150', verified: true, party: 'الجسم الوطني', governorate: 'Baghdad', bio: 'Candidate for الجسم الوطني', verificationBadge: VerificationBadge.GoldFounder, registrationDate: new Date('2025-01-01'), isEarlyAdopter: true },
+  { id: '4202', name: 'صادق صالح حمزه علي الغريري', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4202/150/150', verified: true, party: 'الجسم الوطني', governorate: 'Baghdad', bio: 'Candidate for الجسم الوطني', verificationBadge: VerificationBadge.SilverPioneer, registrationDate: new Date('2025-01-02'), isEarlyAdopter: true },
+  { id: '4203', name: 'زينب محمد علي الحسيني', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4203/150/150', verified: true, party: 'الحزب الديمقراطي الكوردستاني', governorate: 'Erbil', bio: 'مرشحة من أربيل - داعمة لحقوق المرأة', verificationBadge: VerificationBadge.GoldFounder, registrationDate: new Date('2025-01-01'), isEarlyAdopter: true },
+  { id: '4204', name: 'فاطمة أحمد حسن البصري', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4204/150/150', verified: true, party: 'الاتحاد الوطني الكوردستاني', governorate: 'Basra', bio: 'مرشحة من البصرة - ناشطة في المجتمع المدني', verificationBadge: VerificationBadge.SilverPioneer, registrationDate: new Date('2025-01-02'), isEarlyAdopter: true },
+  { id: '4205', name: 'لينا كريم عبدالله السليماني', role: UserRole.Candidate, avatarUrl: 'https://picsum.photos/seed/4205/150/150', verified: true, party: 'تيار الموقف الوطني', governorate: 'Sulaymaniyah', bio: 'مرشحة من السليمانية - خبيرة في التنمية المستدامة', verificationBadge: VerificationBadge.Standard, registrationDate: new Date('2025-01-03'), isEarlyAdopter: false },
 ];
 
 export const MOCK_POSTS: Post[] = [

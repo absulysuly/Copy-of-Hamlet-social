@@ -7,6 +7,13 @@ export enum UserRole {
     Candidate = 'Candidate',
 }
 
+export enum VerificationBadge {
+    GoldFounder = 'GoldFounder',      // First 50 signups
+    SilverPioneer = 'SilverPioneer',  // Next 100 signups
+    Standard = 'Standard',            // After 150
+    PartyVerified = 'PartyVerified',  // Bulk party registration
+}
+
 export enum AppTab {
     Home = 'Home',
     Discover = 'Discover',
@@ -73,6 +80,9 @@ export interface User {
     bio?: string;
     partySlug?: string;
     governorateSlug?: string;
+    verificationBadge?: VerificationBadge;
+    registrationDate?: Date;
+    isEarlyAdopter?: boolean;
 }
 
 export interface Post {

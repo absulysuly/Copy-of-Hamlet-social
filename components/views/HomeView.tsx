@@ -9,6 +9,7 @@ import Stories from '../Stories.tsx';
 import ComposeView from './ComposeView.tsx';
 import PostCard from '../PostCard.tsx';
 import TopNavBar from '../TopNavBar.tsx';
+import UrgentLaunchBanner from '../UrgentLaunchBanner.tsx';
 import { SearchIcon } from '../icons/Icons.tsx';
 
 import ReelsView from './ReelsView.tsx';
@@ -176,6 +177,10 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                             className="block w-full text-sm pl-11 pr-4 py-2.5 border rounded-full text-theme-text-base focus:outline-none focus:ring-2 focus:ring-primary font-arabic border-white/20 bg-white/10 placeholder-theme-text-muted"
                         />
                     </div>
+                </div>
+
+                <div className="mt-6">
+                    <UrgentLaunchBanner />
                 </div>
 
                 <div className="mt-6">

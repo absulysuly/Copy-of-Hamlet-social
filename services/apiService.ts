@@ -21,7 +21,7 @@ export const getParties = (): Promise<string[]> => {
     return simulateFetch(parties);
 };
 
-export const getUsers = (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', authorId?: string, partySlug?: string, governorateSlug?: string }): Promise<User[]> => {
+export const getUsers = (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', authorId?: string, partySlug?: string, governorateSlug?: string, gender?: 'All' | 'Male' | 'Female' }): Promise<User[]> => {
     let users = MOCK_USERS;
 
     if (filters.role) {
@@ -41,6 +41,24 @@ export const getUsers = (filters: { role?: UserRole, governorate?: Governorate |
     }
      if (filters.governorateSlug) {
         users = users.filter(u => u.governorateSlug === filters.governorateSlug);
+    }
+    if (filters.gender && filters.gender !== 'All') {
+        // For now, we'll simulate gender filtering based on candidate names
+        // In real implementation, this would come from the database
+        users = users.filter(u => {
+            // Simple heuristic: if name contains certain patterns, assume gender
+            const name = u.name.toLowerCase();
+            if (filters.gender === 'Female') {
+                return name.includes('زينب') || name.includes('فاطمة') || name.includes('عائشة') || 
+                       name.includes('مريم') || name.includes('خديجة') || name.includes('نور') ||
+                       name.includes('لينا') || name.includes('رنا') || name.includes('هند');
+            } else if (filters.gender === 'Male') {
+                return !(name.includes('زينب') || name.includes('فاطمة') || name.includes('عائشة') || 
+                        name.includes('مريم') || name.includes('خديجة') || name.includes('نور') ||
+                        name.includes('لينا') || name.includes('رنا') || name.includes('هند'));
+            }
+            return true;
+        });
     }
 
     return simulateFetch(users);

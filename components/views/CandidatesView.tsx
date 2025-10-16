@@ -22,6 +22,7 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, se
     // Local state for filters, initialized from global props but managed independently.
     const [localGovernorate, setLocalGovernorate] = useState<Governorate | 'All'>(selectedGovernorate);
     const [localParty, setLocalParty] = useState<string | 'All'>(selectedParty);
+    const [genderFilter, setGenderFilter] = useState<'All' | 'Male' | 'Female'>('All');
 
 
     useEffect(() => {
@@ -32,6 +33,7 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, se
                     role: UserRole.Candidate,
                     governorate: localGovernorate,
                     party: localParty,
+                    gender: genderFilter,
                 });
                 setCandidates(users);
             } catch (error) {
@@ -41,7 +43,7 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, se
             }
         };
         fetchCandidates();
-    }, [localGovernorate, localParty]);
+    }, [localGovernorate, localParty, genderFilter]);
 
 
     return (
@@ -80,6 +82,20 @@ const CandidatesView: React.FC<CandidatesViewProps> = ({ selectedGovernorate, se
                         {parties.map(party => (
                             <option key={party} value={party}>{party}</option>
                         ))}
+                    </select>
+                </div>
+                {/* Gender Filter */}
+                <div className="flex-1 min-w-[150px]">
+                    <label htmlFor="gender-filter" className="block text-sm font-medium text-slate-300 font-arabic">الجنس</label>
+                    <select 
+                        id="gender-filter"
+                        value={genderFilter}
+                        onChange={(e) => setGenderFilter(e.target.value as 'All' | 'Male' | 'Female')}
+                        className="mt-1 block w-full p-2 border border-white/20 rounded-md bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-brand-hot-pink font-arabic text-right"
+                    >
+                        <option value="All">جميع المرشحين</option>
+                        <option value="Male">ذكور</option>
+                        <option value="Female">إناث</option>
                     </select>
                 </div>
             </div>

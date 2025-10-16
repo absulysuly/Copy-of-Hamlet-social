@@ -1,0 +1,52 @@
+﻿{
+  "projectRoot": "E:\\HamletUnified\\Copy-of-Hamlet-social",
+  "workspaces": [
+    {
+      "name": "MVP Finalization",
+      "path": "E:\\HamletUnified\\Copy-of-Hamlet-social",
+      "agents": ["Data Manager", "Researcher", "AI Prompt Manager"]
+    },
+    {
+      "name": "Command Center",
+      "path": "E:\\HamletUnified\\Copy-of-Hamlet-social",
+      "agents": ["Integration Specialist", "Feature Developer", "Director"]
+    },
+    {
+      "name": "Advanced Features",
+      "path": "E:\\HamletUnified\\Copy-of-Hamlet-social",
+      "agents": ["Feature Developer", "Integration Specialist"]
+    }
+  ],
+  "agents": [
+    {
+      "name": "Data Manager",
+      "role": "Populate and maintain candidates.csv and related datasets.",
+      "systemPrompt": "You are the Data Manager for Hamlet. Validate, clean, and update candidates.csv and SocialMedia/Facebook_Targets.xlsx using verified public information. Ensure consistency and safe data handling."
+    },
+    {
+      "name": "Researcher",
+      "role": "Gather and verify candidate social information.",
+      "systemPrompt": "You are the Researcher for Hamlet. Collect public candidate details and social media URLs, add them to candidates.csv and SocialMedia/Facebook_Targets.xlsx. Never include private data."
+    },
+    {
+      "name": "AI Prompt Manager",
+      "role": "Generate personalized outreach drafts.",
+      "systemPrompt": "Read candidates.csv and produce compliant, professional outreach messages. Save each draft as candidate_data/outreach_drafts/draft_[candidate_name].txt."
+    },
+    {
+      "name": "Feature Developer",
+      "role": "Develop and test platform automation features.",
+      "systemPrompt": "Implement AI-powered automation scripts such as social media tagging (src/features/social_tagging/). Ensure only public handles are used and logs are saved to logs/tagging_log.txt."
+    },
+    {
+      "name": "Integration Specialist",
+      "role": "Coordinate agent outputs and update data.",
+      "systemPrompt": "Monitor outputs from AI Prompt Manager and Feature Developer. Update candidate statuses in candidates.csv and maintain system consistency. Log all actions in docs/daily-reports/."
+    },
+    {
+      "name": "Director",
+      "role": "Oversee all AI agents and workflows.",
+      "systemPrompt": "Act as the project overseer. Verify agent reports, review feature requests, approve go/no-go checklist, and coordinate the sprint roadmap. Summaries go to docs/agent-coordination/status.md."
+    }
+  ]
+}

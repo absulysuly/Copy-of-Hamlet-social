@@ -3,12 +3,17 @@ import { useCountdown } from './election/hooks/useCountdown.ts';
 import IraqFlagIcon from './election/icons/IraqFlagIcon.tsx';
 
 const CountdownTimer: React.FC = () => {
-    // This date is set to roughly match the screenshot's remaining time
-    const electionDate = new Date();
-    electionDate.setDate(electionDate.getDate() + 34);
-    electionDate.setHours(electionDate.getHours() + 8);
-    electionDate.setMinutes(electionDate.getMinutes() + 23);
-    electionDate.setSeconds(electionDate.getSeconds() + 35);
+    // Get election date from environment variable or use fallback
+    const electionDateEnv = (window as any).process?.env?.VITE_ELECTION_DATE;
+    const electionDate = electionDateEnv ? new Date(electionDateEnv) : (() => {
+        // Fallback: Set to roughly match the screenshot's remaining time
+        const fallbackDate = new Date();
+        fallbackDate.setDate(fallbackDate.getDate() + 34);
+        fallbackDate.setHours(fallbackDate.getHours() + 8);
+        fallbackDate.setMinutes(fallbackDate.getMinutes() + 23);
+        fallbackDate.setSeconds(fallbackDate.getSeconds() + 35);
+        return fallbackDate;
+    })();
 
     const [days, hours, minutes, seconds] = useCountdown(electionDate);
     

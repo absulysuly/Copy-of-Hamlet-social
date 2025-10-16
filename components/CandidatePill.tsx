@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { User } from '../types.ts';
 import { VerifiedIcon, PlusIcon, CheckIcon } from './icons/Icons.tsx';
+import VerificationBadge from './VerificationBadge.tsx';
 import * as api from '../services/apiService.ts';
 
 interface CandidatePillProps {
@@ -51,6 +52,11 @@ const CandidatePill: React.FC<CandidatePillProps> = ({ candidate, onSelect, user
                         {candidate.verified && <VerifiedIcon className="w-4 h-4 text-primary ml-1.5 flex-shrink-0" />}
                     </p>
                     <p className="text-sm text-theme-text-muted truncate">{candidate.party}</p>
+                    {candidate.verificationBadge && (
+                        <div className="mt-1">
+                            <VerificationBadge badge={candidate.verificationBadge} size="sm" />
+                        </div>
+                    )}
                 </div>
             </div>
             <button 
