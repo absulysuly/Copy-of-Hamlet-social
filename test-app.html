@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamlet Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .error {
+            background: rgba(255,0,0,0.2);
+            border: 1px solid red;
+        }
+        .success {
+            background: rgba(0,255,0,0.2);
+            border: 1px solid green;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Hamlet Application Test</h1>
+        
+        <div id="status" class="status">
+            <h3>Testing Application Status...</h3>
+            <p>Checking environment variables and components...</p>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Test environment variables
+        function testEnvironmentVariables() {
+            const results = [];
+            
+            // Check if window.process exists
+            if (typeof window.process !== 'undefined') {
+                results.push('✅ window.process exists');
+                
+                // Check environment variables
+                if (window.process.env) {
+                    results.push('✅ window.process.env exists');
+                    
+                    const envVars = ['VITE_USE_MOCKS', 'VITE_API_KEY', 'VITE_API_BASE_URL', 'VITE_ELECTION_DATE'];
+                    envVars.forEach(varName => {
+                        if (window.process.env[varName]) {
+                            results.push(`✅ ${varName}: ${window.process.env[varName]}`);
+                        } else {
+                            results.push(`❌ ${varName}: missing`);
+                        }
+                    });
+                } else {
+                    results.push('❌ window.process.env is undefined');
+                }
+            } else {
+                results.push('❌ window.process is undefined');
+            }
+            
+            return results;
+        }
+        
+        // Test React availability
+        function testReact() {
+            const results = [];
+            
+            if (typeof React !== 'undefined') {
+                results.push('✅ React is available');
+            } else {
+                results.push('❌ React is not available');
+            }
+            
+            if (typeof ReactDOM !== 'undefined') {
+                results.push('✅ ReactDOM is available');
+            } else {
+                results.push('❌ ReactDOM is not available');
+            }
+            
+            return results;
+        }
+        
+        // Run tests
+        function runTests() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            let allResults = [];
+            
+            // Test environment variables
+            allResults = allResults.concat(['<h3>Environment Variables Test:</h3>'], testEnvironmentVariables());
+            
+            // Test React
+            allResults = allResults.concat(['<h3>React Test:</h3>'], testReact());
+            
+            // Display results
+            resultsDiv.innerHTML = allResults.join('<br>');
+            
+            // Update status
+            const hasErrors = allResults.some(result => result.includes('❌'));
+            if (hasErrors) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '<h3>❌ Issues Found</h3><p>Some components are not working properly.</p>';
+            } else {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '<h3>✅ All Tests Passed</h3><p>Application should be working correctly.</p>';
+            }
+        }
+        
+        // Run tests when page loads
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>
