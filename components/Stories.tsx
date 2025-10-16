@@ -36,7 +36,7 @@ const Stories: React.FC<StoriesProps> = ({ users, onSelectStory }) => {
     const extendedUsers = [...users, ...users];
 
     return (
-        <div className="w-full overflow-hidden relative">
+        <div className="w-full overflow-hidden relative stories-container">
             <div 
                 className="flex"
                 style={{ animation: `scroll-x ${users.length * 1.5}s linear infinite` }}

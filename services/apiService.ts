@@ -3,24 +3,22 @@ import { MOCK_USERS, MOCK_POSTS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_
 import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types.ts';
 
 // --- MOCK API Service ---
-// This service simulates API calls by returning mock data after a short delay.
+// This service simulates API calls by returning mock data instantly.
 
-const simulateDelay = <T>(data: T): Promise<T> => {
-    return new Promise(resolve => {
-        setTimeout(() => resolve(JSON.parse(JSON.stringify(data))), 300 + Math.random() * 500);
-    });
+const simulateFetch = <T>(data: T): Promise<T> => {
+    return Promise.resolve(JSON.parse(JSON.stringify(data)));
 };
 
 export const getParties = (): Promise<string[]> => {
     const parties = [...new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate).map(u => u.party))];
-    return simulateDelay(parties);
+    return simulateFetch(parties);
 };
 
 export const getCandidateStats = (): Promise<{ total: number; women: number; men: number; }> => {
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate);
     const women = candidates.filter(c => c.gender === 'Female').length;
     const men = candidates.length - women;
-    return simulateDelay({ total: candidates.length, women, men });
+    return simulateFetch({ total: candidates.length, women, men });
 };
 
 export const getUsers = (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', gender?: 'Male' | 'Female' | 'All', authorId?: string, partySlug?: string, governorateSlug?: string }): Promise<User[]> => {
@@ -46,7 +44,7 @@ export const getUsers = (filters: { role?: UserRole, governorate?: Governorate |
     if (filters.governorateSlug) {
         users = users.filter(u => u.governorateSlug === filters.governorateSlug);
     }
-    return simulateDelay(users);
+    return simulateFetch(users);
 };
 
 export const getPosts = (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
@@ -63,7 +61,7 @@ export const getPosts = (filters: { type?: 'Post' | 'Reel' | 'VoiceNote', author
     if (filters.party && filters.party !== 'All') {
         posts = posts.filter(p => p.author.party === filters.party);
     }
-    return simulateDelay(posts);
+    return simulateFetch(posts);
 };
 
 export const getEvents = (filters: { governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Event[]> => {
@@ -74,17 +72,17 @@ export const getEvents = (filters: { governorate?: Governorate | 'All', party?: 
     if (filters.party && filters.party !== 'All') {
         events = events.filter(e => e.organizer.party === filters.party);
     }
-    return simulateDelay(events);
+    return simulateFetch(events);
 };
 
 export const getArticles = (filters: { governorate?: Governorate | 'All' }): Promise<Article[]> => {
-    return simulateDelay(MOCK_ARTICLES);
+    return simulateFetch(MOCK_ARTICLES);
 };
 
 export const getDebates = (filters: { governorate?: Governorate | 'All', party?: string | 'All', participantIds?: string[] }): Promise<Debate[]> => {
     let debates = MOCK_DEBATES;
     // Apply filters if needed
-    return simulateDelay(debates);
+    return simulateFetch(debates);
 };
 
 export const createPost = (postDetails: Partial<Post>, author: User): Promise<Post> => {
@@ -100,7 +98,7 @@ export const createPost = (postDetails: Partial<Post>, author: User): Promise<Po
         ...postDetails,
     };
     MOCK_POSTS.unshift(newPost);
-    return simulateDelay(newPost);
+    return simulateFetch(newPost);
 };
 
 export const createReel = (details: { caption: string; videoFile?: File }, author: User): Promise<Post> => {
@@ -113,10 +111,10 @@ export const createReel = (details: { caption: string; videoFile?: File }, autho
         comments: 0,
         shares: 0,
         type: 'Reel',
-        mediaUrl: '/assets/mock-video.mp4', // Placeholder
+        mediaUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // Placeholder
     };
     MOCK_POSTS.unshift(newReel);
-    return simulateDelay(newReel);
+    return simulateFetch(newReel);
 };
 
 export const createEvent = (details: { title: string, date: string, location: string }, organizer: User): Promise<Event> => {
@@ -126,12 +124,12 @@ export const createEvent = (details: { title: string, date: string, location: st
         ...details,
     };
     MOCK_EVENTS.unshift(newEvent);
-    return simulateDelay(newEvent);
+    return simulateFetch(newEvent);
 };
 
 export const socialLogin = (provider: 'google' | 'facebook'): Promise<User> => {
     // Return a mock voter user
-    return simulateDelay(MOCK_USERS.find(u => u.role === UserRole.Voter)!);
+    return simulateFetch(MOCK_USERS.find(u => u.role === UserRole.Voter)!);
 };
 
 export const registerUser = (details: { name: string; email: string; role: UserRole }): Promise<User> => {
@@ -147,7 +145,7 @@ export const registerUser = (details: { name: string; email: string; role: UserR
         emailVerified: false,
     };
     MOCK_USERS.push(newUser);
-    return simulateDelay(newUser);
+    return simulateFetch(newUser);
 };
 
 export const checkVerificationStatus = (userId: string): Promise<User | null> => {
@@ -156,41 +154,41 @@ export const checkVerificationStatus = (userId: string): Promise<User | null> =>
         // Simulate verification after a delay
         user.emailVerified = true;
     }
-    return simulateDelay(user || null);
+    return simulateFetch(user || null);
 };
 
 export const resendVerificationEmail = (userId: string): Promise<{ success: boolean }> => {
-    return simulateDelay({ success: true });
+    return simulateFetch({ success: true });
 };
 
 export const updateUser = (userId: string, updates: Partial<User>): Promise<User | null> => {
     const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
     if (userIndex > -1) {
         MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], ...updates };
-        return simulateDelay(MOCK_USERS[userIndex]);
+        return simulateFetch(MOCK_USERS[userIndex]);
     }
-    return simulateDelay(null);
+    return simulateFetch(null);
 };
 
 export const followCandidate = (candidateId: string): Promise<{ success: boolean }> => {
-    return simulateDelay({ success: true });
+    return simulateFetch({ success: true });
 };
 
 export const likePost = (postId: string): Promise<{ success: boolean }> => {
-    return simulateDelay({ success: true });
+    return simulateFetch({ success: true });
 };
 
 export const uploadVoiceNote = async (audioBlob: Blob): Promise<{ success: boolean; url: string }> => {
-    return simulateDelay({ success: true, url: URL.createObjectURL(audioBlob) });
+    return simulateFetch({ success: true, url: URL.createObjectURL(audioBlob) });
 };
 
 // --- Tea House API ---
 export const getTeaHouseTopics = (language: Language): Promise<TeaHouseTopic[]> => {
-    return simulateDelay(MOCK_TEA_HOUSE_TOPICS.filter(t => t.language === language));
+    return simulateFetch(MOCK_TEA_HOUSE_TOPICS.filter(t => t.language === language));
 };
 
 export const getTeaHouseMessages = (topicId: string): Promise<TeaHouseMessage[]> => {
-    return simulateDelay(MOCK_TEA_HOUSE_MESSAGES[topicId] || []);
+    return simulateFetch(MOCK_TEA_HOUSE_MESSAGES[topicId] || []);
 };
 
 export const createTeaHouseTopic = (data: { title: string; firstMessage: string; category: string; language: Language; }): Promise<TeaHouseTopic> => {
@@ -204,17 +202,17 @@ export const createTeaHouseTopic = (data: { title: string; firstMessage: string;
         category: data.category,
     };
     MOCK_TEA_HOUSE_TOPICS.unshift(newTopic);
-    return simulateDelay(newTopic);
+    return simulateFetch(newTopic);
 };
 
 // --- Election Portal API ---
 export const submitIntegrityReport = async (formData: FormData): Promise<{ success: boolean; trackingId: string }> => {
     console.log("Submitting integrity report with data:", Object.fromEntries(formData));
-    return simulateDelay({ success: true, trackingId: `IQ-REP-${Date.now()}` });
+    return simulateFetch({ success: true, trackingId: `IQ-REP-${Date.now()}` });
 };
 
 export const getDashboardStats = (): Promise<any> => {
-    return simulateDelay({
+    return simulateFetch({
         stats: { totalRegisteredVoters: 12500000, approvedCandidatesCount: 7769, expectedTurnoutPercentage: 65 },
         participation: IRAQI_GOVERNORATES_INFO.map(g => ({
             governorateId: g.id,
@@ -232,7 +230,7 @@ export const getGovernorateDataByName = (name: string): Promise<{ governorate: a
     const news = MOCK_ARTICLES.slice(0, 4).map(a => ({
         id: a.id, title: a.title, summary: a.contentSnippet, date: a.timestamp
     }));
-    return simulateDelay({ governorate, candidates, news });
+    return simulateFetch({ governorate, candidates, news });
 };
 
 export const getPartyById = (id: string): Promise<{ party: PoliticalParty; candidates: Candidate[] }> => {
@@ -240,7 +238,7 @@ export const getPartyById = (id: string): Promise<{ party: PoliticalParty; candi
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate).slice(0, 8).map(c => ({
         id: c.id, name: c.name, party: c.party, imageUrl: c.avatarUrl, verified: c.verified
     }));
-    return simulateDelay({
+    return simulateFetch({
         party: { id, name: 'Future Alliance', description: 'A forward-thinking party...', leader: 'Dr. Ahmad Al-Jubouri', founded: 2020, logoUrl: '' },
         candidates
     });
@@ -250,11 +248,11 @@ export const getAllElectionCandidates = (): Promise<Candidate[]> => {
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate).map(c => ({
         id: c.id, name: c.name, party: c.party, imageUrl: c.avatarUrl, verified: c.verified
     }));
-    return simulateDelay(candidates);
+    return simulateFetch(candidates);
 };
 
 export const getApiConfig = (): Promise<any[]> => {
-    return simulateDelay([
+    return simulateFetch([
         { id: '1', name: 'Facebook Graph API', status: 'Connected', lastChecked: '2m ago' },
         { id: '2', name: 'X (Twitter) API v2', status: 'Connected', lastChecked: '2m ago' },
         { id: '3', name: 'TikTok Developer API', status: 'Disconnected', lastChecked: '1h ago' },
@@ -262,7 +260,7 @@ export const getApiConfig = (): Promise<any[]> => {
 };
 
 export const getDataCollectionStats = (): Promise<any> => {
-    return simulateDelay({
+    return simulateFetch({
         status: 'Running',
         candidatesFound: 1289,
         profilesScraped: 980,
@@ -280,7 +278,7 @@ export const getDataCollectionStats = (): Promise<any> => {
 const getRandom = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 export const getContactValidationData = (): Promise<any[]> => {
-     return simulateDelay(MOCK_USERS.slice(0, 10).map(u => ({
+     return simulateFetch(MOCK_USERS.slice(0, 10).map(u => ({
         id: u.id,
         contact: `+964 78********${Math.floor(10 + Math.random() * 89)}`,
         type: 'Phone',
@@ -291,14 +289,14 @@ export const getContactValidationData = (): Promise<any[]> => {
 };
 
 export const getEnrichmentData = (candidateId: string): Promise<any> => {
-    return simulateDelay({
+    return simulateFetch({
         politicalProfile: 'Leans socially conservative with a focus on economic liberalization. Strong proponent of foreign investment and developing the private sector. Has voted consistently for measures that reduce government spending.',
         influence: { socialReach: 120500, engagementRate: 4.5, sentiment: 'Positive' },
     });
 };
 
 export const getQualityAnalyticsData = (): Promise<any> => {
-    return simulateDelay({
+    return simulateFetch({
         overallQuality: { verified: 78, pending: 15, invalid: 7 },
         qualityByGov: IRAQI_GOVERNORATES_INFO.map(g => ({ name: g.name.substring(0, 3), quality: 50 + Math.random() * 50 })).slice(0, 6),
     });

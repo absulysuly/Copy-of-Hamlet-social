@@ -199,6 +199,27 @@ const generatePosts = (count: number) => {
             contentTemplate = contentTemplate.replace(regex, () => getRandom(placeholders[key]));
         });
 
+        let mediaUrl: string | undefined;
+        const hasMedia = Math.random() > 0.4;
+
+        if (hasMedia) {
+            switch (type) {
+                case 'Post':
+                    mediaUrl = `https://picsum.photos/seed/${i}/600/400`;
+                    break;
+                case 'Reel':
+                    // Using a common public domain video for mock reels
+                    mediaUrl = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+                    break;
+                case 'VoiceNote':
+                    // Using a public domain audio file with open CORS headers
+                    mediaUrl = `https://archive.org/download/test-mp3-file/test.mp3`;
+                    break;
+                default:
+                    mediaUrl = undefined;
+            }
+        }
+
         MOCK_POSTS.push({
             id: `post-${i + 1}`,
             author,
@@ -208,7 +229,7 @@ const generatePosts = (count: number) => {
             comments: Math.floor(Math.random() * 300),
             shares: Math.floor(Math.random() * 150),
             type,
-            mediaUrl: Math.random() > 0.4 ? `https://picsum.photos/seed/${i}/600/400` : undefined,
+            mediaUrl,
             isSponsored: Math.random() > 0.9 ? true : false,
         });
     }
@@ -297,11 +318,11 @@ const generateTeaHouseTopicsAndMessages = () => {
 if (MOCK_USERS.length === 0) {
     // Add a default voter user
     MOCK_USERS.push({ id: 'user-0', name: 'Ali Ahmed', role: UserRole.Voter, avatarUrl: 'https://i.pravatar.cc/150?u=user-0', verified: false, party: 'Independent', governorate: 'Baghdad', gender: 'Male' });
-    generateCandidates(8000);
-    generatePosts(16000);
-    generateEvents(200);
-    generateArticles(150);
-    generateDebates(100);
+    generateCandidates(100);
+    generatePosts(200);
+    generateEvents(20);
+    generateArticles(15);
+    generateDebates(10);
     generateTeaHouseTopicsAndMessages();
 }
 

@@ -19,6 +19,7 @@ import ReelComposer from './compose/ReelComposer.tsx';
 import EventComposer from './compose/EventComposer.tsx';
 import SeriousnessView from './SeriousnessView.tsx';
 import WomenCandidatesView from './WomenCandidatesView.tsx';
+import SkeletonPostCard from '../SkeletonPostCard.tsx';
 
 
 interface HomeViewProps {
@@ -39,9 +40,8 @@ interface HomeViewProps {
     onCompose: () => void;
 }
 
-const TABS_WITH_FILTERS: MainContentTab[] = [AppTab.Posts, AppTab.Reels, AppTab.Candidates, AppTab.Debates, AppTab.Events, AppTab.Articles];
 const TABS_WITH_HERO: MainContentTab[] = [AppTab.Posts];
-const SUB_TABS: MainContentTab[] = [AppTab.Posts, AppTab.Reels, AppTab.Candidates, AppTab.WomenCandidates, AppTab.Debates, AppTab.Events, AppTab.Articles, AppTab.TeaHouse];
+const SUB_TABS: MainContentTab[] = [AppTab.Posts, AppTab.Reels, AppTab.WomenCandidates, AppTab.Events, AppTab.Articles];
 
 
 const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose }) => {
@@ -50,6 +50,7 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
     const [socialPosts, setSocialPosts] = useState<Post[]>([]);
     const [candidates, setCandidates] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [genderFilter, setGenderFilter] = useState<'All' | 'Male' | 'Female'>('All');
 
     // --- DATA FETCHING ---
     useEffect(() => {
@@ -115,18 +116,17 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
     const texts = UI_TEXT[language];
     
     const showHeroAndStories = TABS_WITH_HERO.includes(activeTab);
-    const showFilters = TABS_WITH_FILTERS.includes(activeTab);
 
-    const MobileFilterBar = () => (
-        <div className="sm:hidden flex gap-4 p-3 bg-black/20 backdrop-blur-sm my-4 rounded-lg border border-[var(--color-glass-border)]">
+    const FilterBar = () => (
+        <div className="flex flex-col sm:flex-row gap-4 p-3 glass-card my-4 rounded-lg shadow-lg">
             {/* Governorate Filter */}
-            <div className="flex-1">
-                <label htmlFor="mobile-gov-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.governorate}</label>
+            <div className="flex-1 min-w-[120px]">
+                <label htmlFor="gov-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.governorate}</label>
                 <select 
-                    id="mobile-gov-filter"
+                    id="gov-filter"
                     value={selectedGovernorate}
                     onChange={(e) => onGovernorateChange(e.target.value as Governorate | 'All')}
-                    className="mt-1 block w-full p-1.5 border border-[var(--color-glass-border)] rounded-md bg-white/20 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
+                    className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/10 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
                 >
                     <option value="All">{texts.allIraq}</option>
                     {GOVERNORATES.map(gov => (
@@ -135,18 +135,32 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                 </select>
             </div>
             {/* Party Filter */}
-            <div className="flex-1">
-                <label htmlFor="mobile-party-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.party}</label>
+            <div className="flex-1 min-w-[120px]">
+                <label htmlFor="party-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.party}</label>
                 <select 
-                    id="mobile-party-filter"
+                    id="party-filter"
                     value={selectedParty}
                     onChange={(e) => onPartyChange(e.target.value)}
-                    className="mt-1 block w-full p-1.5 border border-[var(--color-glass-border)] rounded-md bg-white/20 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
+                    className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/10 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
                 >
                     <option value="All">{texts.all}</option>
                     {parties.map(party => (
                         <option key={party} value={party}>{party}</option>
                     ))}
+                </select>
+            </div>
+             {/* Gender Filter */}
+             <div className="flex-1 min-w-[120px]">
+                <label htmlFor="gender-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.gender}</label>
+                <select 
+                    id="gender-filter"
+                    value={genderFilter}
+                    onChange={(e) => setGenderFilter(e.target.value as 'All' | 'Male' | 'Female')}
+                    className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/10 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
+                >
+                    <option value="All">{texts.all}</option>
+                    <option value="Male">{texts.male}</option>
+                    <option value="Female">{texts.female}</option>
                 </select>
             </div>
         </div>
@@ -190,12 +204,17 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
 
     // --- RENDER LOGIC ---
     const renderSocialContent = () => {
-        if (isLoading && TABS_WITH_FILTERS.includes(activeTab)) {
-            return <Spinner />;
-        }
-
         switch (activeTab) {
             case AppTab.Posts:
+                if (isLoading) {
+                    return (
+                        <div className="mt-4">
+                            <div className="mb-4">{renderComposer()}</div>
+                            {[...Array(3)].map((_, i) => <SkeletonPostCard key={i} />)}
+                        </div>
+                    );
+                }
+
                 const postsWithStories = socialPosts.reduce((acc, post, index) => {
                     acc.push(<PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />);
                     // Inject stories every 4 posts
@@ -221,12 +240,8 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                         <ReelsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} language={language} />
                     </div>
                 );
-            case AppTab.Candidates:
-                return <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} parties={parties} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />;
             case AppTab.WomenCandidates:
                 return <WomenCandidatesView onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />;
-            case AppTab.Debates:
-                return <DebatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} language={language} />;
             case AppTab.Events:
                  return (
                     <div className="mt-4">
@@ -236,9 +251,14 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                 );
             case AppTab.Articles:
                 return <SeriousnessView selectedGovernorate={selectedGovernorate} language={language} />;
+            // Debates and Tea House are removed from tabs, but we leave the cases here for potential future use
+            case AppTab.Debates:
+                return <DebatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} language={language} />;
             case AppTab.TeaHouse:
                 return <TeaHouseView user={user} requestLogin={requestLogin} language={language} />;
             default:
+                // Show a spinner for any other tabs that might be loading
+                if (isLoading) return <Spinner />;
                 return null;
         }
     };
@@ -258,10 +278,22 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                     </>
                 )}
                 
-                {showFilters && <MobileFilterBar />}
+                <div className="mt-6">
+                    <h2 className="text-2xl font-bold font-arabic text-white mb-0">{texts.candidates}</h2>
+                    <FilterBar />
+                    <CandidatesView 
+                        selectedGovernorate={selectedGovernorate}
+                        selectedParty={selectedParty}
+                        selectedGender={genderFilter}
+                        onSelectCandidate={onSelectProfile}
+                        user={user}
+                        requestLogin={requestLogin}
+                        language={language}
+                    />
+                </div>
 
                 {/* Non-sticky TopNavBar */}
-                <div className="mt-2 z-10 py-2">
+                <div className="mt-8 z-10 py-2">
                     <TopNavBar<MainContentTab>
                         tabs={SUB_TABS}
                         activeTab={activeTab}

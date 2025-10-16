@@ -96,6 +96,16 @@ const App: React.FC = () => {
         api.getParties().then(setParties);
     }, []);
 
+    // Effect for mobile compatibility
+    useEffect(() => {
+        // Mobile compatibility check
+        const isOldMobile = /Android [1-6]|iPhone OS [1-9]/.test(navigator.userAgent);
+        if (isOldMobile) {
+            // Disable backdrop-filter for older devices
+            document.body.classList.add('no-backdrop-filter');
+        }
+    }, []);
+
     // Effect for handling language direction (LTR/RTL)
     useEffect(() => {
         const isRtl = language === 'ar' || language === 'ku';
