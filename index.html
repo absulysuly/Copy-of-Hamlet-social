@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     
@@ -247,33 +247,20 @@
     </style>
   </head>
   <body class="bg-neutral-gray-light">
-  
-  <!-- Environment Variables Script - Critical for Application Stability -->
-  <script>
-    // Environment variables shim for buildless architecture
-    window.process = {
-      env: {
-        VITE_USE_MOCKS: 'true',
-        VITE_API_KEY: 'your_google_gemini_api_key_here',
-        VITE_API_BASE_URL: 'http://localhost:3001',
-        VITE_ELECTION_DATE: '2025-12-20T08:00:00Z' // Real election date
+    <!-- Loading spinner shown until React loads -->
+    <div id="root">
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div style="text-align: center;">
+          <div style="width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+          <p style="color: white; font-size: 18px; font-weight: 500;">جاري التحميل...</p>
+        </div>
+      </div>
+    </div>
+    <style>
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
-    };
-  </script>
-  
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.22.0"
-  }
-}
-</script>
-  </head>
-  <body>
-    <div id="root"></div>
+    </style>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
