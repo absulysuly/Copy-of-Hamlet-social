@@ -34,4 +34,4 @@ Communications
 
 Security & Secrets
 - Never commit .env or secrets
-- Add service keys to GitHub Actions secrets (SUPABASE_URL, SUPABASE_SERVICE_ROLE, SENDGRID_KEY, TWILIO_*
+- Add service keys to GitHub Actions secrets (SUPABASE_URL, SUPABASE_SERVICE_ROLE, SENDGRID_KEY, TWILIO_*))
