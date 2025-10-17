@@ -5,6 +5,7 @@ import { colorThemes } from './utils/colorThemes.ts';
 export enum UserRole {
     Voter = 'Voter',
     Candidate = 'Candidate',
+    Journalist = 'Journalist',
 }
 
 export enum AppTab {
