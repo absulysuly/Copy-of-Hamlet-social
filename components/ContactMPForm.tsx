@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Language } from '../types.ts';
+import { Language, User, Post } from '../types.ts';
 import { UI_TEXT } from '../translations.ts';
 
 interface ContactMPFormProps {
     language: Language;
+    candidate: User;
+    recentPosts: Partial<Post>[];
 }
 
-const ContactMPForm: React.FC<ContactMPFormProps> = ({ language }) => {
+const ContactMPForm: React.FC<ContactMPFormProps> = ({ language, candidate, recentPosts }) => {
     const [message, setMessage] = useState('');
     const texts = UI_TEXT[language];
 

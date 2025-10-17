@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Post, User, Language } from '../types.ts';
 import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon, FemaleIcon } from './icons/Icons.tsx';
 import * as api from '../services/apiService.ts';
-import { translateText } from '../services/geminiService.ts';
-import AudioPlayer from './AudioPlayer.tsx';
 import { UI_TEXT } from '../translations.ts';
 
 interface PostCardProps {
@@ -17,44 +15,7 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language, onSelectAuthor, onSelectPost }) => {
     const [isMenuOpen, setMenuOpen] = useState(false);
-    const [translatedContent, setTranslatedContent] = useState<string | null>(null);
-    const [isTranslating, setIsTranslating] = useState(false);
-    const [isShowingTranslation, setIsShowingTranslation] = useState(false);
-    // Assuming mock data is in Arabic for this feature
-    const originalLanguage: Language = 'ar';
     const texts = UI_TEXT[language];
-
-    useEffect(() => {
-        // Reset translation state when the post or language changes
-        setIsShowingTranslation(false);
-        setTranslatedContent(null);
-        setIsTranslating(false);
-
-        const getTranslation = async () => {
-            if (language !== originalLanguage && post.content) {
-                setIsTranslating(true);
-                try {
-                    const translation = await translateText(post.content, language);
-                    // Only store the translation if it's successful and different from the original text.
-                    // This prevents showing a do-nothing "Show translation" button if the API fails or returns the same text.
-                    if (translation && translation.trim() !== post.content.trim()) {
-                        setTranslatedContent(translation);
-                    } else {
-                        setTranslatedContent(null);
-                    }
-                } catch (error) {
-                    console.error("Translation failed", error);
-                    setTranslatedContent(null);
-                } finally {
-                    setIsTranslating(false);
-                }
-            }
-        };
-
-        if (post.type !== 'VoiceNote') {
-            getTranslation();
-        }
-    }, [language, post]);
 
     const handleInteraction = (e: React.MouseEvent, action: () => void) => {
         e.stopPropagation();
@@ -71,11 +32,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
 
     const handleShare = async (e: React.MouseEvent) => {
         e.stopPropagation();
+        const postUrl = `${window.location.origin}/post/${post.id}`;
         const shareData = {
             title: `Post by ${post.author.name} on Smart Campaign`,
             text: post.content,
-            // In a real app with routing for individual posts, this would be a direct link.
-            url: window.location.href, 
+            url: postUrl, 
         };
 
         if (navigator.share) {
@@ -86,7 +47,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                 console.error('Error sharing post:', error);
             }
         } else {
-            // Fallback for browsers that don't support the Web Share API
             try {
                 await navigator.clipboard.writeText(shareData.url);
                 alert(texts.shareLinkCopied);
@@ -111,9 +71,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
         e.stopPropagation();
         setMenuOpen(!isMenuOpen);
     };
-
-    const displayedContent = isShowingTranslation && translatedContent ? translatedContent : post.content;
-    const canToggleTranslation = translatedContent && language !== originalLanguage;
 
     return (
         <div onClick={() => onSelectPost(post)} className="glass-card rounded-xl shadow-lg mb-6 overflow-hidden cursor-pointer">
@@ -153,25 +110,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                     </div>
                 </div>
                 
-                {post.type === 'VoiceNote' ? (
-                    <AudioPlayer src={post.mediaUrl || ''} governorate={post.author.governorate} />
-                ) : (
-                    <div className="my-4 glass-card rounded-lg p-4 post-content-wrapper">
-                        <p className="text-theme-text-base text-sm whitespace-pre-line font-arabic">{displayedContent}</p>
-                        {isTranslating && <p className="text-xs text-theme-text-muted animate-pulse mt-2">{texts.translating}</p>}
-                        {canToggleTranslation && !isTranslating && (
-                             <button
-                                onClick={(e) => { e.stopPropagation(); setIsShowingTranslation(prev => !prev); }}
-                                className="text-xs font-semibold text-primary hover:underline mt-2"
-                            >
-                                {isShowingTranslation ? texts.showOriginal : texts.showTranslation}
-                            </button>
-                        )}
-                    </div>
-                )}
+                <div className="my-4 glass-card rounded-lg p-4 post-content-wrapper">
+                    <p className="text-theme-text-base text-sm whitespace-pre-line font-arabic">{post.content}</p>
+                </div>
             </div>
 
-            {post.mediaUrl && post.type !== 'VoiceNote' && (
+            {post.mediaUrl && post.type === 'Post' && (
                 <div className="px-2 pb-2">
                      <img loading="lazy" className="w-full object-cover max-h-96 rounded-lg ring-1 ring-white/10" src={post.mediaUrl} alt="Post media" />
                 </div>

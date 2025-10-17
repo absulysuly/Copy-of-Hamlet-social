@@ -3,7 +3,6 @@ import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types.ts';
 import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons.tsx';
 import CreateTopicModal from '../CreateTopicModal.tsx';
 import { UI_TEXT } from '../../translations.ts';
-import AudioPlayer from '../AudioPlayer.tsx';
 import * as api from '../../services/apiService.ts';
 import Spinner from '../Spinner.tsx';
 
@@ -99,9 +98,6 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
                             <div className={`message-bubble ${msg.author.id === user?.id ? 'is-user' : 'is-other'}`}>
                                 {msg.type === 'text' && <p>{msg.content}</p>}
                                 {msg.type === 'image' && <img src={msg.mediaUrl} alt="shared" className="rounded-lg max-w-xs" />}
-                                {msg.type === 'voice' && msg.mediaUrl && (
-                                    <AudioPlayer src={msg.mediaUrl} governorate={msg.author.governorate} compact />
-                                )}
                                 {msg.type === 'document' && msg.mediaUrl && (
                                      <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 p-2 bg-black/20 rounded-lg hover:bg-black/40">
                                         <DocumentIcon className="w-6 h-6 flex-shrink-0" />

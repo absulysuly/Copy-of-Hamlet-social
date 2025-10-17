@@ -47,7 +47,7 @@ const WomenCandidatesView: React.FC<WomenCandidatesViewProps> = ({ onSelectCandi
     return (
         <div className="p-4 sm:p-6">
             <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold font-arabic text-white">{texts.womenCandidates}</h2>
+                <h2 className="text-3xl font-bold font-arabic text-white">{texts.women}</h2>
                 <p className="text-theme-text-muted mt-2 max-w-2xl mx-auto">{texts.empoweringWomenInPolitics}</p>
             </div>
             

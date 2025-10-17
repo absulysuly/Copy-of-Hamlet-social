@@ -87,6 +87,7 @@ export const SLUG_GOVERNORATE_MAP: Record<string, string> = Object.fromEntries(
 // --- MOCK DATA GENERATION ---
 const MOCK_USERS: User[] = [];
 const MOCK_POSTS: Post[] = [];
+const MOCK_WHISPERS: Post[] = [];
 const MOCK_EVENTS: Event[] = [];
 const MOCK_ARTICLES: Article[] = [];
 const MOCK_DEBATES: Debate[] = [];
@@ -144,11 +145,14 @@ const postTemplates = {
         "أبرز مقتطفات من كلمتي في مؤتمر {event}. #العراق_أولاً",
         "شاهدوا تقدم العمل في مشروع {project}. نعدكم بالإنجاز.",
     ],
-    VoiceNote: [
-        "رسالة صوتية إلى أهلي في {governorate}. أود أن أؤكد لكم التزامي بخدمتكم.",
-        "توضيح سريع حول موقفي من قضية {topic}. استمعوا وشاركونا آراءكم.",
-    ]
 };
+const whisperTemplates = [
+    "Just concluded a successful meeting with local business owners. Their insights are invaluable for our economic recovery plan.",
+    "The youth are the future. We must invest in education and provide them with opportunities to thrive.",
+    "Transparency and accountability are not just slogans; they are the pillars of good governance.",
+    "Attending the provincial council session today. Key items on the agenda: infrastructure and public services.",
+    "A quick thought: true progress is measured by the well-being of the most vulnerable in our society."
+];
 const placeholders = {
     location: ['سوق الشورجة', 'شارع المتنبي', 'مستشفى اليرموك', 'جامعة بغداد', 'مول المنصور'],
     project: ['تأهيل شبكة الكهرباء', 'بناء مدرسة جديدة', 'تطوير المركز الصحي', 'تعبيد الطرق الرئيسية'],
@@ -190,7 +194,7 @@ const generatePosts = (count: number) => {
 
     for (let i = 0; i < count; i++) {
         const author = getRandom(candidates);
-        const type: Post['type'] = getRandom(['Post', 'Post', 'Post', 'Reel', 'VoiceNote']);
+        const type: Post['type'] = getRandom(['Post', 'Post', 'Post', 'Reel']);
         let contentTemplate = getRandom(postTemplates[type]);
         
         Object.keys(placeholders).forEach(key => {
@@ -198,6 +202,23 @@ const generatePosts = (count: number) => {
             // @ts-ignore
             contentTemplate = contentTemplate.replace(regex, () => getRandom(placeholders[key]));
         });
+
+        let mediaUrl: string | undefined;
+        const hasMedia = Math.random() > 0.4;
+
+        if (hasMedia) {
+            switch (type) {
+                case 'Post':
+                    mediaUrl = `https://picsum.photos/seed/${i}/600/400`;
+                    break;
+                case 'Reel':
+                    // Using a common public domain video for mock reels
+                    mediaUrl = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+                    break;
+                default:
+                    mediaUrl = undefined;
+            }
+        }
 
         MOCK_POSTS.push({
             id: `post-${i + 1}`,
@@ -208,11 +229,27 @@ const generatePosts = (count: number) => {
             comments: Math.floor(Math.random() * 300),
             shares: Math.floor(Math.random() * 150),
             type,
-            mediaUrl: Math.random() > 0.4 ? `https://picsum.photos/seed/${i}/600/400` : undefined,
+            mediaUrl,
             isSponsored: Math.random() > 0.9 ? true : false,
         });
     }
 };
+
+const generateWhispers = (count: number) => {
+    const users = MOCK_USERS.slice(0, 20); // Use a variety of users
+    for(let i = 0; i < count; i++) {
+        MOCK_WHISPERS.push({
+            id: `whisper-${i+1}`,
+            author: getRandom(users),
+            content: getRandom(whisperTemplates),
+            timestamp: `${Math.floor(Math.random() * 10) + 1}h ago`,
+            likes: Math.floor(Math.random() * 500),
+            comments: Math.floor(Math.random() * 50),
+            shares: Math.floor(Math.random() * 20),
+            type: 'Post', // Reusing Post type, the key is no mediaUrl
+        });
+    }
+}
 
 const generateEvents = (count: number) => {
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate);
@@ -297,12 +334,13 @@ const generateTeaHouseTopicsAndMessages = () => {
 if (MOCK_USERS.length === 0) {
     // Add a default voter user
     MOCK_USERS.push({ id: 'user-0', name: 'Ali Ahmed', role: UserRole.Voter, avatarUrl: 'https://i.pravatar.cc/150?u=user-0', verified: false, party: 'Independent', governorate: 'Baghdad', gender: 'Male' });
-    generateCandidates(8000);
-    generatePosts(16000);
-    generateEvents(200);
-    generateArticles(150);
-    generateDebates(100);
+    generateCandidates(100);
+    generatePosts(200);
+    generateEvents(20);
+    generateArticles(15);
+    generateDebates(10);
     generateTeaHouseTopicsAndMessages();
+    generateWhispers(50);
 }
 
-export { MOCK_USERS, MOCK_POSTS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES };
+export { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES };

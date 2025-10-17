@@ -11,21 +11,19 @@ export enum UserRole {
 export enum AppTab {
     Home = 'Home',
     Discover = 'Discover',
-    TeaHouse = 'Tea House',
-    DebateRoom = 'Debate Room',
     Settings = 'Settings',
     UserProfile = 'My Profile',
     CandidateProfile = 'Candidate Profile',
     Dashboard = 'Dashboard',
-    Analytics = 'Analytics',
-    Candidates = 'Candidates',
+
     // For HomeView tabs
-    Posts = 'Posts',
-    Reels = 'Reels',
-    Debates = 'Debates',
-    Events = 'Events',
-    Articles = 'Articles',
-    WomenCandidates = 'Women Candidates',
+    Feed = 'Feed',
+    Real = 'Real',
+    Candidates = 'Candidates',
+    Whisper = 'Whisper',
+    Women = 'Women',
+    Minorities = 'Minorities',
+    Components = 'Components',
 }
 
 export interface GovernorateInfo {
@@ -42,7 +40,7 @@ export type Language = 'en' | 'ar' | 'ku';
 export type Governorate = 'Baghdad' | 'Basra' | 'Nineveh' | 'Erbil' | 'Anbar' | 'Dhi Qar' | 'Salah al-Din' | 'Diyala' | 'Kirkuk' | 'Sulaymaniyah' | 'Babil' | 'Wasit' | 'Maysan' | 'Muthanna' | 'Qadisiyyah' | 'Najaf' | 'Karbala' | 'Dohuk';
 
 
-export type MainContentTab = AppTab.Posts | AppTab.Reels | AppTab.Candidates | AppTab.Debates | AppTab.TeaHouse | AppTab.Events | AppTab.Articles | AppTab.WomenCandidates;
+export type MainContentTab = AppTab.Feed | AppTab.Real | AppTab.Candidates | AppTab.Whisper | AppTab.Women | AppTab.Minorities | AppTab.Components;
 
 export type HomeViewMode = 'Social' | 'Election';
 
@@ -82,10 +80,8 @@ export interface Post {
     likes: number;
     comments: number;
     shares: number;
-    type: 'Post' | 'Reel' | 'VoiceNote';
+    type: 'Post' | 'Reel';
     mediaUrl?: string;
-    duration?: number; // for voice notes
-// Fix: Added optional 'isSponsored' property to support sponsored content feature.
     isSponsored?: boolean;
     privacy?: PostPrivacy;
 }
@@ -132,7 +128,7 @@ export interface TeaHouseTopic {
     language?: Language;
 }
 
-export type MessageType = 'text' | 'voice' | 'image' | 'video' | 'document';
+export type MessageType = 'text' | 'image' | 'video' | 'document';
 
 export interface TeaHouseMessage {
     id: string;

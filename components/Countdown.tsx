@@ -9,7 +9,8 @@ interface CountdownProps {
 }
 
 const Countdown: React.FC<CountdownProps> = ({ language }) => {
-    const electionDateString = process.env.ELECTION_DATE || '2025-11-11T08:00:00';
+    // Access environment variables from the window.process shim defined in index.html
+    const electionDateString = (window as any).process?.env?.VITE_ELECTION_DATE || '2025-11-11T08:00:00';
     const electionDate = new Date(electionDateString);
     const [days, hours, minutes, seconds] = useCountdown(electionDate);
     const texts = UI_TEXT[language];
@@ -26,19 +27,21 @@ const Countdown: React.FC<CountdownProps> = ({ language }) => {
     ];
 
     return (
-        <div className="glass-card rounded-full p-2 w-full max-w-lg mx-auto">
-            <div className="flex items-center justify-between text-center px-4">
-                <div className="flex items-center space-x-2 rtl:space-x-reverse text-primary font-bold">
-                    <ClockIcon className="w-5 h-5"/>
-                    <span className="text-sm font-arabic">{texts.electionCountdownTitle}</span>
-                </div>
-                <div className="flex items-baseline space-x-3 rtl:space-x-reverse text-theme-text-base" dir="ltr">
-                    {items.map(item => (
-                        <div key={item.label} className="flex items-baseline">
-                            <span className="text-lg font-bold w-8 text-center">{String(item.value).padStart(2, '0')}</span>
-                            <span className="text-[10px] ml-0.5 rtl:ml-0 rtl:mr-0.5 opacity-80">{item.label}</span>
-                        </div>
-                    ))}
+        <div className="flex flex-col items-center gap-2 w-full max-w-md mx-auto">
+            <h3 className="text-sm font-bold text-primary font-arabic flex items-center gap-2">
+                <ClockIcon className="w-5 h-5"/>
+                {texts.electionCountdownTitle}
+            </h3>
+            <div className="glass-card rounded-full p-2 w-full">
+                <div className="flex items-center justify-center text-center px-2">
+                    <div className="flex items-baseline space-x-2 rtl:space-x-reverse text-theme-text-base" dir="ltr">
+                        {items.map(item => (
+                            <div key={item.label} className="flex items-baseline">
+                                <span className="text-lg font-bold w-8 text-center">{String(item.value).padStart(2, '0')}</span>
+                                <span className="text-[10px] ml-0.5 rtl:ml-0 rtl:mr-0.5 opacity-80">{item.label}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

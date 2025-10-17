@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User, UserRole, Governorate, Language, AppTab, Post, HomeViewMode, ThemeName, MainContentTab } from './types.ts';
 import * as api from './services/apiService.ts';
-import { SLUG_PARTY_MAP, GOVERNORATE_SLUG_MAP } from './constants.ts';
 import Header from './components/Header.tsx';
 import Sidebar from './components/Sidebar.tsx';
 import BottomBar from './components/BottomBar.tsx';
@@ -17,8 +16,6 @@ import Spinner from './components/Spinner.tsx';
 // --- Lazy-loaded Components ---
 const HomeView = lazy(() => import('./components/views/HomeView.tsx'));
 const PublicDiscoverView = lazy(() => import('./components/views/PublicDiscoverView.tsx'));
-const TeaHouseView = lazy(() => import('./components/views/TeaHouseView.tsx'));
-const DebateRoomView = lazy(() => import('./components/views/DebateRoomView.tsx'));
 const SettingsView = lazy(() => import('./components/views/SettingsView.tsx'));
 const UserProfileView = lazy(() => import('./components/views/UserProfileView.tsx'));
 const CandidateProfileView = lazy(() => import('./components/views/CandidateProfileView.tsx'));
@@ -69,7 +66,7 @@ const App: React.FC = () => {
     const [language, setLanguage] = useState<Language>('ar');
     const [activeTheme, setActiveTheme] = useState<ThemeName>('euphratesTeal');
 
-    // Filters
+    // Filters (now managed inside HomeView, but kept here for potential global use)
     const [selectedGovernorate, setSelectedGovernorate] = useState<Governorate | 'All'>('All');
     const [selectedParty, setSelectedParty] = useState<string | 'All'>('All');
     const [parties, setParties] = useState<string[]>([]);
@@ -80,7 +77,7 @@ const App: React.FC = () => {
     const [selectedPostForDetail, setSelectedPostForDetail] = useState<Post | null>(null);
     const [selectedStoryUser, setSelectedStoryUser] = useState<User | null>(null);
     const [electionPath, setElectionPath] = useState('/');
-    const [mainHomeTab, setMainHomeTab] = useState<MainContentTab>(AppTab.Posts);
+    const [mainHomeTab, setMainHomeTab] = useState<MainContentTab>(AppTab.Feed);
     
     // --- ROUTING ---
     const [isPublicDiscoverPage, setIsPublicDiscoverPage] = useState(false);
@@ -94,6 +91,16 @@ const App: React.FC = () => {
     // --- EFFECTS ---
     useEffect(() => {
         api.getParties().then(setParties);
+    }, []);
+
+    // Effect for mobile compatibility
+    useEffect(() => {
+        // Mobile compatibility check
+        const isOldMobile = /Android [1-6]|iPhone OS [1-9]/.test(navigator.userAgent);
+        if (isOldMobile) {
+            // Disable backdrop-filter for older devices
+            document.body.classList.add('no-backdrop-filter');
+        }
     }, []);
 
     // Effect for handling language direction (LTR/RTL)
@@ -235,10 +242,6 @@ const App: React.FC = () => {
             case AppTab.Home:
             case AppTab.Discover:
                 return <HomeView {...homeViewProps} />;
-            case AppTab.TeaHouse:
-                return <TeaHouseView user={user} requestLogin={() => setLoginModalOpen(true)} language={language} />;
-            case AppTab.DebateRoom:
-                return <DebateRoomView language={language} />;
             case AppTab.Settings:
                 return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} activeTheme={activeTheme} onChangeTheme={setActiveTheme} language={language} />;
             case AppTab.UserProfile:

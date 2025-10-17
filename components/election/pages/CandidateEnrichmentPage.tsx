@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
 import { SparklesIcon } from '../../icons/Icons.tsx';
 import { useEnrichmentData, useAllCandidates } from '../hooks/useManagementData.ts';
@@ -16,11 +16,11 @@ const CandidateEnrichmentPage: React.FC<{ onNavigate: (path: string) => void }> 
     const { data: enrichmentData, isLoading } = useEnrichmentData(selectedCandidateId);
 
     // Set default selection once candidates load
-    useState(() => {
+    useEffect(() => {
         if (candidates.length > 0 && !selectedCandidateId) {
             setSelectedCandidateId(candidates[0].id);
         }
-    });
+    }, [candidates]);
 
     const selectedCandidate = candidates.find(c => c.id === selectedCandidateId);
     

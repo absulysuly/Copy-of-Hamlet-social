@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState } from 'react';
 import Card from '../components/ui/Card.tsx';
 import Input from '../components/ui/Input.tsx';
@@ -94,13 +95,6 @@ const IntegrityHubPage: React.FC<IntegrityHubPageProps> = ({ language }) => {
                                     label={texts.violationDesc}
                                     required
                                     placeholder={texts.violationDescPlaceholder}
-                                />
-
-                                <Input
-                                    id="evidence"
-                                    name="evidence"
-                                    label={texts.attachEvidence}
-                                    type="file"
                                 />
 
                                 <div className="pt-4 text-center">

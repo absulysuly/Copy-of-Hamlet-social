@@ -24,7 +24,7 @@ const StoryViewModal: React.FC<StoryViewModalProps> = ({ storyUser, onClose, onS
         const fetchStories = async () => {
             setIsLoading(true);
             const userPosts = await api.getPosts({ authorId: storyUser.id });
-            const storyPosts = userPosts.filter(p => p.mediaUrl && p.type !== 'VoiceNote').slice(0, 8); // Limit to 8 stories
+            const storyPosts = userPosts.filter(p => p.mediaUrl).slice(0, 8); // Limit to 8 stories
             
             if (storyPosts.length === 0) {
                  // If no stories, close modal after a short delay
