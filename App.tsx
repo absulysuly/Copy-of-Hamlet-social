@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, AppTab, Post, HomeViewMode, ThemeName, MainContentTab } from './types.ts';
+import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab } from './types.ts';
 import * as api from './services/apiService.ts';
 import Header from './components/Header.tsx';
 import Sidebar from './components/Sidebar.tsx';
@@ -10,7 +10,6 @@ import { colorThemes } from './utils/colorThemes.ts';
 import LanguageSwitcher from './components/LanguageSwitcher.tsx';
 import PostDetailModal from './components/PostDetailModal.tsx';
 import Countdown from './components/Countdown.tsx';
-import { UI_TEXT } from './translations.ts';
 import Spinner from './components/Spinner.tsx';
 
 // --- Lazy-loaded Components ---
@@ -21,44 +20,13 @@ const UserProfileView = lazy(() => import('./components/views/UserProfileView.ts
 const CandidateProfileView = lazy(() => import('./components/views/CandidateProfileView.tsx'));
 const CandidateDashboardView = lazy(() => import('./components/views/CandidateDashboardView.tsx'));
 const FullScreenReelView = lazy(() => import('./components/views/FullScreenReelView.tsx'));
-const ElectionManagementView = lazy(() => import('./components/views/ElectionManagementView.tsx'));
 const StoryViewModal = lazy(() => import('./components/views/StoryViewModal.tsx'));
-const ElectionHero = lazy(() => import('./components/ElectionHero.tsx'));
-
-
-const ModeSwitcher: React.FC<{
-    mode: HomeViewMode;
-    onModeChange: (mode: HomeViewMode) => void;
-    language: Language;
-}> = ({ mode, onModeChange, language }) => {
-    const texts = UI_TEXT[language];
-    const buttonBaseClasses = "w-1/2 py-1.5 text-sm font-semibold rounded-md transition-all duration-300";
-    const activeClasses = "bg-primary text-on-primary shadow-lg";
-    const inactiveClasses = "text-theme-text-muted hover:bg-white/10";
-
-    return (
-        <div className="p-1 rounded-lg bg-black/20 w-full max-w-md flex space-x-1">
-            <button
-                onClick={() => onModeChange('Social')}
-                className={`${buttonBaseClasses} ${mode === 'Social' ? activeClasses : inactiveClasses}`}
-            >
-                {texts.social}
-            </button>
-            <button
-                onClick={() => onModeChange('Election')}
-                className={`${buttonBaseClasses} ${mode === 'Election' ? activeClasses : inactiveClasses}`}
-            >
-                {texts.serious}
-            </button>
-        </div>
-    );
-};
+const HeroSection = lazy(() => import('./components/HeroSection.tsx'));
 
 
 const App: React.FC = () => {
     // --- STATE MANAGEMENT ---
     const [user, setUser] = useState<User | null>(null);
-    const [homeViewMode, setHomeViewMode] = useState<HomeViewMode>('Social');
     const [activeTab, setActiveTab] = useState<AppTab>(AppTab.Home);
     const [isLoginModalOpen, setLoginModalOpen] = useState(false);
     const [isComposeModalOpen, setComposeModalOpen] = useState(false);
@@ -66,7 +34,7 @@ const App: React.FC = () => {
     const [language, setLanguage] = useState<Language>('ar');
     const [activeTheme, setActiveTheme] = useState<ThemeName>('euphratesTeal');
 
-    // Filters (now managed inside HomeView, but kept here for potential global use)
+    // Filters
     const [selectedGovernorate, setSelectedGovernorate] = useState<Governorate | 'All'>('All');
     const [selectedParty, setSelectedParty] = useState<string | 'All'>('All');
     const [parties, setParties] = useState<string[]>([]);
@@ -76,7 +44,6 @@ const App: React.FC = () => {
     const [selectedReel, setSelectedReel] = useState<Post | null>(null);
     const [selectedPostForDetail, setSelectedPostForDetail] = useState<Post | null>(null);
     const [selectedStoryUser, setSelectedStoryUser] = useState<User | null>(null);
-    const [electionPath, setElectionPath] = useState('/');
     const [mainHomeTab, setMainHomeTab] = useState<MainContentTab>(AppTab.Feed);
     
     // --- ROUTING ---
@@ -93,60 +60,21 @@ const App: React.FC = () => {
         api.getParties().then(setParties);
     }, []);
 
-    // Effect for mobile compatibility
-    useEffect(() => {
-        // Mobile compatibility check
-        const isOldMobile = /Android [1-6]|iPhone OS [1-9]/.test(navigator.userAgent);
-        if (isOldMobile) {
-            // Disable backdrop-filter for older devices
-            document.body.classList.add('no-backdrop-filter');
-        }
-    }, []);
-
-    // Effect for handling language direction (LTR/RTL)
     useEffect(() => {
         const isRtl = language === 'ar' || language === 'ku';
         document.documentElement.lang = language;
         document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
     }, [language]);
 
-    // Effect for dual-brand theme switching
     useEffect(() => {
         const root = document.documentElement;
-        const body = document.body;
-        
-        // Determine which theme object to use
-        const theme = homeViewMode === 'Election' 
-            ? colorThemes.electionPortal 
-            : colorThemes[activeTheme];
+        const theme = colorThemes[activeTheme];
             
-        // Apply CSS variables from the selected theme
         for (const [key, value] of Object.entries(theme)) {
             root.style.setProperty(key, value as string);
         }
-        
-        // Add/remove class to body for mode-specific global styles
-        if (homeViewMode === 'Election') {
-            body.classList.add('election-mode');
-            body.classList.remove('social-mode');
-            // When switching to election mode, reset social tab to home
-            // to avoid being stuck on a profile page etc.
-            if(activeTab !== AppTab.Home) setActiveTab(AppTab.Home);
-        } else {
-            body.classList.add('social-mode');
-            body.classList.remove('election-mode');
-        }
-
-    }, [activeTheme, homeViewMode]);
+    }, [activeTheme]);
     
-    // When switching to election mode, set the active tab to the portal root
-     useEffect(() => {
-        if (homeViewMode === 'Election') {
-            setElectionPath('/');
-        }
-    }, [homeViewMode]);
-
-
     // --- HANDLERS ---
     const handleLogin = (loggedInUser: User) => {
         setUser(loggedInUser);
@@ -165,8 +93,6 @@ const App: React.FC = () => {
     const handleNavigate = (tab: AppTab) => {
         setSelectedProfile(null);
         setActiveTab(tab);
-        // Always switch to social mode when a social tab is clicked
-        setHomeViewMode('Social');
     };
 
     const handleSelectProfile = (profile: User) => {
@@ -215,7 +141,7 @@ const App: React.FC = () => {
         )
     }
     
-    const renderSocialContent = () => {
+    const renderContent = () => {
          if (selectedReel) {
             return <FullScreenReelView reel={selectedReel} onClose={() => setSelectedReel(null)} user={user} requestLogin={() => setLoginModalOpen(true)} />
         }
@@ -266,48 +192,36 @@ const App: React.FC = () => {
             
             <Sidebar 
                 user={user} 
-                activeTab={homeViewMode === 'Social' ? activeTab : electionPath} 
-                onNavigate={homeViewMode === 'Social' ? handleNavigate : setElectionPath}
-                homeViewMode={homeViewMode}
+                activeTab={activeTab} 
+                onNavigate={handleNavigate}
                 language={language}
             />
             
             <main className="lg:pl-64 pt-14 pb-16 lg:pb-0">
-                 <div className="px-4 sm:px-6 flex flex-col items-center gap-4">
+                 <div className="px-4 sm:px-6 py-4 flex flex-col items-center gap-4">
                     <LanguageSwitcher
                         language={language}
                         onLanguageChange={setLanguage}
                     />
-                    <ModeSwitcher 
-                        mode={homeViewMode}
-                        onModeChange={setHomeViewMode}
-                        language={language}
-                    />
+                </div>
+                
+                <Suspense fallback={<div className="w-full h-32 flex justify-center items-center"><Spinner /></div>}>
+                    <HeroSection />
+                </Suspense>
+
+                <div className="px-4 sm:px-6 flex flex-col items-center gap-4 my-4">
                     <Countdown language={language} />
                 </div>
+                
                 <Suspense fallback={<div className="flex justify-center items-center p-10"><Spinner /></div>}>
-                    {homeViewMode === 'Social' ? (
-                        renderSocialContent()
-                    ) : (
-                        <div className="p-4 sm:p-6">
-                            <div className="mt-4">
-                                <ElectionHero language={language} />
-                            </div>
-                            <div className="mt-6">
-                                <ElectionManagementView path={electionPath} onNavigate={setElectionPath} language={language} />
-                            </div>
-                        </div>
-                    )}
+                    {renderContent()}
                 </Suspense>
             </main>
             
             <BottomBar 
                 user={user} 
-                homeViewMode={homeViewMode}
-                socialActiveTab={activeTab} 
-                onSocialNavigate={handleNavigate} 
-                electionActivePath={electionPath}
-                onElectionNavigate={setElectionPath}
+                activeTab={activeTab} 
+                onNavigate={handleNavigate} 
                 language={language}
             />
 
