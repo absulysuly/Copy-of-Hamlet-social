@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { Candidate } from '@/lib/types';
 import { Locale } from '@/lib/i18n-config';
 import { FaLandmark, FaUserTie, FaHashtag } from 'react-icons/fa';
-// FIX: Import React to define the component as a React.FC
 import React from 'react';
 
 type CandidateCardProps = {
@@ -12,7 +11,6 @@ type CandidateCardProps = {
   lang: Locale;
 };
 
-// FIX: Define as a React.FC to resolve type issues with the 'key' prop.
 const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, dictionary, lang }) => {
   return (
     <Link href={`/${lang}/candidates/${candidate.id}`}>

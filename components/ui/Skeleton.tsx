@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils';
-// FIX: Add missing React import for React.HTMLAttributes
 import React from 'react';
 
 function Skeleton({

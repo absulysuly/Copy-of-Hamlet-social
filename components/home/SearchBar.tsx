@@ -1,7 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { FaSearch } from 'react-icons/fa';
-// FIX: Add missing React import for React.FormEvent type
 import React from 'react';
 
 type SearchBarProps = {

@@ -12,11 +12,8 @@ export default function Hero({ dictionary, lang }: HeroProps) {
                 aria-hidden="true"
                 className="absolute inset-0 overflow-hidden"
             >
-                <div 
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url("/images/iraq-parliament.jpg")', filter: 'blur(3px)' }}
-                ></div>
-                <div className="absolute inset-0 bg-gray-900 bg-opacity-60"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-red-900/50 via-gray-900 to-green-900/50"></div>
+                <div className="absolute inset-0 bg-black bg-opacity-70"></div>
             </div>
 
             <div className="relative mx-auto flex max-w-3xl flex-col items-center px-6 py-32 text-center sm:py-48 lg:px-8">

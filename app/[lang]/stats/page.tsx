@@ -4,7 +4,6 @@ import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
 import { FaUsers, FaUserCheck, FaMapMarkedAlt } from 'react-icons/fa';
 import StatsClient from '@/components/stats/StatsClient';
-// FIX: Add missing React import for React.ElementType
 import React from 'react';
 
 export async function generateMetadata({
@@ -19,7 +18,6 @@ export async function generateMetadata({
   };
 }
 
-// FIX: Define StatCard as a React.FC to correctly type it as a React component, which resolves the error with the 'key' prop.
 const StatCard: React.FC<{ icon: React.ElementType, title: string, value: string | number }> = ({ icon: Icon, title, value }) => (
     <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
@@ -62,7 +60,6 @@ export default async function StatsPage({
 
       <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {mainStats.map(stat => (
-            // FIX: Pass props explicitly to avoid type errors with spreading while using the 'key' prop.
             <StatCard key={stat.title} icon={stat.icon} title={stat.title} value={stat.value} />
         ))}
       </div>

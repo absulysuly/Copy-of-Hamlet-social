@@ -37,7 +37,6 @@ export default async function CandidatesPage({
   const page = Number(searchParams.page) || 1;
   const limit = 12;
 
-  // FIX: Explicitly pass search parameters to fetchCandidates to ensure correct types.
   const [candidatesResponse, governorates] = await Promise.all([
     fetchCandidates({
       page,

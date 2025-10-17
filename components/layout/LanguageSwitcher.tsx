@@ -17,6 +17,12 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
     return segments.join('/');
   };
 
+  const languageNames: { [key: string]: string } = {
+    en: 'English',
+    ar: 'العربية',
+    ku: 'کوردی'
+  };
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -48,7 +54,7 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
                         : 'text-gray-700 dark:text-gray-300'
                     )}
                   >
-                    {locale === 'en' ? 'English' : 'العربية'}
+                    {languageNames[locale]}
                   </button>
                 )}
               </Menu.Item>
