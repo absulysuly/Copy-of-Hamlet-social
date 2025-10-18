@@ -1,4 +1,3 @@
-import React from 'react';
 import { Language } from '../types.ts';
 import { UI_TEXT } from '../translations.ts';
 
@@ -9,7 +8,11 @@ interface TopNavBarProps<T extends string> {
     language: Language;
 }
 
-const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
+type TextKey = {
+    [K in keyof (typeof UI_TEXT)['en']]: (typeof UI_TEXT)['en'][K] extends string ? K : never;
+}[keyof (typeof UI_TEXT)['en']];
+
+const tabTranslationKeys: Record<string, TextKey> = {
     'Feed': 'feed',
     'Real': 'real',
     'Candidates': 'candidates',
@@ -51,6 +54,6 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
             </nav>
         </div>
     );
-};
+}
 
 export default TopNavBar;

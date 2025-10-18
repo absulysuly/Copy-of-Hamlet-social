@@ -32,6 +32,7 @@ const ApiConnectionRow: React.FC<{ api: { id: string, name: string, status: stri
 
 const ApiConfigPage: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
     const { data: apiData, isLoading } = useApiConfig();
+    const apis = apiData ?? [];
 
     return (
         <div className="p-4 sm:p-6 lg:p-8">
@@ -50,7 +51,7 @@ const ApiConfigPage: React.FC<{ onNavigate: (path: string) => void }> = ({ onNav
                     <p className="p-8 text-center">Loading API statuses...</p>
                 ) : (
                     <div>
-                        {apiData.map((api: any) => <ApiConnectionRow key={api.id} api={api} />)}
+                        {apis.map((api: any) => <ApiConnectionRow key={api.id} api={api} />)}
                     </div>
                 )}
                  <div className="p-4 flex justify-end">

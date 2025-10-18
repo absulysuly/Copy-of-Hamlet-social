@@ -1,24 +1,11 @@
 import type { Metadata } from 'next';
-import { Noto_Sans, Noto_Sans_Arabic } from 'next/font/google';
 import { Locale, i18n } from '@/lib/i18n-config';
-import { dir } from 'i18next';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { getDictionary } from '@/lib/dictionaries';
 import '../globals.css';
 import React from 'react';
-
-const noto_sans = Noto_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-noto-sans',
-});
-const noto_sans_arabic = Noto_Sans_Arabic({
-  subsets: ['arabic'],
-  display: 'swap',
-  variable: '--font-noto-sans-arabic',
-});
 
 export async function generateMetadata({
   params: { lang },
@@ -50,13 +37,10 @@ export default async function RootLayout({
   params: { lang: Locale };
 }) {
   const dictionary = await getDictionary(lang);
+  const rtlLocales = new Set<Locale>(['ar', 'ku']);
+  const documentDirection = rtlLocales.has(lang) ? 'rtl' : 'ltr';
   return (
-    <html
-      lang={lang}
-      dir={dir(lang)}
-      className={`${noto_sans.variable} ${noto_sans_arabic.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={lang} dir={documentDirection} suppressHydrationWarning>
       <body className="flex min-h-screen flex-col bg-gray-50 font-sans text-gray-800 dark:bg-gray-900 dark:text-gray-200">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navbar dictionary={dictionary.nav} lang={lang} />

@@ -1,7 +1,13 @@
 import React from 'react';
 import Card from '../components/ui/Card.tsx';
+import { Language } from '../../../types.ts';
 
-const ElectionHubPage: React.FC = () => {
+interface ElectionHubPageProps {
+    onNavigate: (path: string) => void;
+    language: Language;
+}
+
+const ElectionHubPage: React.FC<ElectionHubPageProps> = () => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="max-w-4xl mx-auto">

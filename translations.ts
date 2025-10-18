@@ -95,6 +95,7 @@ type Translations = {
         following: string;
         shareLinkCopied: string;
         shareNotSupported: string;
+        messageSent: string;
         socialLoginFailed: string;
         registrationFailed: string;
         emailNotVerified: string;
@@ -250,6 +251,10 @@ type Translations = {
         dataCollectionDesc: string;
         contactValidation: string;
         contactValidationDesc: string;
+        contactMP: string;
+        contactMPDesc: string;
+        contactMPPlaceholder: string;
+        sendMessage: string;
         candidateEnrichment: string;
         candidateEnrichmentDesc: string;
         qualityAnalytics: string;
@@ -369,6 +374,7 @@ export const UI_TEXT: Translations = {
         following: 'Following',
         shareLinkCopied: 'Link to post copied to clipboard!',
         shareNotSupported: 'Sharing is not supported on this browser.',
+        messageSent: 'Your message has been sent.',
         socialLoginFailed: 'Social login failed. Please try again.',
         registrationFailed: 'Registration failed. Please try again.',
         emailNotVerified: 'Email not verified yet. Please check your inbox for the verification link.',
@@ -517,6 +523,10 @@ export const UI_TEXT: Translations = {
         dataCollectionDesc: 'Monitor and control the collection of candidate data.',
         contactValidation: 'Contact Validation',
         contactValidationDesc: 'Review the quality of collected contact data.',
+        contactMP: 'Contact this representative',
+        contactMPDesc: 'Send a quick message to share your questions or concerns.',
+        contactMPPlaceholder: 'Write your message...',
+        sendMessage: 'Send message',
         candidateEnrichment: 'Candidate Enrichment',
         candidateEnrichmentDesc: 'View enriched data and analytics for profiles.',
         qualityAnalytics: 'Quality Analytics',
@@ -633,6 +643,7 @@ export const UI_TEXT: Translations = {
         following: "فۆڵۆ کراوە",
         shareLinkCopied: "لینکی پۆستەکە کۆپی کرا!",
         shareNotSupported: "شەیرکردن لەم وێبگەڕەدا پشتگیری نەکراوە.",
+        messageSent: "پەیامەکەت نێردرا.",
         socialLoginFailed: "چوونەژوورەوە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         registrationFailed: "تۆمارکردن سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         emailNotVerified: "ئیمەیڵ پشتڕاست نەکراوەتەوە. تکایە سندوقی نامەکانت بپشکنە.",
@@ -781,6 +792,10 @@ export const UI_TEXT: Translations = {
         dataCollectionDesc: "چاودێری و کۆنترۆڵکردنی کۆکردنەوەی داتای کاندیدەکان.",
         contactValidation: "پشتڕاستکردنەوەی پەیوەندی",
         contactValidationDesc: "پێداچوونەوەی کوالێتی داتای پەیوەندی کۆکراوە.",
+        contactMP: "پەیوەندی بە ئەم نوێنەرەوە بکە",
+        contactMPDesc: "پەیامێکی خێرا بنێرە بۆ هاوبەشی و پرسیارەکانت.",
+        contactMPPlaceholder: "پەیامەکەت بنووسە...",
+        sendMessage: "پەیام بنێرە",
         candidateEnrichment: "دەوڵەمەندکردنی کاندید",
         candidateEnrichmentDesc: "بینینی داتای دەوڵەمەندکراو و شیکاری بۆ پرۆفایلەکان.",
         qualityAnalytics: "شیکاری کوالێتی",
@@ -897,6 +912,7 @@ export const UI_TEXT: Translations = {
         following: "تتابعه",
         shareLinkCopied: "تم نسخ رابط المنشور!",
         shareNotSupported: "المشاركة غير مدعومة في هذا المتصفح.",
+        messageSent: "تم إرسال رسالتك.",
         socialLoginFailed: "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
         registrationFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
         emailNotVerified: "البريد الإلكتروني لم يتم التحقق منه بعد. يرجى مراجعة بريدك الوارد.",
@@ -1045,6 +1061,10 @@ export const UI_TEXT: Translations = {
         dataCollectionDesc: "مراقبة والتحكم في جمع بيانات المرشحين.",
         contactValidation: "التحقق من جهات الاتصال",
         contactValidationDesc: "مراجعة جودة بيانات الاتصال التي تم جمعها.",
+        contactMP: "تواصل مع هذا الممثل",
+        contactMPDesc: "أرسل رسالة سريعة لمشاركة أسئلتك أو اهتماماتك.",
+        contactMPPlaceholder: "اكتب رسالتك...",
+        sendMessage: "إرسال الرسالة",
         candidateEnrichment: "إثراء بيانات المرشحين",
         candidateEnrichmentDesc: "عرض البيانات المثرية والتحليلات للملفات الشخصية.",
         qualityAnalytics: "تحليلات الجودة",

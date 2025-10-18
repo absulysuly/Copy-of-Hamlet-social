@@ -15,7 +15,7 @@ export default async function Home({
     <>
       <Hero dictionary={dictionary.page.home} lang={lang} />
       <HomeStats dictionary={dictionary.page.home} />
-      <FeaturedCandidates dictionary={dictionary.page.home} lang={lang} />
+      <FeaturedCandidates dictionary={dictionary} lang={lang} />
     </>
   );
 }
