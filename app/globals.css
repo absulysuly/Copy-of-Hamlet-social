@@ -6,6 +6,8 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+    --font-noto-sans: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-noto-sans-arabic: 'Segoe UI', 'Arial', sans-serif;
     /* ... other CSS variables ... */
   }
 

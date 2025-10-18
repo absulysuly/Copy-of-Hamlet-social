@@ -6,6 +6,7 @@ export interface Candidate {
   party: string;
   nomination_type: string;
   ballot_number: number;
+  ballotNumber?: number;
 }
 
 export interface PaginatedCandidates {
