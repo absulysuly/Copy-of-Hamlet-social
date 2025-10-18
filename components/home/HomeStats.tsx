@@ -1,4 +1,5 @@
 import { fetchStats } from '@/lib/api';
+import { Stats } from '@/lib/types';
 import { FaUsers, FaUserCheck, FaMapMarkedAlt } from 'react-icons/fa';
 
 type HomeStatsProps = {
@@ -6,7 +7,26 @@ type HomeStatsProps = {
 };
 
 export default async function HomeStats({ dictionary }: HomeStatsProps) {
-  const stats = await fetchStats();
+  let stats: Stats;
+
+  const timeoutPromise = new Promise<never>((_, reject) => 
+    setTimeout(() => reject(new Error('Request timed out after 3 seconds')), 3000)
+  );
+
+  try {
+    stats = await Promise.race([
+      fetchStats(),
+      timeoutPromise
+    ]);
+  } catch (error) {
+    console.error("HomeStats fetch failed or timed out:", error);
+    stats = {
+      total_candidates: 0,
+      gender_distribution: { Male: 0, Female: 0 },
+      candidates_per_governorate: [],
+    };
+  }
+
   const statsData = [
     { name: dictionary.totalCandidates, value: stats.total_candidates.toLocaleString(), icon: FaUsers },
     { name: dictionary.maleCandidates, value: stats.gender_distribution.Male.toLocaleString(), icon: FaUserCheck },

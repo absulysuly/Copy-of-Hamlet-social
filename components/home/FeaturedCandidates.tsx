@@ -1,4 +1,4 @@
-import { fetchTrendingCandidates } from '@/lib/api';
+import { fetchCandidates } from '@/lib/api';
 import { Locale } from '@/lib/i18n-config';
 import CandidateCard from '../candidates/CandidateCard';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ type FeaturedCandidatesProps = {
 }
 
 export default async function FeaturedCandidates({ dictionary, lang }: FeaturedCandidatesProps) {
-    const trendingCandidates = await fetchTrendingCandidates();
+    const { data: candidates } = await fetchCandidates({ limit: 6 });
 
     return (
         <section className="bg-white py-16 dark:bg-gray-800">
@@ -23,7 +23,7 @@ export default async function FeaturedCandidates({ dictionary, lang }: FeaturedC
                     </p>
                 </div>
                 <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {trendingCandidates.map((candidate) => (
+                    {candidates.map((candidate) => (
                         <CandidateCard key={candidate.id} candidate={candidate} dictionary={dictionary} lang={lang} />
                     ))}
                 </div>
