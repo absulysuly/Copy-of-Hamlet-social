@@ -1,99 +1,192 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { User, Post } from "../types.ts";
+/**
+ * Gemini AI Service
+ * Supports two modes via GEMINI_MODE env var:
+ * - 'remote': Use real Gemini API (production)
+ * - 'stub' or undefined: Use deterministic mock (local dev)
+ */
 
-const apiKey = (window as any).process?.env?.API_KEY;
-
-let ai: GoogleGenAI | null = null;
-if (apiKey && apiKey !== 'your_google_gemini_api_key_here') {
-    ai = new GoogleGenAI({ apiKey });
+function resolveMode(): 'remote' | 'stub' {
+  return process.env.GEMINI_MODE === 'remote' ? 'remote' : 'stub';
 }
 
-export const generatePostSuggestion = async (topic: string): Promise<string> => {
-    if (!ai) {
-        // Fallback suggestions
-        const fallbacks = [
-            `Share your thoughts about ${topic} with your community!`,
-            `What's your perspective on ${topic}? Let's discuss!`,
-            `Join the conversation about ${topic} - your voice matters!`,
-            `Share your experience with ${topic} and inspire others!`
-        ];
-        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-    }
-    
+const GEMINI_MODE = resolveMode();
+
+type GeminiTextResponse = { text: string };
+
+async function callRealGemini(prompt: string): Promise<GeminiTextResponse> {
+  // EXISTING PRODUCTION CODE - DO NOT REMOVE
+  const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Gemini API key is not configured');
+  }
+
+  const { GoogleGenAI } = await import('@google/genai');
+  const client = new GoogleGenAI({ apiKey });
+
+  const response = await client.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+  });
+
+  const text = extractTextFromResponse(response);
+  return { text };
+}
+
+function extractTextFromResponse(response: any): string {
+  if (!response) {
+    return '';
+  }
+
+  if (typeof response.text === 'string') {
+    return response.text;
+  }
+
+  if (Array.isArray(response.candidates)) {
+    return response.candidates
+      .map((candidate: any) => {
+        if (!candidate?.content?.parts) {
+          return '';
+        }
+
+        return candidate.content.parts
+          .map((part: any) => (typeof part?.text === 'string' ? part.text : ''))
+          .join('');
+      })
+      .filter(Boolean)
+      .join('\n')
+      .trim();
+  }
+
+  if (response.output_text) {
+    return String(response.output_text);
+  }
+
+  return '';
+}
+
+function getStubResponse(prompt: string): GeminiTextResponse {
+  const lowerPrompt = prompt.toLowerCase();
+
+  if (lowerPrompt.includes('candidate')) {
+    return {
+      text: 'Stubbed candidate analysis: This candidate demonstrates strong leadership qualities. [GEMINI_MODE=stub]',
+    };
+  }
+
+  if (lowerPrompt.includes('summary')) {
+    return {
+      text: 'Stubbed summary: Key points extracted from content. [GEMINI_MODE=stub]',
+    };
+  }
+
+  return {
+    text: 'Stubbed Gemini response. Enable GEMINI_MODE=remote to use real Gemini API. [GEMINI_MODE=stub]',
+  };
+}
+
+export async function generateText(prompt: string): Promise<GeminiTextResponse> {
+  const mode = resolveMode();
+
+  if (mode === 'remote') {
+    console.log('[Gemini] Using remote API');
     try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Generate a short, engaging social media post about: "${topic}"`
-        });
-        return response.text;
+      return await callRealGemini(prompt);
     } catch (error) {
-        console.error("AI service error:", error);
+      console.error('[Gemini] Remote API failed, falling back to stub:', error);
+      return getStubResponse(prompt);
     }
-    
-    // Final fallback
-    return `Share your thoughts about ${topic} with your community!`;
-};
+  }
 
-export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 'ar'): Promise<string> => {
-    if (!text) return "";
-    
-    if (!ai) {
-        return text; // Return original text if no API key or AI client
-    }
-    
-    try {
-        const languageMap = {
-            en: 'English',
-            ku: 'Kurdish (Sorani)',
-            ar: 'Arabic',
-        };
-        
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Translate to ${languageMap[targetLanguage]}: "${text}"`
-        });
-        
-        return response.text;
-    } catch (error) {
-        console.error("Translation error:", error);
-    }
-    
-    return text; // Return original text on error
-};
+  console.log('[Gemini] Using local stub (GEMINI_MODE=stub)');
+  return getStubResponse(prompt);
+}
 
-export const generateLikelyMpResponse = async (candidate: User, question: string, recentPosts: Partial<Post>[]): Promise<string> => {
-    if (!ai) {
-        return "Thank you for your question. As an AI simulation, I'd recommend looking at the candidate's recent posts for information on this topic. A real response would be forthcoming from their office.";
-    }
+export async function generatePostSuggestion(topic: string): Promise<string> {
+  const prompt = `Generate a short, engaging social media post about: "${topic}"`;
+  const fallbackSuggestions = [
+    `Share your thoughts about ${topic} with your community!`,
+    `What's your perspective on ${topic}? Let's discuss!`,
+    `Join the conversation about ${topic} - your voice matters!`,
+    `Share your experience with ${topic} and inspire others!`,
+  ];
 
-    const postSnippets = recentPosts.map(p => `- "${p.content?.substring(0, 100)}..."`).join('\n');
-    const context = `
-        You are simulating a response from an Iraqi Member of Parliament (MP).
-        MP's Profile:
-        - Name: ${candidate.name}
-        - Political Party: ${candidate.party}
-        - Governorate: ${candidate.governorate}
-        - Biography: ${candidate.bio || 'Not provided.'}
-        - Snippets from recent posts:
-        ${postSnippets || '- No recent posts provided.'}
+  const fallback = fallbackSuggestions[0];
 
-        Based *only* on the information above, answer the following question from a citizen.
-        Your response should be in the first person, as if you are the MP.
-        Keep the response concise, professional, and relevant to an Iraqi political context.
-        If the information is not available to answer the question, politely state that you will look into the matter.
-    `;
+  try {
+    const { text } = await generateText(prompt);
+    return text || fallback;
+  } catch (error) {
+    console.error('[Gemini] Failed to generate post suggestion:', error);
+    return fallback;
+  }
+}
 
-    try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Question from citizen: "${question}"`,
-            config: {
-                systemInstruction: context
-            }
-        });
-        return response.text;
-    } catch (error) {
-        console.error("AI MP Response service error:", error);
-        return "An error occurred while generating a response. Please try again.";
-    }
-};
+export async function translateText(text: string, targetLanguage: 'en' | 'ku' | 'ar'): Promise<string> {
+  if (!text) {
+    return '';
+  }
+
+  const mode = resolveMode();
+
+  if (mode !== 'remote') {
+    return text;
+  }
+
+  const languageMap: Record<'en' | 'ku' | 'ar', string> = {
+    en: 'English',
+    ku: 'Kurdish (Sorani)',
+    ar: 'Arabic',
+  };
+
+  const prompt = `Translate to ${languageMap[targetLanguage]}: "${text}"`;
+
+  try {
+    const { text: translated } = await callRealGemini(prompt);
+    return translated || text;
+  } catch (error) {
+    console.error('[Gemini] Translation error:', error);
+    return text;
+  }
+}
+
+export async function generateLikelyMpResponse(
+  candidate: { name?: string; party?: string; governorate?: string; bio?: string },
+  question: string,
+  recentPosts: { content?: string }[],
+): Promise<string> {
+  const postSnippets = recentPosts
+    .map((post) => (post.content ? `- "${post.content.substring(0, 100)}..."` : undefined))
+    .filter(Boolean)
+    .join('\n');
+
+  const context = `
+You are simulating a response from an Iraqi Member of Parliament (MP).
+MP's Profile:
+- Name: ${candidate.name ?? 'Unknown'}
+- Political Party: ${candidate.party ?? 'Unknown'}
+- Governorate: ${candidate.governorate ?? 'Unknown'}
+- Biography: ${candidate.bio ?? 'Not provided.'}
+- Snippets from recent posts:
+${postSnippets || '- No recent posts provided.'}
+
+Based *only* on the information above, answer the following question from a citizen.
+Your response should be in the first person, as if you are the MP.
+Keep the response concise, professional, and relevant to an Iraqi political context.
+If the information is not available to answer the question, politely state that you will look into the matter.
+`;
+
+  const prompt = `${context}\nQuestion from citizen: "${question}"`;
+  const fallback =
+    "Thank you for your question. As an AI simulation, I'd recommend looking at the candidate's recent posts for information on this topic. A real response would be forthcoming from their office.";
+
+  try {
+    const { text } = await generateText(prompt);
+    return text || fallback;
+  } catch (error) {
+    console.error('[Gemini] Failed to generate MP response:', error);
+    return fallback;
+  }
+}
+
+export { GEMINI_MODE };

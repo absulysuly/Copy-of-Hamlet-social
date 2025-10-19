@@ -51,6 +51,6 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
             </nav>
         </div>
     );
-};
+}
 
 export default TopNavBar;

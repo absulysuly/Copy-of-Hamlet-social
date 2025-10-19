@@ -82,3 +82,116 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - **Responsive Design**: The UI adapts seamlessly from mobile to desktop screens.
 - **Dark/Light Mode**: User-configurable theme that persists across sessions.
 - **Dynamic SEO**: Metadata for pages (like candidate profiles) is generated dynamically based on fetched data.
+
+## Environment Variables
+
+### Required for Development
+
+Create `.env.local` and set the following values:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:4001
+GEMINI_MODE=stub
+```
+
+### Environment Variable Reference
+
+- `NEXT_PUBLIC_API_BASE_URL`: Backend API base URL used by the frontend API client.
+- `GEMINI_MODE`: Controls Gemini AI integration behaviour.
+  - `stub` (default): Deterministic mock responses for local development.
+  - `remote`: Calls the real Gemini API (requires `GEMINI_API_KEY` or `NEXT_PUBLIC_GEMINI_API_KEY`).
+- `GEMINI_API_KEY` / `NEXT_PUBLIC_GEMINI_API_KEY`: Optional keys for enabling remote Gemini access.
+
+## Development
+
+### Initial Setup
+
+```bash
+npm install
+cp .env.example .env.local # If the template exists, otherwise create manually
+# Edit .env.local with your environment values
+```
+
+### Running Locally
+
+1. Start the backend API (adjust commands to your backend project):
+
+   ```bash
+   cd backend
+   npm start
+   # Should log: Server: http://localhost:4001
+   ```
+
+2. Start the frontend in a new terminal window:
+
+   ```bash
+   npm run dev
+   ```
+
+3. Verify the setup by running smoke tests and unit tests:
+
+   ```bash
+   npm run smoke
+   npm test
+   ```
+
+### Verification Steps
+
+After starting both servers, verify the following:
+
+- [ ] No hydration warnings appear in the browser console.
+- [ ] Featured candidates render correctly on `/en` and `/ar` routes.
+- [ ] Stats panels display data (or safe fallbacks if the backend is unavailable).
+- [ ] `npm run smoke` passes all API endpoint checks.
+- [ ] `npm test` completes without failures.
+
+### Production Build
+
+```bash
+npm run build
+npm start
+```
+
+## Testing
+
+### Unit Tests
+
+```bash
+npm test          # Run the full test suite once
+npm run test:watch # Watch mode during development
+```
+
+### Smoke Tests
+
+```bash
+npm run smoke
+```
+
+### CI Checks
+
+- Build verification: `npm run build`
+- Unit tests: `npm test`
+- Smoke tests: `npm run smoke`
+- Type checking: `npm run type-check` (if configured)
+
+## Troubleshooting
+
+### API Validation Errors
+
+If you encounter `[API Validation]` console output:
+
+1. Confirm the backend response structure matches the schemas in `lib/api.ts`.
+2. Review the logged payload sample (development mode only) for discrepancies.
+3. Update the Zod schemas if the API contract changed intentionally.
+
+### Hydration Warnings
+
+1. Ensure the `<html>` `dir` attribute is set server-side in `app/[lang]/layout.tsx`.
+2. Disable browser extensions that might inject client-side scripts.
+3. View the page source to confirm the server-rendered HTML matches expectations.
+
+### Gemini Service Issues
+
+1. Check the `GEMINI_MODE` environment variable.
+2. Use `stub` for predictable local development responses.
+3. Set `GEMINI_MODE=remote` and provide an API key only when real AI responses are required.
