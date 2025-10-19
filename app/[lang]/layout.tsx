@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Noto_Sans, Noto_Sans_Arabic } from 'next/font/google';
 import { Locale, i18n } from '@/lib/i18n-config';
-import { dir } from 'i18next';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -49,17 +48,23 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { lang: Locale };
 }) {
-  const dictionary = await getDictionary(lang);
+  const currentLang = lang || 'en';
+  const direction = currentLang === 'ar' || currentLang === 'ku' ? 'rtl' : 'ltr';
+  const dictionary = await getDictionary(currentLang);
   return (
     <html
-      lang={lang}
-      dir={dir(lang)}
+      lang={currentLang}
+      dir={direction}
       className={`${noto_sans.variable} ${noto_sans_arabic.variable}`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-screen flex-col bg-gray-50 font-sans text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+      <body
+        className={`flex min-h-screen flex-col bg-gray-50 font-sans text-gray-800 dark:bg-gray-900 dark:text-gray-200 ${
+          direction === 'rtl' ? 'rtl' : 'ltr'
+        }`}
+      >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Navbar dictionary={dictionary.nav} lang={lang} />
+          <Navbar dictionary={dictionary.nav} lang={currentLang} />
           <main className="flex-grow">{children}</main>
           <Footer dictionary={dictionary.footer} />
         </ThemeProvider>
