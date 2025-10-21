@@ -1,4 +1,3 @@
-import React from 'react';
 import { Language } from '../types.ts';
 import { UI_TEXT } from '../translations.ts';
 
@@ -51,6 +50,6 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
             </nav>
         </div>
     );
-};
+}
 
 export default TopNavBar;
