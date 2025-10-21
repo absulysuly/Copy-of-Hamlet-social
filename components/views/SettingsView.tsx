@@ -36,6 +36,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({ isHighContrast, onToggleCon
     const [ttsEnabled, setTtsEnabled] = useState(true);
     const texts = UI_TEXT[language];
 
+    // Read version from the shimmed process.env object in index.html
+    const appVersion = (window as any).process?.env?.VITE_APP_VERSION || '0.0.0';
+
     return (
         <div className="max-w-3xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">{texts.accessibilityDisplay}</h2>
@@ -59,6 +62,16 @@ const SettingsView: React.FC<SettingsViewProps> = ({ isHighContrast, onToggleCon
                     checked={ttsEnabled}
                     onChange={() => setTtsEnabled(p => !p)}
                 />
+            </div>
+            
+            <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-4">{texts.aboutApp.replace('{appName}', texts.appName)}</h2>
+                <div className="glass-card rounded-lg shadow-sm p-6">
+                    <p className="text-sm text-theme-text-muted">{texts.appDescription}</p>
+                    <div className="mt-4 pt-4 border-t border-[var(--color-glass-border)]">
+                        <p className="text-xs text-theme-text-muted font-mono">{texts.version} {appVersion}</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

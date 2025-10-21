@@ -271,6 +271,9 @@ type Translations = {
         loginToVoterPortal: string;
         loginToCandidatePortal: string;
         empoweringWomenInPolitics: string;
+        aboutApp: string;
+        version: string;
+        appDescription: string;
     }
 }
 
@@ -538,6 +541,9 @@ export const UI_TEXT: Translations = {
         loginToVoterPortal: 'Login / Sign Up for Voters',
         loginToCandidatePortal: 'Login / Sign Up for Candidates',
         empoweringWomenInPolitics: 'A dedicated space to discover and support women candidates.',
+        aboutApp: 'About {appName}',
+        version: 'Version',
+        appDescription: 'A safe, engaging space for Iraqis to discuss politics, share concerns, and hold leaders accountable — using voice, text, and community moderation to foster inclusive dialogue before, during, and after elections.',
     },
     ku: {
         appName: 'هەڵمەتی زیرەک',
@@ -802,6 +808,9 @@ export const UI_TEXT: Translations = {
         loginToVoterPortal: "چوونەژوورەوە / تۆمارکردن بۆ دەنگدەران",
         loginToCandidatePortal: "چوونەژوورەوە / تۆمارکردن بۆ کاندیدان",
         empoweringWomenInPolitics: "شوێنێکی تایبەت بۆ دۆزینەوە و پشتگیریکردنی کاندیدە ژنەکان.",
+        aboutApp: 'دەربارەی {appName}',
+        version: 'وەشان',
+        appDescription: 'شوێنێکی سەلامەت و بەشداریکەر بۆ عێراقییەکان بۆ گفتوگۆکردنی سیاسەت، هاوبەشکردنی نیگەرانییەکان، و لێپرسینەوە لە سەرکردەکان — بە بەکارهێنانی دەنگ، نووسین، و میانڕەوی کۆمەڵگە بۆ پەرەپێدانی گفتوگۆی گشتگیر پێش، لە کاتی، و دوای هەڵبژاردنەکان.',
     },
     ar: {
         appName: 'الحملة الذكية',
@@ -1066,5 +1075,8 @@ export const UI_TEXT: Translations = {
         loginToVoterPortal: "تسجيل الدخول / إنشاء حساب للناخبين",
         loginToCandidatePortal: "تسجيل الدخول / إنشاء حساب للمرشحين",
         empoweringWomenInPolitics: "مساحة مخصصة لاكتشاف ودعم المرشحات.",
+        aboutApp: 'حول {appName}',
+        version: 'الإصدار',
+        appDescription: 'مساحة آمنة وجذابة للعراقيين لمناقشة السياسة ومشاركة المخاوف ومساءلة القادة - باستخدام الصوت والنص والإشراف المجتمعي لتعزيز الحوار الشامل قبل الانتخابات وأثناءها وبعدها.',
     }
 };
