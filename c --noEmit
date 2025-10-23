@@ -1,0 +1,337 @@
+[1mdiff --git a/.github/CODEOWNERS b/.github/CODEOWNERS[m
+[1mnew file mode 100644[m
+[1mindex 0000000..b777358[m
+[1m--- /dev/null[m
+[1m+++ b/.github/CODEOWNERS[m
+[36m@@ -0,0 +1,9 @@[m
+[32m+[m[32m# Frontend owners (review required for frontend changes)[m
+[32m+[m[32mfrontend/ @absulysuly[m
+[32m+[m
+[32m+[m[32m# Backend owners (review required for backend changes)[m
+[32m+[m[32mbackend/ @absulysuly[m
+[32m+[m
+[32m+[m[32m# Data and automation owners[m
+[32m+[m[32mdata/ @absulysuly[m
+[32m+[m[32mai-automation/ @absulysuly[m
+[1mdiff --git a/.github/PULL_REQUEST_TEMPLATE.md b/.github/PULL_REQUEST_TEMPLATE.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..fcf9a39[m
+[1m--- /dev/null[m
+[1m+++ b/.github/PULL_REQUEST_TEMPLATE.md[m
+[36m@@ -0,0 +1,15 @@[m
+[32m+[m[32m## Summary[m
+[32m+[m[32mWhat does this PR change? (1–2 sentences)[m
+[32m+[m
+[32m+[m[32m## Related issues[m
+[32m+[m[32m- Closes: # (issue number)[m
+[32m+[m
+[32m+[m[32m## Checklist[m
+[32m+[m[32m- [ ] Code builds locally[m
+[32m+[m[32m- [ ] Lint passes[m
+[32m+[m[32m- [ ] Tests added/updated (if applicable)[m
+[32m+[m[32m- [ ] Documentation updated[m
+[32m+[m[32m- [ ] Target branch correct (team branch or main)[m
+[32m+[m
+[32m+[m[32m## Deployment notes / migrations[m
+[32m+[m[32m- Any .env or DB migrations required:[m
+[1mdiff --git a/CONTRIBUTING.md b/CONTRIBUTING.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f175038[m
+[1m--- /dev/null[m
+[1m+++ b/CONTRIBUTING.md[m
+[36m@@ -0,0 +1,37 @@[m
+[32m+[m[32m# Contributing[m
+[32m+[m
+[32m+[m[32mBranch model[m
+[32m+[m[32m- main — protected, always deployable.[m
+[32m+[m[32m- team branches: frontend, backend, data, ai-automation, marketing, future-features.[m
+[32m+[m[32m- Feature branches: feat/<team>/<short-desc> created from the team branch.[m
+[32m+[m
+[32m+[m[32mPR workflow[m
+[32m+[m[32m1. Create a feature branch from your team branch.[m
+[32m+[m[32m2. Open PR → team branch for internal review.[m
+[32m+[m[32m3. When team branch ready, open PR from team branch → main.[m
+[32m+[m[32m4. PRs into main require at least one reviewer and passing CI.[m
+[32m+[m
+[32m+[m[32mPR checklist[m
+[32m+[m[32m- Code builds locally[m
+[32m+[m[32m- Lint/format passes[m
+[32m+[m[32m- Tests added (if applicable)[m
+[32m+[m[32m- Docs updated[m
+[32m+[m[32m- Target branch correct[m
+[32m+[m
+[32m+[m[32mCoding standards[m
+[32m+[m[32m- TypeScript with "strict": true[m
+[32m+[m[32m- Zod for runtime validation on API inputs[m
+[32m+[m[32m- Tailwind for styling; use RTL-aware utilities for Arabic[m
+[32m+[m[32m- Keep PRs small (<300 LOC) to reduce merge conflicts[m
+[32m+[m
+[32m+[m[32mCI / Quality gates[m
+[32m+[m[32m- Each PR must run lint/build/test (GH Actions)[m
+[32m+[m[32m- Require 1 reviewer for team branches and 1 reviewer + CI for main[m
+[32m+[m
+[32m+[m[32mCommunications[m
+[32m+[m[32m- Daily standup posts in Slack #general (15 minutes)[m
+[32m+[m[32m- Use Trello/Notion for task tracking (Backlog | In Progress | Review | Done)[m
+[32m+[m
+[32m+[m[32mSecurity & Secrets[m
+[32m+[m[32m- Never commit .env or secrets[m
+[32m+[m[32m- Add service keys to GitHub Actions secrets (SUPABASE_URL, SUPABASE_SERVICE_ROLE, SENDGRID_KEY, TWILIO_*))[m
+\ No newline at end of file[m
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 617c7a1..95c4e5f 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -1,80 +1,25 @@[m
+[31m-# Hamlet - Civic Social Platform[m
+[31m-[m
+[31m-Hamlet is a single-page civic social platform designed to surface verified candidate content by governorate for Iraq’s 2025 national election. It supports various content formats (posts, reels, events, debates), integrates social media features, and is designed to be fully accessible and bilingual (English, Arabic, Sorani Kurdish).[m
+[31m-[m
+[31m-## Project Structure[m
+[31m-[m
+[31m-The application is a modern, single-page application built with React and TypeScript, styled with Tailwind CSS. It operates without a traditional build tool like Vite or Create React App, using ES modules directly in the browser via an `importmap`.[m
+[31m-[m
+[31m-```[m
+[31m-/[m
+[31m-├── components/[m
+[31m-│   ├── icons/[m
+[31m-│   │   └── Icons.tsx         # SVG icons as React components[m
+[31m-│   ├── views/[m
+[31m-│   │   ├── compose/[m
+[31m-│   │   │   ├── EventComposer.tsx # UI for creating events[m
+[31m-│   │   │   └── ReelComposer.tsx  # UI for creating reels[m
+[31m-│   │   ├── CandidatesView.tsx  # View for listing candidates[m
+[31m-│   │   ├── CandidateProfileView.tsx # Detailed view for a single candidate[m
+[31m-│   │   ├── ComposeView.tsx     # Main post composer UI[m
+[31m-│   │   ├── DebatesView.tsx     # View for listing debates[m
+[31m-│   │   ├── ...and other views...[m
+[31m-│   ├── BottomBar.tsx         # Mobile navigation[m
+[31m-│   ├── CandidatePill.tsx     # Compact candidate display component[m
+[31m-│   ├── Header.tsx            # Main application header[m
+[31m-│   ├── HeroSection.tsx       # Image carousel on the home page[m
+[31m-│   ├── LanguageSwitcher.tsx  # UI for changing language[m
+[31m-│   ├── LoginModal.tsx        # Login/Registration modal[m
+[31m-│   ├── PostCard.tsx          # Component for displaying a single post[m
+[31m-│   ├── Sidebar.tsx           # Desktop sidebar navigation[m
+[31m-│   ├── Stories.tsx           # Horizontal stories component[m
+[31m-│   └── TopNavBar.tsx         # Reusable tab navigation[m
+[31m-├── services/[m
+[31m-│   └── geminiService.ts      # Service for interacting with the Google Gemini API[m
+[31m-├── App.tsx                   # Main application component, manages state and views[m
+[31m-├── constants.ts              # Mock data for users, posts, etc.[m
+[31m-├── index.html                # The single HTML entry point[m
+[31m-├── index.tsx                 # Renders the React application[m
+[31m-├── translations.ts           # Contains all UI text for EN, KU, AR[m
+[31m-└── types.ts                  # TypeScript type definitions[m
+[31m-```[m
+[31m-[m
+[31m-## Key Files & Features[m
+[31m-[m
+[31m--   **`App.tsx`**: The core of the application. It manages all major state, including the current user, active view, selected language, and modal visibility. This is the central hub for application logic.[m
+[31m--   **`components/views/HomeView.tsx`**: The main dashboard that users see. It aggregates multiple components like the `HeroSection`, `Stories`, and the main content feed, which is tabbed to show Posts, Reels, Events, etc.[m
+[31m--   **`constants.ts`**: Currently, all data is mocked and stored here. This file is the primary target for replacement when integrating a backend.[m
+[31m--   **`translations.ts`**: A simple but effective internationalization (i18n) solution. All display text is pulled from this file based on the selected language.[m
+[31m--   **Guest Mode & Login Flow**: The app starts in a "guest" mode where content is viewable. Interactions (liking, commenting, viewing reels) are intercepted by the `requestLogin` function, which opens the `LoginModal` to encourage sign-ups.[m
+[31m-[m
+[31m-## Next Steps: Integrating a Backend[m
+[31m-[m
+[31m-This foundational code is designed for easy integration with a real backend API. Here are the recommended steps:[m
+[31m-[m
+[31m-1.  **Replace Mock Data with API Calls:**[m
+[31m-    -   In components like `HomeView.tsx`, `CandidatesView.tsx`, etc., replace direct imports from `constants.ts` with `useEffect` hooks that fetch data from your API.[m
+[31m-    -   Create a dedicated `apiService.ts` file to centralize `fetch` or `axios` logic for endpoints like `/posts`, `/users`, `/events`, etc.[m
+[31m-    -   Example: In `HomeView.tsx`, instead of `const socialPosts = MOCK_POSTS.filter(...)`, you would have:[m
+[31m-        ```typescript[m
+[31m-        const [posts, setPosts] = useState<Post[]>([]);[m
+[31m-        useEffect(() => {[m
+[31m-          // apiService.getPosts(selectedGovernorate).then(setPosts);[m
+[31m-        }, [selectedGovernorate]);[m
+[31m-        ```[m
+[31m-[m
+[31m-2.  **Implement Real Authentication:**[m
+[31m-    -   In `LoginModal.tsx`, modify `handleSelectRole` to call your API's `/login` or `/register` endpoint.[m
+[31m-    -   Upon successful login, the API should return a user object and a token (e.g., JWT).[m
+[31m-    -   Store the token securely (e.g., in an HttpOnly cookie or `localStorage`) and update the `user` state in `App.tsx`.[m
+[31m-    -   Implement a `useEffect` hook in `App.tsx` to check for a valid token on initial load to keep the user logged in.[m
+[31m-[m
+[31m-3.  **Connect "Compose" Functionality:**[m
+[31m-    -   In `ComposeView.tsx`, `ReelComposer.tsx`, and `EventComposer.tsx`, the `onPost`, `onCreateReel`, and `onCreateEvent` handlers should be wired to make `POST` requests to your backend API.[m
+[31m-    -   Handle form data, including file uploads for reels, and send it to the appropriate endpoints.[m
+[31m-[m
+[31m-4.  **Secure the Gemini API Key:**[m
+[31m-    -   The `geminiService.ts` currently expects `process.env.API_KEY`. In a production environment, this client-side call is insecure.[m
+[31m-    -   **Action:** Create a backend endpoint (e.g., `/api/generate-suggestion`) that securely calls the Gemini API from the server. The client-side `generatePostSuggestion` function should then call this new backend endpoint instead of the Gemini API directly.[m
+[31m-[m
+[31m-By following these steps, you can transition the application from a mock-data prototype to a fully functional, data-driven platform.[m
+[32m+[m[32m# ProjectMVP — Iraqi Election Platform (Operation Phoenix)[m
+[32m+[m
+[32m+[m[32mThis repository is the coordination point for the MVP built from the Hamlet Unified assets.[m
+[32m+[m
+[32m+[m[32mBranches[m
+[32m+[m[32m- main — protected, always deployable[m
+[32m+[m[32m- frontend — Google AI Studio (UI)[m
+[32m+[m[32m- backend — GitHub Copilot team (API)[m
+[32m+[m[32m- data — Data collection & enrichment[m
+[32m+[m[32m- ai-automation — n8n, prompts, automation[m
+[32m+[m[32m- marketing — outreach and templates[m
+[32m+[m[32m- future-features — Cursor team (refactors, Prisma)[m
+[32m+[m
+[32m+[m[32mQuick start[m
+[32m+[m[32m1. Clone: git clone https://github.com/absulysuly/Copy-of-Hamlet-social.git[m
+[32m+[m[32m2. Create team branches (if not present): git checkout -b frontend origin/main[m
+[32m+[m[32m3. Place code into frontend/, backend/, data/ and open PRs per CONTRIBUTING.md[m
+[32m+[m
+[32m+[m[32m3-Day MVP summary[m
+[32m+[m[32m- Day 1: DB + Backend (Prisma schema, GET endpoints, seed)[m
+[32m+[m[32m- Day 2: Frontend integration (CandidatesView → real API, CandidateProfile)[m
+[32m+[m[32m- Day 3: Deploy + outreach (Vercel, Render, SendGrid test batch)[m
+[32m+[m
+[32m+[m[32mCoordinator[m
+[32m+[m[32m- Heather (project director) — approves merges to main, triages blockers, oversees timelines.[m
+\ No newline at end of file[m
+[1mdiff --git a/package.json b/package.json[m
+[1mindex 9c25e56..782ea6e 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -9,7 +9,11 @@[m
+     "preview": "vite preview"[m
+   },[m
+   "dependencies": {[m
+[32m+[m[32m<<<<<<< HEAD[m
+     "@google/genai": "^0.14.2",[m
+[32m+[m[32m=======[m
+[32m+[m[32m    "@google/genai": "^1.25.0",[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+     "react": "^18.2.0",[m
+     "react-dom": "^18.2.0"[m
+   },[m
+[1mdiff --git a/services/apiService.ts b/services/apiService.ts[m
+[1mindex 27c7659..652268a 100644[m
+[1m--- a/services/apiService.ts[m
+[1m+++ b/services/apiService.ts[m
+[36m@@ -80,11 +80,15 @@[m [mexport const getUsers = (filters: { role?: UserRole, governorate?: Governorate |[m
+     return simulateFetch(users);[m
+ };[m
+ [m
+[32m+[m[32m<<<<<<< HEAD[m
+ export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' } = {}): Promise<Post[]> => {[m
+     if (!USE_MOCKS) {[m
+       return realFetch('/posts', { method: 'GET' });[m
+     }[m
+ [m
+[32m+[m[32m=======[m
+[32m+[m[32mexport const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+     let posts = MOCK_POSTS;[m
+     if (filters.type) {[m
+         posts = posts.filter(p => p.type === filters.type);[m
+[36m@@ -108,6 +112,14 @@[m [mexport const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, g[m
+     });[m
+ [m
+     return simulateFetch(sortedPosts);[m
+[32m+[m[32m<<<<<<< HEAD[m
+[32m+[m[32m=======[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mexport const getWhispers = (filters: {}): Promise<Post[]> => {[m
+[32m+[m[32m    const sorted = MOCK_WHISPERS.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));[m
+[32m+[m[32m    return simulateFetch(sorted);[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+ };[m
+ [m
+ export const getWhispers = (filters: {} = {}): Promise<Post[]> => {[m
+[36m@@ -126,7 +138,11 @@[m [mexport const getEvents = (filters: { governorate?: Governorate | 'All', party?:[m
+     return simulateFetch(events);[m
+ };[m
+ [m
+[32m+[m[32m<<<<<<< HEAD[m
+ export const getArticles = (filters: { governorate?: Governorate | 'All' } = {}): Promise<Article[]> => {[m
+[32m+[m[32m=======[m
+[32m+[m[32mexport const getArticles = (filters: { governorate?: Governorate | 'All' }): Promise<Article[]> => {[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+     return simulateFetch(MOCK_ARTICLES);[m
+ };[m
+ [m
+[36m@@ -162,15 +178,21 @@[m [mexport const createPost = async (postDetails: Partial<Post>, author: User): Prom[m
+         type: 'Post',[m
+         ...postDetails,[m
+     };[m
+[32m+[m[32m<<<<<<< HEAD[m
+     // Add to mocked posts at the front[m
+     MOCK_POSTS.unshift(newPost);[m
+[32m+[m[32m=======[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+     return simulateFetch(newPost);[m
+ };[m
+ [m
+ export const createReel = (details: { caption: string }, author: User): Promise<Post> => {[m
+[32m+[m[32m<<<<<<< HEAD[m
+     if (!USE_MOCKS) {[m
+       return realFetch('/reels', { method: 'POST', body: JSON.stringify(details) });[m
+     }[m
+[32m+[m[32m=======[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+     const newReel: Post = {[m
+         id: `reel-${Date.now()}`,[m
+         author: author,[m
+[36m@@ -182,7 +204,10 @@[m [mexport const createReel = (details: { caption: string }, author: User): Promise<[m
+         type: 'Reel',[m
+         mediaUrl: 'https://picsum.photos/seed/newreel/400/700'[m
+     };[m
+[32m+[m[32m<<<<<<< HEAD[m
+     MOCK_POSTS.unshift(newReel);[m
+[32m+[m[32m=======[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+     return simulateFetch(newReel);[m
+ };[m
+ [m
+[36m@@ -200,6 +225,7 @@[m [mexport const socialLogin = (provider: 'google' | 'facebook'): Promise<User> => {[m
+     return simulateFetch(MOCK_USERS.find(u => u.role === UserRole.Voter)!);[m
+ };[m
+ [m
+[32m+[m
+ export const registerUser = (details: { name: string; email: string; role: UserRole }): Promise<User> => {[m
+     const newUser: User = {[m
+         id: `user-${Date.now()}`,[m
+[36m@@ -216,6 +242,7 @@[m [mexport const registerUser = (details: { name: string; email: string; role: UserR[m
+     return simulateFetch(newUser);[m
+ };[m
+ [m
+[32m+[m
+ export const checkVerificationStatus = (userId: string): Promise<User | null> => {[m
+     const user = MOCK_USERS.find(u => u.id === userId);[m
+     if (user) {[m
+[36m@@ -242,6 +269,7 @@[m [mexport const followCandidate = (candidateId: string): Promise<{ success: boolean[m
+     return simulateFetch({ success: true });[m
+ };[m
+ [m
+[32m+[m[32m<<<<<<< HEAD[m
+ // Updated likePost with mock + real behavior[m
+ export const likePost = async (postId: string): Promise<{ success: boolean; likes?: number }> => {[m
+   if (!USE_MOCKS) {[m
+[36m@@ -291,6 +319,13 @@[m [mexport const addComment = async (postId: string, comment: { authorId: string; co[m
+   }[m
+   return simulateFetch({ success: false });[m
+ };[m
+[32m+[m[32m=======[m
+[32m+[m[32mexport const likePost = (postId: string): Promise<{ success: boolean }> => {[m
+[32m+[m[32m    console.log(`(Mock API) Liked post: ${postId}`);[m
+[32m+[m[32m    return simulateFetch({ success: true });[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+ [m
+ // --- Tea House API ---[m
+ export const getTeaHouseTopics = (language: Language): Promise<TeaHouseTopic[]> => {[m
+[36m@@ -399,7 +434,11 @@[m [mexport const getContactValidationData = (): Promise<any[]> => {[m
+ [m
+ export const getEnrichmentData = (candidateId: string): Promise<any> => {[m
+     return simulateFetch({[m
+[32m+[m[32m<<<<<<< HEAD[m
+         politicalProfile: 'Leans socially conservative with a focus on economic liberalization. Strong proponent of foreign investment and developing the private sector. Has voted consistently for broad economic reforms.',[m
+[32m+[m[32m=======[m
+[32m+[m[32m        politicalProfile: 'Leans socially conservative with a focus on economic liberalization. Strong proponent of foreign investment and developing the private sector. Has voted consistently for measures that reduce government spending.',[m
+[32m+[m[32m>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f[m
+         influence: { socialReach: 120500, engagementRate: 4.5, sentiment: 'Positive' },[m
+     });[m
+ };[m
