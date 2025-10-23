@@ -54,15 +54,15 @@ const ElectionManagementView: React.FC<ElectionManagementViewProps> = ({ path, o
             case '/parties':
                 return <PartiesPage {...pageProps} />;
             case '/election-hub':
-                return <ElectionHubPage />;
+                return <ElectionHubPage {...pageProps} />;
              case '/privacy-policy':
-                return <PrivacyPolicyPage />;
+                return <PrivacyPolicyPage {...pageProps} />;
             case '/terms-of-service':
-                return <TermsOfServicePage />;
+                return <TermsOfServicePage {...pageProps} />;
             case '/pricing':
-                return <PricingPage />;
+                return <PricingPage {...pageProps} />;
             case '/compare':
-                return <CandidateComparisonPage />;
+                return <CandidateComparisonPage {...pageProps} />;
              case '/voter-registration':
                 return <VoterRegistrationPage {...pageProps} />;
             // New Data Management Routes

@@ -44,7 +44,7 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
                             onClick={() => onTabChange(tab)}
                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
                         >
-                            {label as string}
+                            {label}
                         </button>
                     );
                 })}
