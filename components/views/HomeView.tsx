@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types.ts';
 import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
 import { UI_TEXT } from '../../translations.ts';
@@ -12,13 +12,14 @@ import TopNavBar from '../TopNavBar.tsx';
 import Spinner from '../Spinner.tsx';
 import ReelsView from './ReelsView.tsx';
 import CandidatesView from './CandidatesView.tsx';
-import DebatesView from './DebatesView.tsx';
-import TeaHouseView from './TeaHouseView.tsx';
-import EventsView from './EventsView.tsx';
 import ReelComposer from './compose/ReelComposer.tsx';
-import EventComposer from './compose/EventComposer.tsx';
-import SeriousnessView from './SeriousnessView.tsx';
-import WomenCandidatesView from './WomenCandidatesView.tsx';
+import SkeletonPostCard from '../SkeletonPostCard.tsx';
+
+// Lazy load views
+const WhisperView = lazy(() => import('./WhisperView.tsx'));
+const WomenCandidatesView = lazy(() => import('./WomenCandidatesView.tsx'));
+const MinoritiesView = lazy(() => import('./MinoritiesView.tsx'));
+const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView.tsx'));
 
 
 interface HomeViewProps {
@@ -39,64 +40,62 @@ interface HomeViewProps {
     onCompose: () => void;
 }
 
-const TABS_WITH_FILTERS: MainContentTab[] = [AppTab.Posts, AppTab.Reels, AppTab.Candidates, AppTab.Debates, AppTab.Events, AppTab.Articles];
-const TABS_WITH_HERO: MainContentTab[] = [AppTab.Posts];
-const SUB_TABS: MainContentTab[] = [AppTab.Posts, AppTab.Reels, AppTab.Candidates, AppTab.WomenCandidates, AppTab.Debates, AppTab.Events, AppTab.Articles, AppTab.TeaHouse];
+const SUB_TABS: MainContentTab[] = [AppTab.Feed, AppTab.Real, AppTab.Candidates, AppTab.Women, AppTab.Minorities, AppTab.Whisper, AppTab.Components];
 
+const getThemeClassForTab = (tab: MainContentTab) => {
+    switch (tab) {
+        case AppTab.Real: return 'theme-reels';
+        case AppTab.Candidates: return 'theme-candidates';
+        case AppTab.Whisper: return 'theme-whisper';
+        default: return 'theme-default';
+    }
+};
 
 const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose }) => {
     
     // --- STATE FOR ASYNC DATA ---
     const [socialPosts, setSocialPosts] = useState<Post[]>([]);
     const [candidates, setCandidates] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+    const [genderFilter, setGenderFilter] = useState<'All' | 'Male' | 'Female'>('All');
 
-    // --- DATA FETCHING ---
+    // --- DATA FETCHING FOR FEED ---
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const filters = { governorate: selectedGovernorate, party: selectedParty };
-                const postsPromise = api.getPosts(filters);
-                const candidatesPromise = api.getUsers({ role: UserRole.Candidate, ...filters });
-                
-                const [postsData, candidatesData] = await Promise.all([postsPromise, candidatesPromise]);
-                
-                setSocialPosts(postsData);
-                setCandidates(candidatesData);
-            } catch (error) {
-                console.error("Failed to fetch home view data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [selectedGovernorate, selectedParty]);
+        if (activeTab === AppTab.Feed) {
+            const fetchFeedData = async () => {
+                setIsLoadingPosts(true);
+                try {
+                    const postsPromise = api.getPosts({ governorate: selectedGovernorate, party: selectedParty });
+                    const candidatesPromise = api.getUsers({ role: UserRole.Candidate, governorate: selectedGovernorate, party: selectedParty });
+                    const [postsData, candidatesData] = await Promise.all([postsPromise, candidatesPromise]);
+                    setSocialPosts(postsData);
+                    setCandidates(candidatesData); // Used for stories and who-to-follow
+                } catch (error) {
+                    console.error("Failed to fetch feed data:", error);
+                } finally {
+                    setIsLoadingPosts(false);
+                }
+            };
+            fetchFeedData();
+        }
+    }, [activeTab, selectedGovernorate, selectedParty]);
 
     // --- API HANDLERS ---
     const handlePost = (postDetails: Partial<Post>) => {
         if (!user) return;
         api.createPost(postDetails, user).then(newPost => {
-            setSocialPosts(prevPosts => [newPost, ...prevPosts]);
-             alert("Post created successfully (simulation).");
+            if (activeTab === AppTab.Feed) {
+                setSocialPosts(prevPosts => [newPost, ...prevPosts]);
+            }
+            alert("Post created successfully (simulation).");
         });
     };
     
     const handleCreateReel = (reelDetails: { caption: string; videoFile?: File }) => {
         if (!user) return;
         api.createReel(reelDetails, user).then(newReel => {
-            // In a real app, you might want a separate state for reels
             console.log("New reel created (simulation):", newReel);
             alert("Reel created successfully (simulation).");
-        });
-    };
-    
-    const handleCreateEvent = (eventDetails: { title: string; date: string; location: string; }) => {
-        if (!user) return;
-        api.createEvent(eventDetails, user).then(newEvent => {
-            console.log("New event created (simulation):", newEvent);
-            alert("Event created successfully (simulation).");
         });
     };
 
@@ -114,91 +113,39 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
     const storyCandidates = candidates.slice(0, 10);
     const texts = UI_TEXT[language];
     
-    const showHeroAndStories = TABS_WITH_HERO.includes(activeTab);
-    const showFilters = TABS_WITH_FILTERS.includes(activeTab);
-
-    const MobileFilterBar = () => (
-        <div className="sm:hidden flex gap-4 p-3 bg-black/20 backdrop-blur-sm my-4 rounded-lg border border-[var(--color-glass-border)]">
-            {/* Governorate Filter */}
-            <div className="flex-1">
-                <label htmlFor="mobile-gov-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.governorate}</label>
-                <select 
-                    id="mobile-gov-filter"
-                    value={selectedGovernorate}
-                    onChange={(e) => onGovernorateChange(e.target.value as Governorate | 'All')}
-                    className="mt-1 block w-full p-1.5 border border-[var(--color-glass-border)] rounded-md bg-white/20 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
-                >
+    const FilterBar = () => (
+        <div className="flex flex-col sm:flex-row gap-4 p-3 glass-card my-4 rounded-lg shadow-lg">
+            <div className="flex-1 min-w-[120px]">
+                <label htmlFor="gov-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.governorate}</label>
+                <select id="gov-filter" value={selectedGovernorate} onChange={(e) => onGovernorateChange(e.target.value as Governorate | 'All')} className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/10 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right">
                     <option value="All">{texts.allIraq}</option>
-                    {GOVERNORATES.map(gov => (
-                        <option key={gov} value={gov}>{GOVERNORATE_AR_MAP[gov]}</option>
-                    ))}
+                    {GOVERNORATES.map(gov => <option key={gov} value={gov}>{GOVERNORATE_AR_MAP[gov]}</option>)}
                 </select>
             </div>
-            {/* Party Filter */}
-            <div className="flex-1">
-                <label htmlFor="mobile-party-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.party}</label>
-                <select 
-                    id="mobile-party-filter"
-                    value={selectedParty}
-                    onChange={(e) => onPartyChange(e.target.value)}
-                    className="mt-1 block w-full p-1.5 border border-[var(--color-glass-border)] rounded-md bg-white/20 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right"
-                >
+            <div className="flex-1 min-w-[120px]">
+                <label htmlFor="party-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.party}</label>
+                <select id="party-filter" value={selectedParty} onChange={(e) => onPartyChange(e.target.value)} className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/10 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right">
                     <option value="All">{texts.all}</option>
-                    {parties.map(party => (
-                        <option key={party} value={party}>{party}</option>
-                    ))}
+                    {parties.map(party => <option key={party} value={party}>{party}</option>)}
+                </select>
+            </div>
+             <div className="flex-1 min-w-[120px]">
+                <label htmlFor="gender-filter" className="block text-xs font-medium text-theme-text-muted font-arabic">{texts.gender}</label>
+                <select id="gender-filter" value={genderFilter} onChange={(e) => setGenderFilter(e.target.value as 'All' | 'Male' | 'Female')} className="mt-1 block w-full p-1.5 border border-white/20 rounded-md bg-white/10 text-theme-text-base text-sm focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right">
+                    <option value="All">{texts.all}</option>
+                    <option value="Male">{texts.male}</option>
+                    <option value="Female">{texts.female}</option>
                 </select>
             </div>
         </div>
     );
     
-    const renderComposer = () => {
-        if (!user) return null;
-
-        if (user.role === UserRole.Candidate) {
-            switch (activeTab) {
-                case AppTab.Posts:
-                    return <ComposeView user={user} onPost={handlePost} language={language} />;
-                case AppTab.Reels:
-                    return <ReelComposer user={user} onCreateReel={handleCreateReel} />;
-                case AppTab.Events:
-                    return <EventComposer user={user} onCreateEvent={handleCreateEvent} />;
-                default:
-                    return null;
-            }
-        }
-        
-        // For Voters, only show a simple composer prompt on the Posts tab
-        if (activeTab === AppTab.Posts) {
-            return (
-                <div 
-                    onClick={onCompose}
-                    className="glass-card rounded-lg p-3 flex items-center space-x-4 cursor-pointer hover:border-primary"
-                >
-                    <img className="w-10 h-10 rounded-full" src={user.avatarUrl} alt={user.name} />
-                    <div className="flex-1 text-theme-text-muted font-arabic">{texts.whatsOnYourMind}</div>
-                    <button className="px-4 py-2 text-sm font-bold bg-primary text-on-primary rounded-full">
-                        {texts.post}
-                    </button>
-                </div>
-            );
-        }
-
-        return null;
-    };
-
-
     // --- RENDER LOGIC ---
-    const renderSocialContent = () => {
-        if (isLoading && TABS_WITH_FILTERS.includes(activeTab)) {
-            return <Spinner />;
-        }
-
+    const renderTabContent = () => {
         switch (activeTab) {
-            case AppTab.Posts:
+            case AppTab.Feed:
                 const postsWithStories = socialPosts.reduce((acc, post, index) => {
                     acc.push(<PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />);
-                    // Inject stories every 4 posts
                     if ((index + 1) % 4 === 0) {
                         acc.push(<div key={`stories-${index}`} className="my-6"><Stories users={storyCandidates} onSelectStory={onSelectStory} /></div>);
                     }
@@ -206,62 +153,75 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                 }, [] as React.ReactNode[]);
 
                 return (
-                     <div className="mt-4">
-                        <div className="mb-4">{renderComposer()}</div>
-                        {postsWithStories.length > 0 
-                            ? postsWithStories
-                            : <p className="text-center py-10 text-theme-text-muted">{texts.noPostsFound}</p>
-                        }
-                    </div>
+                    <>
+                        <div className="mt-6"><Stories users={storyCandidates} onSelectStory={onSelectStory}/></div>
+                        <div className="mt-6"><HeroSection /></div>
+                        <div className="mt-4">
+                            {user ? <ComposeView user={user} onPost={handlePost} language={language} postType="Post" />
+                                : <div onClick={requestLogin} className="glass-card rounded-lg p-3 flex items-center space-x-4 cursor-pointer hover:border-primary"><div className="flex-1 text-theme-text-muted font-arabic">{texts.whatsOnYourMind}</div><button className="px-4 py-2 text-sm font-bold bg-primary text-on-primary rounded-full">{texts.post}</button></div>
+                            }
+                        </div>
+                        <div className="mt-4">
+                            {isLoadingPosts ? [...Array(3)].map((_, i) => <SkeletonPostCard key={i} />)
+                                : postsWithStories.length > 0 ? postsWithStories
+                                : <p className="text-center py-10 text-theme-text-muted">{texts.noPostsFound}</p>
+                            }
+                        </div>
+                    </>
                 );
-            case AppTab.Reels:
+            case AppTab.Real:
                 return (
                     <div className="mt-4">
-                        <div className="mb-4">{renderComposer()}</div>
+                        {user?.role === UserRole.Candidate && <div className="mb-4"><ReelComposer user={user} onCreateReel={handleCreateReel} /></div>}
                         <ReelsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} language={language} />
                     </div>
                 );
             case AppTab.Candidates:
-                return <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} parties={parties} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />;
-            case AppTab.WomenCandidates:
-                return <WomenCandidatesView onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />;
-            case AppTab.Debates:
-                return <DebatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} language={language} />;
-            case AppTab.Events:
                  return (
-                    <div className="mt-4">
-                        <div className="mb-4">{renderComposer()}</div>
-                        <EventsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} language={language} />
+                    <div className="mt-6">
+                        <FilterBar />
+                        <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} selectedGender={genderFilter} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language}/>
                     </div>
                 );
-            case AppTab.Articles:
-                return <SeriousnessView selectedGovernorate={selectedGovernorate} language={language} />;
-            case AppTab.TeaHouse:
-                return <TeaHouseView user={user} requestLogin={requestLogin} language={language} />;
+            case AppTab.Women:
+                return (
+                    <Suspense fallback={<Spinner />}>
+                        <WomenCandidatesView onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />
+                    </Suspense>
+                );
+            case AppTab.Minorities:
+                return (
+                    <Suspense fallback={<Spinner />}>
+                        <MinoritiesView language={language} />
+                    </Suspense>
+                );
+            case AppTab.Whisper:
+                return (
+                     <div className="mt-4">
+                        {user && <div className="mb-4"><ComposeView user={user} onPost={handlePost} language={language} postType="Whisper" /></div>}
+                         <Suspense fallback={<Spinner/>}>
+                            <WhisperView user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />
+                         </Suspense>
+                    </div>
+                );
+            case AppTab.Components:
+                return (
+                    <Suspense fallback={<Spinner />}>
+                        <CrossPlatformNavigationView onNavigateToCandidates={() => onTabChange(AppTab.Candidates)} onQrScan={() => alert('QR Scan not implemented yet.')} />
+                    </Suspense>
+                );
             default:
+                if (isLoadingPosts) return <Spinner />;
                 return null;
         }
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-4 sm:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-0 sm:p-6">
             {/* Main Content Column */}
             <main className="lg:col-span-3">
-                {showHeroAndStories && (
-                    <>
-                        <div className="mt-6">
-                            <HeroSection />
-                        </div>
-                        <div className="mt-6">
-                            <Stories users={storyCandidates} onSelectStory={onSelectStory}/>
-                        </div>
-                    </>
-                )}
-                
-                {showFilters && <MobileFilterBar />}
-
-                {/* Non-sticky TopNavBar */}
-                <div className="mt-2 z-10 py-2">
+                 {/* Non-sticky TopNavBar */}
+                <div className="z-10 py-2 sticky top-14 lg:top-0 glass-nav lg:glass-card lg:rounded-t-xl">
                     <TopNavBar<MainContentTab>
                         tabs={SUB_TABS}
                         activeTab={activeTab}
@@ -270,11 +230,13 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
                     />
                 </div>
                 
-                {renderSocialContent()}
+                <div className={`tab-content-wrapper ${getThemeClassForTab(activeTab)} px-4 sm:px-0`}>
+                    {renderTabContent()}
+                </div>
             </main>
 
             {/* Right Sidebar (Desktop) */}
-            <aside className="hidden lg:block lg:col-span-1 space-y-6">
+            <aside className="hidden lg:block lg:col-span-1 space-y-6 pt-2">
                 <div className="glass-card rounded-lg p-4">
                     <h3 className="font-bold mb-3 font-arabic">{texts.whoToFollow}</h3>
                     <div className="space-y-3">

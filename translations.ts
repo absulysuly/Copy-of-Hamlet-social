@@ -36,10 +36,13 @@ type Translations = {
         registerAsCandidateButton: string;
         boostedPost: string;
         home: string;
-        posts: string;
-        reels: string;
+        feed: string;
+        real: string;
         candidates: string;
-        womenCandidates: string;
+        whisper: string;
+        women: string;
+        minorities: string;
+        components: string;
         debates: string;
         analytics: string;
         myProfile: string;
@@ -68,8 +71,6 @@ type Translations = {
         like: string;
         comment: string;
         share: string;
-        enterTopicForAI: string;
-        getSuggestion: string;
         generating: string;
         portal: string;
         electionCandidates: string;
@@ -90,8 +91,6 @@ type Translations = {
         hours: string;
         minutes: string;
         seconds: string;
-
-        // Added for full i18n
         follow: string;
         following: string;
         shareLinkCopied: string;
@@ -99,7 +98,6 @@ type Translations = {
         socialLoginFailed: string;
         registrationFailed: string;
         emailNotVerified: string;
-        promptTopic: string;
         draftSaved: string;
         previewingPost: string;
         speechRecognitionNotSupported: string;
@@ -118,7 +116,7 @@ type Translations = {
         socialConnectionsDesc: string;
         notACandidate: string;
         noBio: string;
-        postsBy: string; // e.g. "Posts by {name}"
+        postsBy: string; 
         noPostsYetCandidate: string;
         loadingReels: string;
         noReelsFound: string;
@@ -244,11 +242,6 @@ type Translations = {
         colorTheme: string;
         underConstruction: string;
         featureComingSoon: string;
-        contactMP: string;
-        contactMPDesc: string;
-        contactMPPlaceholder: string;
-        sendMessage: string;
-        messageSent: string;
         dataManagement: string;
         dataManagementDesc: string;
         apiConfig: string;
@@ -317,10 +310,13 @@ export const UI_TEXT: Translations = {
         registerAsCandidateButton: 'Register as a Candidate',
         boostedPost: 'Boosted Post',
         home: 'Home',
-        posts: 'Feed',
-        reels: 'Reels',
+        feed: 'Feed',
+        real: 'Real',
         candidates: 'Candidates',
-        womenCandidates: 'Women',
+        whisper: 'Whisper',
+        women: 'Women',
+        minorities: 'Minorities',
+        components: 'Components',
         debates: 'Debates',
         analytics: 'Analytics',
         myProfile: 'My Profile',
@@ -349,8 +345,6 @@ export const UI_TEXT: Translations = {
         like: 'Like',
         comment: 'Comment',
         share: 'Share',
-        enterTopicForAI: 'Or enter a topic for AI...',
-        getSuggestion: 'Get Suggestion',
         generating: 'Generating...',
         portal: 'Portal',
         electionCandidates: 'Candidates',
@@ -378,7 +372,6 @@ export const UI_TEXT: Translations = {
         socialLoginFailed: 'Social login failed. Please try again.',
         registrationFailed: 'Registration failed. Please try again.',
         emailNotVerified: 'Email not verified yet. Please check your inbox for the verification link.',
-        promptTopic: 'Please enter a topic for the post suggestion.',
         draftSaved: 'Draft saved (simulation)!',
         previewingPost: 'Previewing post',
         speechRecognitionNotSupported: 'Speech recognition is not supported in this browser.',
@@ -516,11 +509,6 @@ export const UI_TEXT: Translations = {
         colorTheme: 'Color Theme',
         underConstruction: 'Under Construction',
         featureComingSoon: 'This feature will be available here soon!',
-        contactMP: 'This is your MP! Send them a question directly.',
-        contactMPDesc: 'Ask a question about an issue that matters to you, like the electricity crisis.',
-        contactMPPlaceholder: 'Example: What is your plan to solve the electricity crisis in our area?',
-        sendMessage: 'Send Message',
-        messageSent: 'Thank you! Your message has been sent (simulation).',
         dataManagement: 'Data Management & Collection',
         dataManagementDesc: 'Tools for platform administrators to manage the data collection process and verify its quality.',
         apiConfig: 'API Settings',
@@ -586,10 +574,13 @@ export const UI_TEXT: Translations = {
         registerAsCandidateButton: 'تۆمارکردن وەک کاندید',
         boostedPost: 'پۆستی سپۆنسەر',
         home: 'سەرەکی',
-        posts: 'پۆستەکان',
-        reels: 'ڕیلەکان',
+        feed: 'فیید',
+        real: 'ڕیەڵ',
         candidates: 'کاندیدەکان',
-        womenCandidates: 'ژنان',
+        whisper: 'چرپە',
+        women: 'ژنان',
+        minorities: 'کەمینەکان',
+        components: 'پێکهاتەکان',
         debates: 'گفتوگۆکان',
         analytics: 'شیکاری',
         myProfile: 'پرۆفایلی من',
@@ -618,8 +609,6 @@ export const UI_TEXT: Translations = {
         like: 'لایك',
         comment: 'کۆمێنت',
         share: 'شەیر',
-        enterTopicForAI: 'یان بابەتێک بۆ AI بنووسە...',
-        getSuggestion: 'پێشنیار وەربگرە',
         generating: 'دروست دەکرێت...',
         portal: 'پۆرتاڵ',
         electionCandidates: 'پاڵێوراوەکان',
@@ -647,7 +636,6 @@ export const UI_TEXT: Translations = {
         socialLoginFailed: "چوونەژوورەوە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         registrationFailed: "تۆمارکردن سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         emailNotVerified: "ئیمەیڵ پشتڕاست نەکراوەتەوە. تکایە سندوقی نامەکانت بپشکنە.",
-        promptTopic: "تکایە بابەتێک بنووسە بۆ پێشنیاری پۆست.",
         draftSaved: "ڕەشنووس پاشەکەوت کرا (نموونە)!",
         previewingPost: "پێشبینینی پۆست",
         speechRecognitionNotSupported: "ناساندنی دەنگ لەم وێبگەڕەدا پشتگیری نەکراوە.",
@@ -785,11 +773,6 @@ export const UI_TEXT: Translations = {
         colorTheme: "ڕەنگی تێما",
         underConstruction: "لەژێر دروستکردندایە",
         featureComingSoon: "ئەم تایبەتمەندییە بەم زووانە لێرە بەردەست دەبێت!",
-        contactMP: "ئەمە نوێنەری تۆیە! ڕاستەوخۆ پرسیارێکی لێ بکە.",
-        contactMPDesc: "پرسیارێک بکە دەربارەی کێشەیەک کە بۆت گرنگە، وەک قەیرانی کارەبا.",
-        contactMPPlaceholder: "نموونە: پلانتان چییە بۆ چارەسەرکردنی قەیرانی کارەبا لە ناوچەکەماندا؟",
-        sendMessage: "ناردنی نامە",
-        messageSent: "سوپاس! نامەکەت نێردرا (نموونە).",
         dataManagement: "بەڕێوەبردنی داتا و کۆکردنەوە",
         dataManagementDesc: "ئامرازەکان بۆ بەڕێوەبەرانی پلاتفۆرم بۆ بەڕێوەبردنی پرۆسەی کۆکردنەوەی داتا و پشتڕاستکردنەوەی کوالێتییەکەی.",
         apiConfig: "ڕێکخستنەکانی API",
@@ -855,10 +838,13 @@ export const UI_TEXT: Translations = {
         registerAsCandidateButton: 'التسجيل كمرشح',
         boostedPost: 'منشور ممول',
         home: 'الرئيسية',
-        posts: 'المنشورات',
-        reels: 'مقاطع',
+        feed: 'الخلاصة',
+        real: 'ريلز',
         candidates: 'المرشحون',
-        womenCandidates: 'المرشحات',
+        whisper: 'همسة',
+        women: 'النساء',
+        minorities: 'الأقليات',
+        components: 'المكونات',
         debates: 'المناقشات',
         analytics: 'التحليلات',
         myProfile: 'ملفي الشخصي',
@@ -887,8 +873,6 @@ export const UI_TEXT: Translations = {
         like: 'إعجاب',
         comment: 'تعليق',
         share: 'مشاركة',
-        enterTopicForAI: 'أو أدخل موضوعًا للذكاء الاصطناعي...',
-        getSuggestion: 'احصل على اقتراح',
         generating: 'جاري الإنشاء...',
         portal: 'البوابة',
         electionCandidates: 'المرشحون',
@@ -916,7 +900,6 @@ export const UI_TEXT: Translations = {
         socialLoginFailed: "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
         registrationFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
         emailNotVerified: "البريد الإلكتروني لم يتم التحقق منه بعد. يرجى مراجعة بريدك الوارد.",
-        promptTopic: "الرجاء إدخال موضوع لاقتراح المنشور.",
         draftSaved: "تم حفظ المسودة (محاكاة)!",
         previewingPost: "معاينة المنشور",
         speechRecognitionNotSupported: "التعرف على الكلام غير مدعوم في هذا المتصفح.",
@@ -1038,7 +1021,7 @@ export const UI_TEXT: Translations = {
         registrationSuccess: "تم تسجيلك بنجاح!",
         confirmationId: "رقم تأكيد التسجيل الخاص بك هو:",
         registerAnotherVoter: "تسجيل ناخب آخر",
-        simulationNotice: "هذه عملية محاكاة لأغراض العرض التوضيحي. لا يتم تخزين أي بيانات حقيقية.",
+        simulationNotice: "هذه عملية محاكاة لأغراض العرض التوضیחי. لا يتم تخزين أي بيانات حقيقية.",
         discoverCandidates: "اكتشف المرشحين",
         discoverCandidatesDesc: "امسح رمز الاستجابة السريعة للمرشح لرؤية جميع مرشحي حزبه الذين يترشحون في نفس المحافظة.",
         loadingCandidates: "جاري تحميل المرشحين...",
@@ -1054,11 +1037,6 @@ export const UI_TEXT: Translations = {
         colorTheme: "سمة اللون",
         underConstruction: "تحت الإنشاء",
         featureComingSoon: "ستكون هذه الميزة متاحة هنا قريبًا!",
-        contactMP: "هذا نائبك! أرسل له سؤالك مباشرة",
-        contactMPDesc: "اطرح سؤالاً حول قضية تهمك, مثل أزمة الكهرباء.",
-        contactMPPlaceholder: "مثال: ما هي خطتكم لحل أزمة الكهرباء في منطقتنا؟",
-        sendMessage: "إرسال الرسالة",
-        messageSent: "شكراً لك! تم إرسال رسالتك (محاكاة).",
         dataManagement: "إدارة وجمع البيانات",
         dataManagementDesc: "أدوات لمشرفي المنصة لإدارة عملية جمع البيانات والتحقق من جودتها.",
         apiConfig: "إعدادات API",

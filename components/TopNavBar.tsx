@@ -10,31 +10,30 @@ interface TopNavBarProps<T extends string> {
 }
 
 const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
-    'Posts': 'posts',
-    'Reels': 'reels',
+    'Feed': 'feed',
+    'Real': 'real',
     'Candidates': 'candidates',
-    'Women Candidates': 'womenCandidates',
-    'Debates': 'debates',
-    'Tea House': 'teaHouse',
-    'Events': 'events',
-    'Articles': 'articles',
+    'Whisper': 'whisper',
+    'Women': 'women',
+    'Minorities': 'minorities',
+    'Components': 'components',
 };
 
 
 function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }: TopNavBarProps<T>) {
     const texts = UI_TEXT[language];
-    const navBarClasses = 'border-b border-[var(--color-glass-border)]';
+    const navBarClasses = 'border-b border-[var(--color-glass-border)] top-nav-bar';
 
     const getTabClasses = (tab: T) => {
         const isActive = activeTab === tab;
         return isActive
-            ? 'border-primary text-primary glow'
+            ? 'border-primary text-primary'
             : 'border-transparent text-theme-text-muted hover:text-theme-text-base hover:border-theme-text-muted';
     };
 
     return (
         <div className={navBarClasses}>
-            <nav className="-mb-px flex justify-center space-x-6 px-4 sm:px-6" aria-label="Tabs">
+            <nav className="flex space-x-6 rtl:space-x-reverse px-4 sm:px-6 overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
                 {tabs.map((tab) => {
                     const translationKey = tabTranslationKeys[tab];
                     const label = translationKey ? texts[translationKey] : tab;
@@ -43,7 +42,7 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
                         <button
                             key={tab}
                             onClick={() => onTabChange(tab)}
-                            className={`whitespace-nowac py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
+                            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
                         >
                             {label}
                         </button>
