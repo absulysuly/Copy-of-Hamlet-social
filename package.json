@@ -9,7 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@google/genai": "^0.14.2",
+=======
+    "@google/genai": "^1.25.0",
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

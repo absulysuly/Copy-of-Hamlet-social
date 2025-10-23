@@ -80,11 +80,15 @@ export const getUsers = (filters: { role?: UserRole, governorate?: Governorate |
     return simulateFetch(users);
 };
 
+<<<<<<< HEAD
 export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' } = {}): Promise<Post[]> => {
     if (!USE_MOCKS) {
       return realFetch('/posts', { method: 'GET' });
     }
 
+=======
+export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
     let posts = MOCK_POSTS;
     if (filters.type) {
         posts = posts.filter(p => p.type === filters.type);
@@ -108,6 +112,14 @@ export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, g
     });
 
     return simulateFetch(sortedPosts);
+<<<<<<< HEAD
+=======
+};
+
+export const getWhispers = (filters: {}): Promise<Post[]> => {
+    const sorted = MOCK_WHISPERS.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
+    return simulateFetch(sorted);
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
 };
 
 export const getWhispers = (filters: {} = {}): Promise<Post[]> => {
@@ -126,7 +138,11 @@ export const getEvents = (filters: { governorate?: Governorate | 'All', party?: 
     return simulateFetch(events);
 };
 
+<<<<<<< HEAD
 export const getArticles = (filters: { governorate?: Governorate | 'All' } = {}): Promise<Article[]> => {
+=======
+export const getArticles = (filters: { governorate?: Governorate | 'All' }): Promise<Article[]> => {
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
     return simulateFetch(MOCK_ARTICLES);
 };
 
@@ -162,15 +178,21 @@ export const createPost = async (postDetails: Partial<Post>, author: User): Prom
         type: 'Post',
         ...postDetails,
     };
+<<<<<<< HEAD
     // Add to mocked posts at the front
     MOCK_POSTS.unshift(newPost);
+=======
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
     return simulateFetch(newPost);
 };
 
 export const createReel = (details: { caption: string }, author: User): Promise<Post> => {
+<<<<<<< HEAD
     if (!USE_MOCKS) {
       return realFetch('/reels', { method: 'POST', body: JSON.stringify(details) });
     }
+=======
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
     const newReel: Post = {
         id: `reel-${Date.now()}`,
         author: author,
@@ -182,7 +204,10 @@ export const createReel = (details: { caption: string }, author: User): Promise<
         type: 'Reel',
         mediaUrl: 'https://picsum.photos/seed/newreel/400/700'
     };
+<<<<<<< HEAD
     MOCK_POSTS.unshift(newReel);
+=======
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
     return simulateFetch(newReel);
 };
 
@@ -200,6 +225,7 @@ export const socialLogin = (provider: 'google' | 'facebook'): Promise<User> => {
     return simulateFetch(MOCK_USERS.find(u => u.role === UserRole.Voter)!);
 };
 
+
 export const registerUser = (details: { name: string; email: string; role: UserRole }): Promise<User> => {
     const newUser: User = {
         id: `user-${Date.now()}`,
@@ -215,6 +241,7 @@ export const registerUser = (details: { name: string; email: string; role: UserR
     MOCK_USERS.push(newUser);
     return simulateFetch(newUser);
 };
+
 
 export const checkVerificationStatus = (userId: string): Promise<User | null> => {
     const user = MOCK_USERS.find(u => u.id === userId);
@@ -242,6 +269,7 @@ export const followCandidate = (candidateId: string): Promise<{ success: boolean
     return simulateFetch({ success: true });
 };
 
+<<<<<<< HEAD
 // Updated likePost with mock + real behavior
 export const likePost = async (postId: string): Promise<{ success: boolean; likes?: number }> => {
   if (!USE_MOCKS) {
@@ -291,6 +319,13 @@ export const addComment = async (postId: string, comment: { authorId: string; co
   }
   return simulateFetch({ success: false });
 };
+=======
+export const likePost = (postId: string): Promise<{ success: boolean }> => {
+    console.log(`(Mock API) Liked post: ${postId}`);
+    return simulateFetch({ success: true });
+};
+
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
 
 // --- Tea House API ---
 export const getTeaHouseTopics = (language: Language): Promise<TeaHouseTopic[]> => {
@@ -399,7 +434,11 @@ export const getContactValidationData = (): Promise<any[]> => {
 
 export const getEnrichmentData = (candidateId: string): Promise<any> => {
     return simulateFetch({
+<<<<<<< HEAD
         politicalProfile: 'Leans socially conservative with a focus on economic liberalization. Strong proponent of foreign investment and developing the private sector. Has voted consistently for broad economic reforms.',
+=======
+        politicalProfile: 'Leans socially conservative with a focus on economic liberalization. Strong proponent of foreign investment and developing the private sector. Has voted consistently for measures that reduce government spending.',
+>>>>>>> 54451a09cb0a21a17f65e24dd69a58a7b227ea5f
         influence: { socialReach: 120500, engagementRate: 4.5, sentiment: 'Positive' },
     });
 };
