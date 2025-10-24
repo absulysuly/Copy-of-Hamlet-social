@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab } from './types.ts';
-import * as api from './services/apiService.ts';
-import Header from './components/Header.tsx';
-import Sidebar from './components/Sidebar.tsx';
+import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab } from './types';
+import * as api from './services/apiService';
+import Header from '.'./components/Header';
+import Sidebar from './components/Sidebar';
 import BottomBar from './components/BottomBar.tsx';
 import LoginModal from './components/LoginModal.tsx';
 import ComposeModal from './components/ComposeModal.tsx';
