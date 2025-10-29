@@ -139,6 +139,16 @@
             animation: glow 1.5s ease-in-out infinite alternate;
         }
 
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .animate-marquee {
+            animation: marquee 40s linear infinite;
+        }
+
+
         /* Mobile compatibility */
         @media (max-width: 768px) {
             .glass-card {
@@ -170,23 +180,6 @@
             scrollbar-width: none;  /* Firefox */
         }
     </style>
-<<<<<<< HEAD
-  </head>
-  <body class="bg-neutral-gray-light">
-  
-  <!-- Environment Variables Script - Critical for Application Stability -->
-  <script>
-    // Environment variables shim for Vite architecture
-    window.process = {
-      env: {
-        VITE_USE_MOCKS: 'true',
-        VITE_API_KEY: 'your_google_gemini_api_key_here',
-        VITE_API_BASE_URL: 'http://localhost:3001',
-        VITE_ELECTION_DATE: '2025-12-20T08:00:00Z' // Real election date
-      }
-    };
-  </script>
-=======
 <script type="importmap">
 {
   "imports": {
@@ -195,7 +188,24 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0",
     "vite": "https://aistudiocdn.com/vite@^7.1.10",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.4"
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.4",
+    "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
+    "tailwind-merge": "https://aistudiocdn.com/tailwind-merge@^3.3.1",
+    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.6.0",
+    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.14",
+    "clsx": "https://aistudiocdn.com/clsx@^2.1.1",
+    "react-icons/": "https://aistudiocdn.com/react-icons@^5.5.0/",
+    "axios": "https://aistudiocdn.com/axios@^1.12.2",
+    "i18next": "https://aistudiocdn.com/i18next@^25.6.0",
+    "next/": "https://aistudiocdn.com/next@^15.5.6/",
+    "next": "https://aistudiocdn.com/next@^15.5.6",
+    "@headlessui/react": "https://aistudiocdn.com/@headlessui/react@^2.2.9",
+    "next-themes/": "https://aistudiocdn.com/next-themes@^0.4.6/",
+    "next-themes": "https://aistudiocdn.com/next-themes@^0.4.6",
+    "server-only": "https://aistudiocdn.com/server-only@^0.0.1",
+    "negotiator": "https://aistudiocdn.com/negotiator@^1.0.0",
+    "use-debounce": "https://aistudiocdn.com/use-debounce@^10.0.6",
+    "@formatjs/intl-localematcher": "https://aistudiocdn.com/@formatjs/intl-localematcher@^0.6.2"
   }
 }
 </script>
@@ -207,12 +217,12 @@
             env: {
                 VITE_USE_MOCKS: 'true',
                 API_KEY: 'your_google_gemini_api_key_here',
-                VITE_ELECTION_DATE: '2025-11-11T08:00:00Z'
+                VITE_ELECTION_DATE: '2025-11-11T08:00:00Z',
+                VITE_APP_VERSION: '0.1.0'
             }
         };
     </script>
     
->>>>>>> 1e6903d3e4615faca19894ed698a8181881737c5
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

@@ -1,9 +1,0 @@
-# Frontend owners (review required for frontend changes)
-frontend/ @absulysuly
-
-# Backend owners (review required for backend changes)
-backend/ @absulysuly
-
-# Data and automation owners
-data/ @absulysuly
-ai-automation/ @absulysuly
