@@ -1,25 +1,25 @@
 import React from 'react';
-import { Language } from '../../types';
+import { Language } from '../../types.ts';
 
 // Election portal components
-import LandingPage from '../election/pages/LandingPage';
-import DashboardPage from '../election/pages/DashboardPage';
-import IntegrityHubPage from '../election/pages/IntegrityHubPage';
-import InternationalPortalPage from '../election/pages/InternationalPortalPage';
-import GovernoratePage from '../election/pages/GovernoratePage';
-import PoliticalPartyPage from '../election/pages/PoliticalPartyPage';
-import PartiesPage from '../election/pages/PartiesPage';
-import ElectionHubPage from '../election/pages/ElectionHubPage';
-import PrivacyPolicyPage from '../election/pages/PrivacyPolicyPage';
-import TermsOfServicePage from '../election/pages/TermsOfServicePage';
-import PricingPage from '../election/pages/PricingPage';
-import CandidateComparisonPage from '../election/pages/CandidateComparisonPage';
-import VoterRegistrationPage from '../election/pages/VoterRegistrationPage';
-import ApiConfigPage from '../election/pages/ApiConfigPage';
-import DataCollectionPage from '../election/pages/DataCollectionPage';
-import ContactValidationPage from '../election/pages/ContactValidationPage';
-import CandidateEnrichmentPage from '../election/pages/CandidateEnrichmentPage';
-import QualityAnalyticsPage from '../election/pages/QualityAnalyticsPage';
+import LandingPage from '../election/pages/LandingPage.tsx';
+import DashboardPage from '../election/pages/DashboardPage.tsx';
+import IntegrityHubPage from '../election/pages/IntegrityHubPage.tsx';
+import InternationalPortalPage from '../election/pages/InternationalPortalPage.tsx';
+import GovernoratePage from '../election/pages/GovernoratePage.tsx';
+import PoliticalPartyPage from '../election/pages/PoliticalPartyPage.tsx';
+import PartiesPage from '../election/pages/PartiesPage.tsx';
+import ElectionHubPage from '../election/pages/ElectionHubPage.tsx';
+import PrivacyPolicyPage from '../election/pages/PrivacyPolicyPage.tsx';
+import TermsOfServicePage from '../election/pages/TermsOfServicePage.tsx';
+import PricingPage from '../election/pages/PricingPage.tsx';
+import CandidateComparisonPage from '../election/pages/CandidateComparisonPage.tsx';
+import VoterRegistrationPage from '../election/pages/VoterRegistrationPage.tsx';
+import ApiConfigPage from '../election/pages/ApiConfigPage.tsx';
+import DataCollectionPage from '../election/pages/DataCollectionPage.tsx';
+import ContactValidationPage from '../election/pages/ContactValidationPage.tsx';
+import CandidateEnrichmentPage from '../election/pages/CandidateEnrichmentPage.tsx';
+import QualityAnalyticsPage from '../election/pages/QualityAnalyticsPage.tsx';
 
 
 interface ElectionManagementViewProps {
@@ -54,15 +54,15 @@ const ElectionManagementView: React.FC<ElectionManagementViewProps> = ({ path, o
             case '/parties':
                 return <PartiesPage {...pageProps} />;
             case '/election-hub':
-                return <ElectionHubPage />;
+                return <ElectionHubPage {...pageProps} />;
              case '/privacy-policy':
-                return <PrivacyPolicyPage />;
+                return <PrivacyPolicyPage {...pageProps} />;
             case '/terms-of-service':
-                return <TermsOfServicePage />;
+                return <TermsOfServicePage {...pageProps} />;
             case '/pricing':
-                return <PricingPage />;
+                return <PricingPage {...pageProps} />;
             case '/compare':
-                return <CandidateComparisonPage />;
+                return <CandidateComparisonPage {...pageProps} />;
              case '/voter-registration':
                 return <VoterRegistrationPage {...pageProps} />;
             // New Data Management Routes

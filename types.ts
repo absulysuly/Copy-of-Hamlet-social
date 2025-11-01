@@ -1,4 +1,4 @@
-import { colorThemes } from './utils/colorThemes';
+import { colorThemes } from './utils/colorThemes.ts';
 
 // --- ENUMS & LITERAL TYPES ---
 
@@ -23,6 +23,12 @@ export enum AppTab {
     Women = 'Women',
     Minorities = 'Minorities',
     Components = 'Components',
+    PollingCenter = 'Polling Center',
+    TeaHouse = 'TeaHouse',
+    Events = 'Events',
+    Articles = 'Articles',
+    Debates = 'Debates',
+    AskNeighbor = 'Ask Neighbor',
 }
 
 export interface GovernorateInfo {
@@ -39,7 +45,7 @@ export type Language = 'en' | 'ar' | 'ku';
 export type Governorate = 'Baghdad' | 'Basra' | 'Nineveh' | 'Erbil' | 'Anbar' | 'Dhi Qar' | 'Salah al-Din' | 'Diyala' | 'Kirkuk' | 'Sulaymaniyah' | 'Babil' | 'Wasit' | 'Maysan' | 'Muthanna' | 'Qadisiyyah' | 'Najaf' | 'Karbala' | 'Dohuk';
 
 
-export type MainContentTab = AppTab.Feed | AppTab.Real | AppTab.Candidates | AppTab.Whisper | AppTab.Women | AppTab.Minorities | AppTab.Components;
+export type MainContentTab = AppTab.Feed | AppTab.Real | AppTab.Candidates | AppTab.Whisper | AppTab.Women | AppTab.Minorities | AppTab.Components | AppTab.PollingCenter | AppTab.TeaHouse | AppTab.Events | AppTab.Articles | AppTab.Debates | AppTab.AskNeighbor;
 
 export type HomeViewMode = 'Social' | 'Election';
 
@@ -79,10 +85,26 @@ export interface Post {
     likes: number;
     comments: number;
     shares: number;
-    type: 'Post' | 'Reel';
+    type: 'Post' | 'Reel' | 'VoiceNote';
     mediaUrl?: string;
     isSponsored?: boolean;
     privacy?: PostPrivacy;
+}
+
+export interface Answer {
+    id: string;
+    author: User | { name: 'AI', avatarUrl: string };
+    answerText: string;
+    timestamp: string;
+}
+
+export interface Question {
+    id: string;
+    author: User;
+    questionText: string;
+    timestamp: string;
+    answers: Answer[];
+    governorate: Governorate;
 }
 
 export interface Event {
@@ -136,4 +158,12 @@ export interface TeaHouseMessage {
     content: string; // Text content or file name
     mediaUrl?: string; // URL for voice, image, video, doc
     timestamp: string;
+}
+
+export interface PollingCenter {
+    id: string;
+    name: string;
+    address: string;
+    centerCode: string;
+    googleMapsUrl: string;
 }

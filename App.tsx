@@ -1,27 +1,30 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab } from './types';
-import * as api from './services/apiService';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import BottomBar from './components/BottomBar';
-import LoginModal from './components/LoginModal';
-import ComposeModal from './components/ComposeModal';
-import { colorThemes } from './utils/colorThemes';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import PostDetailModal from './components/PostDetailModal';
-import Countdown from './components/Countdown';
-import Spinner from './components/Spinner';
+import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab, HomeViewMode } from './types.ts';
+import * as api from './services/apiService.ts';
+import Header from './components/Header.tsx';
+import Sidebar from './components/Sidebar.tsx';
+import BottomBar from './components/BottomBar.tsx';
+import LoginModal from './components/LoginModal.tsx';
+import ComposeModal from './components/ComposeModal.tsx';
+import { colorThemes } from './utils/colorThemes.ts';
+import LanguageSwitcher from './components/LanguageSwitcher.tsx';
+import PostDetailModal from './components/PostDetailModal.tsx';
+import Countdown from './components/Countdown.tsx';
+import Spinner from './components/Spinner.tsx';
+import ViewModeSwitcher from './components/ViewModeSwitcher.tsx';
+
 
 // --- Lazy-loaded Components ---
-const HomeView = lazy(() => import('./components/views/HomeView'));
-const PublicDiscoverView = lazy(() => import('./components/views/PublicDiscoverView'));
-const SettingsView = lazy(() => import('./components/views/SettingsView'));
-const UserProfileView = lazy(() => import('./components/views/UserProfileView'));
-const CandidateProfileView = lazy(() => import('./components/views/CandidateProfileView'));
-const CandidateDashboardView = lazy(() => import('./components/views/CandidateDashboardView'));
-const FullScreenReelView = lazy(() => import('./components/views/FullScreenReelView'));
-const StoryViewModal = lazy(() => import('./components/views/StoryViewModal'));
-const HeroSection = lazy(() => import('./components/HeroSection'));
+const HomeView = lazy(() => import('./components/views/HomeView.tsx'));
+const PublicDiscoverView = lazy(() => import('./components/views/PublicDiscoverView.tsx'));
+const SettingsView = lazy(() => import('./components/views/SettingsView.tsx'));
+const UserProfileView = lazy(() => import('./components/views/UserProfileView.tsx'));
+const CandidateProfileView = lazy(() => import('./components/views/CandidateProfileView.tsx'));
+const CandidateDashboardView = lazy(() => import('./components/views/CandidateDashboardView.tsx'));
+const FullScreenReelView = lazy(() => import('./components/views/FullScreenReelView.tsx'));
+const StoryViewModal = lazy(() => import('./components/views/StoryViewModal.tsx'));
+const MarqueeNews = lazy(() => import('./components/MarqueeNews.tsx'));
+const AskNeighborView = lazy(() => import('./components/views/AskNeighborView.tsx'));
 
 
 const App: React.FC = () => {
@@ -32,7 +35,8 @@ const App: React.FC = () => {
     const [isComposeModalOpen, setComposeModalOpen] = useState(false);
     const [isHighContrast, setHighContrast] = useState(false);
     const [language, setLanguage] = useState<Language>('ar');
-    const [activeTheme, setActiveTheme] = useState<ThemeName>('euphratesTeal');
+    const [userSelectedTheme, setUserSelectedTheme] = useState<ThemeName>('euphratesTeal');
+    const [homeViewMode, setHomeViewMode] = useState<HomeViewMode>('Social');
 
     // Filters
     const [selectedGovernorate, setSelectedGovernorate] = useState<Governorate | 'All'>('All');
@@ -65,15 +69,28 @@ const App: React.FC = () => {
         document.documentElement.lang = language;
         document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
     }, [language]);
-
+    
+    // Theme Management Effect
     useEffect(() => {
         const root = document.documentElement;
+        const body = document.body;
+        
+        const activeTheme = homeViewMode === 'Election' ? 'electionPortal' : userSelectedTheme;
         const theme = colorThemes[activeTheme];
-            
+
+        // Apply theme variables
         for (const [key, value] of Object.entries(theme)) {
             root.style.setProperty(key, value as string);
         }
-    }, [activeTheme]);
+
+        // Apply body class for election theme
+        if (activeTheme === 'electionPortal') {
+            body.classList.add('theme-election');
+        } else {
+            body.classList.remove('theme-election');
+        }
+
+    }, [userSelectedTheme, homeViewMode]);
     
     // --- HANDLERS ---
     const handleLogin = (loggedInUser: User) => {
@@ -93,6 +110,9 @@ const App: React.FC = () => {
     const handleNavigate = (tab: AppTab) => {
         setSelectedProfile(null);
         setActiveTab(tab);
+        if (tab !== AppTab.Home) {
+            setHomeViewMode('Social');
+        }
     };
 
     const handleSelectProfile = (profile: User) => {
@@ -162,6 +182,7 @@ const App: React.FC = () => {
             activeTab: mainHomeTab,
             onTabChange: setMainHomeTab,
             onCompose: () => setComposeModalOpen(true),
+            homeViewMode,
         };
 
         switch (activeTab) {
@@ -169,7 +190,7 @@ const App: React.FC = () => {
             case AppTab.Discover:
                 return <HomeView {...homeViewProps} />;
             case AppTab.Settings:
-                return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} activeTheme={activeTheme} onChangeTheme={setActiveTheme} language={language} />;
+                return <SettingsView isHighContrast={isHighContrast} onToggleContrast={() => setHighContrast(p => !p)} activeTheme={userSelectedTheme} onChangeTheme={setUserSelectedTheme} language={language} />;
             case AppTab.UserProfile:
                 return user ? <UserProfileView user={user} onUpdateUser={handleUpdateUser} language={language} onSelectProfile={handleSelectProfile} onSelectPost={handleSelectPost} /> : <HomeView {...homeViewProps} />;
             case AppTab.CandidateProfile:
@@ -205,13 +226,23 @@ const App: React.FC = () => {
                     />
                 </div>
                 
-                <Suspense fallback={<div className="w-full h-32 flex justify-center items-center"><Spinner /></div>}>
-                    <HeroSection />
+                <Suspense fallback={<div className="w-full h-[52px] bg-black/10"></div>}>
+                    <MarqueeNews language={language} />
                 </Suspense>
 
                 <div className="px-4 sm:px-6 flex flex-col items-center gap-4 my-4">
                     <Countdown language={language} />
                 </div>
+
+                {activeTab === AppTab.Home && (
+                    <div className="px-4 sm:px-6 my-6 flex justify-center">
+                        <ViewModeSwitcher
+                            activeMode={homeViewMode}
+                            onModeChange={setHomeViewMode}
+                            language={language}
+                        />
+                    </div>
+                )}
                 
                 <Suspense fallback={<div className="flex justify-center items-center p-10"><Spinner /></div>}>
                     {renderContent()}

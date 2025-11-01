@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole } from '../types';
-import * as api from '../services/apiService';
-import Spinner from './Spinner';
+import { User, UserRole } from '../types.ts';
+import * as api from '../services/apiService.ts';
+import Spinner from './Spinner.tsx';
 
 const HeroSection: React.FC = () => {
     const [candidates, setCandidates] = useState<User[]>([]);
@@ -39,9 +39,9 @@ const HeroSection: React.FC = () => {
         <div className="w-full overflow-hidden relative py-4 bg-black/10">
             <div className="flex animate-marquee whitespace-nowrap">
                 {carouselItems.map((candidate, index) => (
-                    <div key={`${candidate.id}-${index}`} className="flex flex-col items-center flex-shrink-0 w-28 mx-4">
+                    <div key={`${candidate.id}-${index}`} className="flex flex-col items-center flex-shrink-0 w-20 sm:w-28 mx-2 sm:mx-4">
                         <div className="relative">
-                            <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-secondary via-primary to-accent">
+                            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-br from-secondary via-primary to-accent">
                                 <img
                                     loading="lazy"
                                     className="w-full h-full rounded-full object-cover border-2 border-[var(--color-background)]"

@@ -1,7 +1,7 @@
 import React from 'react';
-import { AppTab, User, Language } from '../types';
-import { HomeIcon, UserCircleIcon, UsersIcon } from './icons/Icons';
-import { UI_TEXT } from '../translations';
+import { AppTab, User, Language } from '../types.ts';
+import { HomeIcon, UserCircleIcon, UsersIcon } from './icons/Icons.tsx';
+import { UI_TEXT } from '../translations.ts';
 
 interface BottomBarProps {
     user: User | null;

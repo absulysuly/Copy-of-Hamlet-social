@@ -93,36 +93,104 @@
             border-bottom: 1px solid var(--color-glass-border);
         }
         
-        .theme-reels {
-            --color-background-image: radial-gradient(circle at 90% 90%, rgba(240, 0, 184, 0.5), transparent 40%), radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.3), transparent 35%);
-        }
-        .theme-candidates {
-            --color-background-image: radial-gradient(circle at 50% 10%, rgba(13, 148, 136, 0.7), transparent 40%);
-        }
-        .theme-whisper {
+        .theme-election {
+            --color-primary: #2B6CB0; 
+            --color-primary-rgb: 43, 108, 176;
+            --color-secondary: #4299E1;
+            --color-accent: '#ECC94B';
             --color-background: #F7FAFC;
             --color-background-image: none;
+            --color-glass-bg: rgba(255, 255, 255, 0.8);
+            --color-glass-border: #E2E8F0;
+            --color-card-bg: #FFFFFF;
+            --color-card-text: '#1A202C';
             --color-text-base: #2D3748;
             --color-text-muted: #718096;
-            --color-primary: #2B6CB0;
-            --color-secondary: #4299E1;
             --color-text-on-primary: #FFFFFF;
         }
-        .theme-whisper .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(0, 0, 0, 0.08);
+        .theme-election .glass-card {
+            background: #FFFFFF;
+            border-color: #E2E8F0;
             color: #1A202C;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-         .theme-whisper .glass-card:hover {
+        .theme-election .glass-card:hover {
             border-color: var(--color-primary);
         }
-        .theme-whisper .text-white { 
+        .theme-election .text-white { 
             color: var(--color-text-base);
         }
-         .theme-whisper .top-nav-bar {
+         .theme-election .top-nav-bar {
             border-bottom-color: #E2E8F0;
         }
+        
+        .theme-election .polling-form-select {
+            background-color: #F7FAFC;
+            border-color: #E2E8F0;
+            color: #2D3748;
+        }
+
+        .theme-election .polling-form-select:disabled {
+            background-color: #EDF2F7;
+        }
+        
+        .view-mode-switcher button {
+            transition: all 0.3s ease;
+        }
+
+        .view-mode-switcher button.active {
+            background-color: var(--color-primary);
+            color: var(--color-text-on-primary);
+            box-shadow: 0 4px 14px 0 rgba(var(--color-primary-rgb), 0.38);
+        }
+
+        .view-mode-switcher button.inactive {
+             background-color: transparent;
+             color: var(--color-text-muted);
+        }
+        
+        .teahouse-composer {
+            background: var(--color-background);
+            border-top: 1px solid var(--color-glass-border);
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        .message-bubble.is-user {
+            background-color: var(--color-primary);
+            color: var(--color-text-on-primary);
+            border-bottom-right-radius: 4px;
+        }
+        .message-bubble.is-other {
+            background-color: rgba(255,255,255,0.1);
+            border-bottom-left-radius: 4px;
+        }
+
+        .search-bar-input {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid var(--color-glass-border);
+            color: var(--color-text-base);
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .search-bar-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px var(--color-primary-glow);
+        }
+        .theme-election .search-bar-input {
+            background-color: #F7FAFC;
+            border-color: #E2E8F0;
+            color: #2D3748;
+        }
+         .theme-election .search-bar-input:focus {
+             border-color: var(--color-primary);
+             box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+         }
+
 
         @keyframes glow {
             from {
@@ -147,6 +215,36 @@
         .animate-marquee {
             animation: marquee 40s linear infinite;
         }
+        
+        /* Polling Center Styles */
+        .polling-form-select {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid var(--color-glass-border);
+            color: var(--color-text-base);
+        }
+        .polling-form-select:disabled {
+            background-color: rgba(0,0,0,0.2);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-spinner {
+            border-color: transparent;
+            border-top-color: var(--color-text-on-primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down {
+            animation: slideDown 0.5s ease-out forwards;
+        }
 
 
         /* Mobile compatibility */
@@ -155,7 +253,7 @@
                 backdrop-filter: none;
                 background: rgba(26, 22, 37, 0.9);
             }
-             .theme-whisper .glass-card {
+             .theme-election .glass-card {
                 background: #FFFFFF;
             }
             .hero-election-bg {

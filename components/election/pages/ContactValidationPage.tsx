@@ -1,7 +1,7 @@
 import React from 'react';
-import ManagementPageHeader from '../components/ManagementPageHeader';
-import { IdentificationIcon } from '../../icons/Icons';
-import { useContactValidationData } from '../hooks/useManagementData';
+import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
+import { IdentificationIcon } from '../../icons/Icons.tsx';
+import { useContactValidationData } from '../hooks/useManagementData.ts';
 
 const QualityScore: React.FC<{ score: number }> = ({ score }) => {
     const getColor = () => {
@@ -56,7 +56,7 @@ const ContactValidationPage: React.FC<{ onNavigate: (path: string) => void }> = 
                              {isLoading ? (
                                 <tr><td colSpan={5} className="p-8 text-center">Loading contact data...</td></tr>
                             ) : (
-                                contacts && contacts.map((contact: any) => (
+                                contacts.map((contact: any) => (
                                     <tr key={contact.id} className="hover:bg-official-200/50">
                                         <td className="p-3 text-sm font-mono">{contact.contact}</td>
                                         <td className="p-3 text-sm hidden md:table-cell">{contact.type}</td>

@@ -1,8 +1,8 @@
 import React from 'react';
 // Fix: The 'Language' type is defined in 'types.ts', not 'colorThemes.ts'. This resolves the module export error.
-import { colorThemes, ThemeName } from '../../utils/colorThemes';
-import { Language } from '../../types';
-import { UI_TEXT } from '../../translations';
+import { colorThemes, ThemeName } from '../../utils/colorThemes.ts';
+import { Language } from '../../types.ts';
+import { UI_TEXT } from '../../translations.ts';
 
 interface ColorThemeSelectorProps {
     currentTheme: ThemeName;

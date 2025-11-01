@@ -1,6 +1,6 @@
 import React from 'react';
-import { User } from '../types';
-import { VerifiedIcon } from './icons/Icons';
+import { User } from '../types.ts';
+import { VerifiedIcon } from './icons/Icons.tsx';
 
 interface PublicDiscoverCandidateCardProps {
     candidate: User;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconProps } from '../../icons/Icons';
+import { IconProps } from '../../icons/Icons.tsx';
 
 const XIcon: React.FC<IconProps> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>

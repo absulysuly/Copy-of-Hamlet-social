@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { User, Post, PostPrivacy, Language } from '../../types';
-import { GlobeAltIcon, UsersIcon, LockClosedIcon, ChevronDownIcon } from '../icons/Icons';
-import { UI_TEXT } from '../../translations';
+import { User, Post, PostPrivacy, Language } from '../../types.ts';
+import { GlobeAltIcon, UsersIcon, LockClosedIcon, ChevronDownIcon } from '../icons/Icons.tsx';
+import { UI_TEXT } from '../../translations.ts';
 
 interface ComposeViewProps {
     user: User;

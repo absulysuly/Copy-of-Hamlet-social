@@ -1,4 +1,4 @@
-import { Language } from './types';
+import { Language } from './types.ts';
 
 type Translations = {
     [key in Language]: {
@@ -43,11 +43,19 @@ type Translations = {
         women: string;
         minorities: string;
         components: string;
+        pollingCenter: string;
         debates: string;
         analytics: string;
         myProfile: string;
         events: string;
         articles: string;
+        askNeighbor: string;
+        askNeighborDesc: string;
+        askAQuestion: string;
+        askAQuestionPlaceholder: string;
+        ask: string;
+        askAI: string;
+        generatingAnswer: string;
         search: string;
         dashboard: string;
         settings: string;
@@ -274,14 +282,35 @@ type Translations = {
         aboutApp: string;
         version: string;
         appDescription: string;
+        findPollingCenterTitle: string;
+        findPollingCenterDesc: string;
+        district: string;
+        area: string;
+        findMyCenter: string;
+        pollingCenterName: string;
+        address: string;
+        centerCode: string;
+        viewOnMap: string;
+        noCenterFound: string;
+        noCenterFoundDesc: string;
+        searching: string;
+        selectDistrict: string;
+        selectArea: string;
+        marquee: {
+            item1: string;
+            item2: string;
+            item3: string;
+            item4: string;
+            item5: string;
+        };
     }
 }
 
 export const UI_TEXT: Translations = {
     en: {
-        appName: 'Smart Campaign',
-        social: 'Social Interaction',
-        serious: 'Election Management',
+        appName: 'Hayy',
+        social: 'Social',
+        serious: 'Election',
         whoToFollow: 'Who to follow',
         platformRules: 'Platform Rules',
         rule1: 'Be respectful to others.',
@@ -320,11 +349,19 @@ export const UI_TEXT: Translations = {
         women: 'Women',
         minorities: 'Minorities',
         components: 'Components',
+        pollingCenter: 'Polling Center',
         debates: 'Debates',
         analytics: 'Analytics',
         myProfile: 'My Profile',
         events: 'Events',
         articles: 'Articles',
+        askNeighbor: 'Ask Neighbor',
+        askNeighborDesc: 'Ask questions to your local community and get answers from neighbors or AI.',
+        askAQuestion: 'Ask a Question',
+        askAQuestionPlaceholder: 'What would you like to know about your community or the elections?',
+        ask: 'Ask',
+        askAI: 'Ask AI',
+        generatingAnswer: 'Generating AI answer...',
         search: 'Search...',
         dashboard: 'Dashboard',
         settings: 'Settings',
@@ -350,7 +387,7 @@ export const UI_TEXT: Translations = {
         share: 'Share',
         generating: 'Generating...',
         portal: 'Portal',
-        electionCandidates: 'Candidates',
+        electionCandidates: 'Election Candidates',
         electionData: 'Data',
         resources: 'Resources',
         signInWithGoogle: 'Sign in with Google',
@@ -544,11 +581,32 @@ export const UI_TEXT: Translations = {
         aboutApp: 'About {appName}',
         version: 'Version',
         appDescription: 'A safe, engaging space for Iraqis to discuss politics, share concerns, and hold leaders accountable — using voice, text, and community moderation to foster inclusive dialogue before, during, and after elections.',
+        findPollingCenterTitle: 'Find Your Polling Center',
+        findPollingCenterDesc: 'Select your governorate, district, and area to find your assigned voting location.',
+        district: 'District / City',
+        area: 'Area / Neighborhood',
+        findMyCenter: 'Find My Center',
+        pollingCenterName: 'Polling Center Name',
+        address: 'Address',
+        centerCode: 'Center Code',
+        viewOnMap: 'View on Map',
+        noCenterFound: 'No Polling Center Found',
+        noCenterFoundDesc: 'We could not find a polling center for the selected location. Please double-check your selections or contact support.',
+        searching: 'Searching...',
+        selectDistrict: 'Select District',
+        selectArea: 'Select Area',
+        marquee: {
+            item1: "Voter registration for the 2025 parliamentary elections is now open.",
+            item2: "The Independent High Electoral Commission (IHEC) confirms election date.",
+            item3: "Follow your favorite candidates and stay updated on their campaigns.",
+            item4: "Join public discussions in the Tea House to make your voice heard.",
+            item5: "Report any electoral violations through the Integrity Hub to ensure a fair process."
+        },
     },
     ku: {
-        appName: 'هەڵمەتی زیرەک',
-        social: 'کارلێکی کۆمەڵایەتی',
-        serious: 'بەڕێوەبردنی هەڵبژاردن',
+        appName: 'Hayy',
+        social: 'کۆمەڵایەتی',
+        serious: 'هەڵبژاردن',
         whoToFollow: 'کێ فۆڵۆ بکەیت',
         platformRules: 'ڕێنماییەکان',
         rule1: 'ڕێز لە کەسانی تر بگرە.',
@@ -587,11 +645,19 @@ export const UI_TEXT: Translations = {
         women: 'ژنان',
         minorities: 'کەمینەکان',
         components: 'پێکهاتەکان',
+        pollingCenter: 'بنکەی دەنگدان',
         debates: 'گفتوگۆکان',
         analytics: 'شیکاری',
         myProfile: 'پرۆفایلی من',
         events: 'ڕووداوەکان',
         articles: 'وتارەکان',
+        askNeighbor: 'پرسیار لە دراوسێ',
+        askNeighborDesc: 'پرسیار لە کۆمەڵگاکەت بکە و وەڵام لە دراوسێکانت یان AI وەربگرە.',
+        askAQuestion: 'پرسیارێک بکە',
+        askAQuestionPlaceholder: 'دەتەوێت چی بزانیت دەربارەی کۆمەڵگاکەت یان هەڵبژاردنەکان؟',
+        ask: 'پرسیار بکە',
+        askAI: 'لە AI بپرسە',
+        generatingAnswer: 'دروستکردنی وەڵامی AI...',
         search: 'بگەڕێ...',
         dashboard: 'داشبۆرد',
         settings: 'ڕێکخستنەکان',
@@ -811,11 +877,32 @@ export const UI_TEXT: Translations = {
         aboutApp: 'دەربارەی {appName}',
         version: 'وەشان',
         appDescription: 'شوێنێکی سەلامەت و بەشداریکەر بۆ عێراقییەکان بۆ گفتوگۆکردنی سیاسەت، هاوبەشکردنی نیگەرانییەکان، و لێپرسینەوە لە سەرکردەکان — بە بەکارهێنانی دەنگ، نووسین، و میانڕەوی کۆمەڵگە بۆ پەرەپێدانی گفتوگۆی گشتگیر پێش، لە کاتی، و دوای هەڵبژاردنەکان.',
+        findPollingCenterTitle: 'بنکەی دەنگدانی خۆت بدۆزەرەوە',
+        findPollingCenterDesc: 'پارێزگا و قەزا و گەڕەکی خۆت هەڵبژێرە بۆ دۆزینەوەی شوێنی دەنگدانت.',
+        district: 'قەزا / شار',
+        area: 'گەڕەک / ناوچە',
+        findMyCenter: 'دۆزینەوەی بنکەکەم',
+        pollingCenterName: 'ناوی بنکەی دەنگدان',
+        address: 'ناونیشان',
+        centerCode: 'کۆدی بنکە',
+        viewOnMap: 'لەسەر نەخشە بیبینە',
+        noCenterFound: 'هیچ بنکەیەکی دەنگدان نەدۆزرایەوە',
+        noCenterFoundDesc: 'نەمانتوانی بنکەیەکی دەنگدان بۆ شوێنی هەڵبژێردراو بدۆزینەوە. تکایە دڵنیابە لە هەڵبژاردنەکانت یان پەیوەندی بە پشتیوانییەوە بکە.',
+        searching: 'گەڕان...',
+        selectDistrict: 'قەزا هەڵبژێرە',
+        selectArea: 'گەڕەک هەڵبژێرە',
+        marquee: {
+            item1: "تۆمارکردنی دەنگدەران بۆ هەڵبژاردنەکانی پەرلەمانی ٢٠٢٥ دەستیپێکرد.",
+            item2: "کۆمیسیۆنی باڵای سەربەخۆی هەڵبژاردنەکان وادەی هەڵبژاردن پشتڕاست دەکاتەوە.",
+            item3: "فۆڵۆی کاندیدە دڵخوازەکانت بکە و ئاگاداری هەڵمەتەکانیان بە.",
+            item4: "بەشداری گفتوگۆ گشتییەکان بکە لە چایخانە بۆ گەیاندنی دەنگت.",
+            item5: "هەر پێشێلکارییەکی هەڵبژاردن لە ڕێگەی ناوەندی دەستپاکیەوە ڕاپۆرت بکە بۆ دڵنیابوون لە پرۆسەیەکی دادپەروەرانە."
+        },
     },
     ar: {
-        appName: 'الحملة الذكية',
-        social: 'التفاعل الاجتماعي',
-        serious: 'إدارة الانتخابات',
+        appName: 'حي',
+        social: 'اجتماعي',
+        serious: 'انتخابات',
         whoToFollow: 'من تتابعه',
         platformRules: 'قواعد المنصة',
         rule1: 'كن محترما للآخرين.',
@@ -854,11 +941,19 @@ export const UI_TEXT: Translations = {
         women: 'النساء',
         minorities: 'الأقليات',
         components: 'المكونات',
-        debates: 'المناقشات',
+        pollingCenter: 'مركز الاقتراع',
+        debates: 'المناظرات',
         analytics: 'التحليلات',
         myProfile: 'ملفي الشخصي',
         events: 'الفعاليات',
         articles: 'مقالات',
+        askNeighbor: 'اسأل جارك',
+        askNeighborDesc: 'اطرح أسئلة على مجتمعك المحلي واحصل على إجابات من جيرانك أو من الذكاء الاصطناعي.',
+        askAQuestion: 'اطرح سؤالاً',
+        askAQuestionPlaceholder: 'ماذا تود أن تعرف عن مجتمعك أو الانتخابات؟',
+        ask: 'اسأل',
+        askAI: 'اسأل الذكاء الاصطناعي',
+        generatingAnswer: 'جاري إنشاء إجابة بالذكاء الاصطناعي...',
         search: 'ابحث...',
         dashboard: 'لوحة التحكم',
         settings: 'الإعدادات',
@@ -884,7 +979,7 @@ export const UI_TEXT: Translations = {
         share: 'مشاركة',
         generating: 'جاري الإنشاء...',
         portal: 'البوابة',
-        electionCandidates: 'المرشحون',
+        electionCandidates: 'مرشحو الانتخابات',
         electionData: 'البيانات',
         resources: 'الموارد',
         signInWithGoogle: 'تسجيل الدخول باستخدام جوجل',
@@ -933,9 +1028,9 @@ export const UI_TEXT: Translations = {
         noReelsFound: "لا توجد مقاطع متاحة للفلاتر المحددة.",
         filterByCandidate: "فلترة حسب مرشح معين...",
         clearSelection: "مسح الاختيار",
-        loadingDebates: "جاري تحميل المناقشات...",
-        noDebatesFound: "لم يتم العثور على مناقشات للفلاتر المحددة.",
-        joinLiveDebate: "انضم إلى المناقشة المباشرة",
+        loadingDebates: "جاري تحميل المناظرات...",
+        noDebatesFound: "لم يتم العثور على مناظرات للفلاتر المحددة.",
+        joinLiveDebate: "انضم إلى المناظرة المباشرة",
         setReminder: "ضبط تذكير",
         upcomingEvents: "الفعاليات القادمة",
         loadingEvents: "جاري تحميل الفعاليات...",
@@ -1078,5 +1173,26 @@ export const UI_TEXT: Translations = {
         aboutApp: 'حول {appName}',
         version: 'الإصدار',
         appDescription: 'مساحة آمنة وجذابة للعراقيين لمناقشة السياسة ومشاركة المخاوف ومساءلة القادة - باستخدام الصوت والنص والإشراف المجتمعي لتعزيز الحوار الشامل قبل الانتخابات وأثناءها وبعدها.',
+        findPollingCenterTitle: 'ابحث عن مركز الاقتراع الخاص بك',
+        findPollingCenterDesc: 'اختر محافظتك وقضائك ومنطقتك للعثور على موقع التصويت المخصص لك.',
+        district: 'القضاء / المدينة',
+        area: 'المنطقة / الحي',
+        findMyCenter: 'ابحث عن مركزي',
+        pollingCenterName: 'اسم مركز الاقتراع',
+        address: 'العنوان',
+        centerCode: 'رمز المركز',
+        viewOnMap: 'عرض على الخريطة',
+        noCenterFound: 'لم يتم العثور على مركز اقتراع',
+        noCenterFoundDesc: 'لم نتمكن من العثور على مركز اقتراع للموقع المحدد. يرجى التحقق مرة أخرى من اختياراتك أو الاتصال بالدعم.',
+        searching: 'جاري البحث...',
+        selectDistrict: 'اختر القضاء',
+        selectArea: 'اختر المنطقة',
+        marquee: {
+            item1: "تسجيل الناخبين لانتخابات البرلمان لعام 2025 مفتوح الآن.",
+            item2: "المفوضية العليا المستقلة للانتخابات تؤكد موعد الانتخابات.",
+            item3: "تابع مرشحيك المفضلين وابق على اطلاع بحملاتهم الانتخابية.",
+            item4: "انضم إلى النقاشات العامة في المقهى لإسماع صوتك.",
+            item5: "أبلغ عن أي انتهاكات انتخابية عبر مركز نزاهة الانتخابات لضمان عملية عادلة."
+        },
     }
 };

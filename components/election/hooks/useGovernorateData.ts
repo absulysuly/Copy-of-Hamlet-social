@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import * as api from '../../../services/apiService';
-import { Candidate, NewsArticle } from '../types';
+import * as api from '../../../services/apiService.ts';
+import { Candidate, NewsArticle } from '../types.ts';
 
 export const useGovernorateData = (name: string | undefined) => {
     const [data, setData] = useState<{ governorate: any; candidates: Candidate[]; news: NewsArticle[] } | null>(null);

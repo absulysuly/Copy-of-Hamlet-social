@@ -1,22 +1,30 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types';
-import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants';
-import { UI_TEXT } from '../../translations';
-import * as api from '../../services/apiService';
+import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, HomeViewMode } from '../../types.ts';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
+import { UI_TEXT } from '../../translations.ts';
+import * as api from '../../services/apiService.ts';
 
-import ComposeView from './ComposeView';
-import PostCard from '../PostCard';
-import TopNavBar from '../TopNavBar';
-import Spinner from '../Spinner';
-import ReelsView from './ReelsView';
-import CandidatesView from './CandidatesView';
-import SkeletonPostCard from '../SkeletonPostCard';
+import ComposeView from './ComposeView.tsx';
+import PostCard from '../PostCard.tsx';
+import TopNavBar from '../TopNavBar.tsx';
+import Spinner from '../Spinner.tsx';
+import ReelsView from './ReelsView.tsx';
+import CandidatesView from './CandidatesView.tsx';
+import SkeletonPostCard from '../SkeletonPostCard.tsx';
+import SearchBar from '../SearchBar.tsx';
 
 // Lazy load views
-const WhisperView = lazy(() => import('./WhisperView'));
-const WomenCandidatesView = lazy(() => import('./WomenCandidatesView'));
-const MinoritiesView = lazy(() => import('./MinoritiesView'));
-const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView'));
+const WhisperView = lazy(() => import('./WhisperView.tsx'));
+const WomenCandidatesView = lazy(() => import('./WomenCandidatesView.tsx'));
+const MinoritiesView = lazy(() => import('./MinoritiesView.tsx'));
+const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView.tsx'));
+const PollingCenterFinder = lazy(() => import('./PollingCenterFinder.tsx'));
+const DebatesView = lazy(() => import('./DebatesView.tsx'));
+const EventsView = lazy(() => import('./EventsView.tsx'));
+const SeriousnessView = lazy(() => import('./SeriousnessView.tsx'));
+const TeaHouseView = lazy(() => import('./TeaHouseView.tsx'));
+const HeroSection = lazy(() => import('../HeroSection.tsx'));
+const AskNeighborView = lazy(() => import('./AskNeighborView.tsx'));
 
 
 interface HomeViewProps {
@@ -35,41 +43,53 @@ interface HomeViewProps {
     activeTab: MainContentTab;
     onTabChange: (tab: MainContentTab) => void;
     onCompose: () => void;
+    homeViewMode: HomeViewMode;
 }
 
-const SUB_TABS: MainContentTab[] = [AppTab.Feed, AppTab.Real, AppTab.Candidates, AppTab.Women, AppTab.Whisper, AppTab.Components];
+const SOCIAL_TABS: MainContentTab[] = [AppTab.Feed, AppTab.Real, AppTab.AskNeighbor, AppTab.Whisper, AppTab.Women, AppTab.Components, AppTab.TeaHouse];
+const ELECTION_TABS: MainContentTab[] = [AppTab.Candidates, AppTab.PollingCenter, AppTab.Women, AppTab.Minorities, AppTab.Debates, AppTab.Events, AppTab.Articles];
 
-const getThemeClassForTab = (tab: MainContentTab) => {
-    switch (tab) {
-        case AppTab.Real: return 'theme-reels';
-        case AppTab.Candidates: return 'theme-candidates';
-        case AppTab.Whisper: return 'theme-whisper';
-        default: return 'theme-default';
-    }
-};
-
-const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose }) => {
+const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose, homeViewMode }) => {
     
     const [socialPosts, setSocialPosts] = useState<Post[]>([]);
-    const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [genderFilter, setGenderFilter] = useState<'All' | 'Male' | 'Female'>('All');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Reset active tab and search when mode changes
+    useEffect(() => {
+        setSearchQuery('');
+        if (homeViewMode === 'Social') {
+            onTabChange(AppTab.Feed);
+        } else {
+            onTabChange(AppTab.Candidates);
+        }
+    }, [homeViewMode, onTabChange]);
+
 
     useEffect(() => {
         if (activeTab === AppTab.Feed) {
             const fetchFeedData = async () => {
-                setIsLoadingPosts(true);
+                setIsLoading(true);
+                setError(null);
                 try {
-                    const postsData = await api.getPosts({ governorate: selectedGovernorate, party: selectedParty });
+                    const postsData = await api.getPosts({ 
+                        governorate: selectedGovernorate, 
+                        party: selectedParty,
+                        query: searchQuery,
+                    });
                     setSocialPosts(postsData);
                 } catch (error) {
                     console.error("Failed to fetch feed data:", error);
+                    setError("Failed to load feed. Please try again.");
                 } finally {
-                    setIsLoadingPosts(false);
+                    setIsLoading(false);
                 }
             };
             fetchFeedData();
         }
-    }, [activeTab, selectedGovernorate, selectedParty]);
+    }, [activeTab, selectedGovernorate, selectedParty, searchQuery]);
 
     const handlePost = (postDetails: Partial<Post>) => {
         if (!user) return;
@@ -80,22 +100,13 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
             alert("Post created successfully (simulation).");
         });
     };
-    
-    const handleFollow = (e: React.MouseEvent, candidateId: string) => {
-        if (!user) {
-            e.preventDefault();
-            requestLogin();
-        } else {
-            api.followCandidate(candidateId);
-        }
-    };
 
     const texts = UI_TEXT[language];
     
     const CandidateFilters = () => (
         <div className="flex flex-col gap-4 p-4 glass-card my-4 rounded-lg shadow-lg w-full max-w-md mx-auto">
              <h2 className="text-xl font-bold text-center text-theme-text-base font-arabic">
-                Iraqi National Election Candidates
+                {texts.electionCandidates}
              </h2>
             <div>
                 <label htmlFor="gov-filter" className="block text-sm font-medium text-theme-text-muted font-arabic">{texts.governorate}</label>
@@ -122,106 +133,86 @@ const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGoverno
         </div>
     );
     
-    const renderTabContent = () => {
+    const renderFeed = () => {
+        if (isLoading) {
+             return (
+                <div className="mt-4">
+                    {[...Array(3)].map((_, i) => <SkeletonPostCard key={i} />)}
+                </div>
+            );
+        }
+
+        if (error) {
+            return <p className="text-center py-10 text-red-400">{error}</p>;
+        }
+
+        return (
+            <div className="mt-4">
+                {socialPosts.length > 0 ? (
+                    socialPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
+                ) : (
+                    <p className="text-center py-10 text-theme-text-muted">{texts.noPostsFound}</p>
+                )}
+            </div>
+        );
+    }
+    
+    const renderActiveTab = () => {
         switch (activeTab) {
             case AppTab.Feed:
                 return (
                     <>
-                        <div className="mt-4">
-                            {user ? <ComposeView user={user} onPost={handlePost} language={language} postType="Post" />
-                                : <div onClick={requestLogin} className="glass-card rounded-lg p-3 flex items-center space-x-4 cursor-pointer hover:border-primary"><div className="flex-1 text-theme-text-muted font-arabic">{texts.whatsOnYourMind}</div><button className="px-4 py-2 text-sm font-bold bg-primary text-on-primary rounded-full">{texts.post}</button></div>
-                            }
-                        </div>
-                        <div className="mt-4">
-                            {isLoadingPosts ? [...Array(3)].map((_, i) => <SkeletonPostCard key={i} />)
-                                : socialPosts.length > 0 ? socialPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
-                                : <p className="text-center py-10 text-theme-text-muted">{texts.noPostsFound}</p>
-                            }
-                        </div>
+                        {user?.role === UserRole.Candidate && <ComposeView user={user} onPost={handlePost} language={language} />}
+                        {renderFeed()}
                     </>
                 );
             case AppTab.Real:
-                return (
-                    <div className="mt-4">
-                        <ReelsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} language={language} />
-                    </div>
-                );
+                return <ReelsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} language={language} />;
             case AppTab.Candidates:
-                 return (
-                    <div className="mt-6">
-                        <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} selectedGender={genderFilter} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language}/>
-                    </div>
-                );
-            case AppTab.Women:
-                return (
-                    <Suspense fallback={<Spinner />}>
-                        <WomenCandidatesView onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />
-                    </Suspense>
-                );
-            case AppTab.Minorities:
-                return (
-                    <Suspense fallback={<Spinner />}>
-                        <MinoritiesView language={language} />
-                    </Suspense>
-                );
+                 return <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} selectedGender={genderFilter} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />;
             case AppTab.Whisper:
-                return (
-                     <div className="mt-4">
-                        {user && <div className="mb-4"><ComposeView user={user} onPost={handlePost} language={language} postType="Whisper" /></div>}
-                         <Suspense fallback={<Spinner/>}>
-                            <WhisperView user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />
-                         </Suspense>
-                    </div>
-                );
+                return <WhisperView user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />;
+            case AppTab.Women:
+                 return <WomenCandidatesView onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />;
+            case AppTab.Minorities:
+                 return <MinoritiesView language={language} />;
             case AppTab.Components:
-                return (
-                    <Suspense fallback={<Spinner />}>
-                        <CrossPlatformNavigationView onNavigateToCandidates={() => onTabChange(AppTab.Candidates)} onQrScan={() => alert('QR Scan not implemented yet.')} />
-                    </Suspense>
-                );
+                 return <CrossPlatformNavigationView onNavigateToCandidates={() => onTabChange(AppTab.Candidates)} onQrScan={() => {}} />;
+            case AppTab.PollingCenter:
+                 return <PollingCenterFinder language={language} />;
+            case AppTab.Debates:
+                 return <DebatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} language={language} />;
+            case AppTab.Events:
+                 return <EventsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} language={language} />;
+            case AppTab.Articles:
+                 return <SeriousnessView selectedGovernorate={selectedGovernorate} language={language} />;
+            case AppTab.TeaHouse:
+                 return <TeaHouseView user={user} requestLogin={requestLogin} language={language} />;
+            case AppTab.AskNeighbor:
+                return <AskNeighborView user={user} requestLogin={requestLogin} language={language} />;
             default:
-                return null;
+                return renderFeed();
         }
-    };
+    }
+
+    const TABS_FOR_MODE = homeViewMode === 'Social' ? SOCIAL_TABS : ELECTION_TABS;
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-0 sm:p-6">
-            <main className="lg:col-span-3">
-                 <div className="flex flex-col items-center">
-                    <CandidateFilters />
-                 </div>
-                <div className="z-10 py-2 sticky top-14 lg:top-0 glass-nav lg:glass-card lg:rounded-t-xl">
-                    <TopNavBar<MainContentTab>
-                        tabs={SUB_TABS}
-                        activeTab={activeTab}
-                        onTabChange={onTabChange}
-                        language={language}
-                    />
-                </div>
-                
-                <div className={`tab-content-wrapper ${getThemeClassForTab(activeTab)} px-4 sm:px-0`}>
-                    {renderTabContent()}
-                </div>
-            </main>
+        <div className="max-w-xl mx-auto">
+            {homeViewMode === 'Social' && (
+                <Suspense fallback={<div className="h-40 bg-black/10"></div>}>
+                    <HeroSection />
+                </Suspense>
+            )}
 
-            <aside className="hidden lg:block lg:col-span-1 space-y-6 pt-2">
-                <div className="glass-card rounded-lg p-4">
-                    <h3 className="font-bold mb-3 font-arabic">{texts.whoToFollow}</h3>
-                    <div className="space-y-3">
-                        <p className="text-xs text-theme-text-muted">{texts.noCandidatesToShow}</p>
-                    </div>
-                </div>
+            <TopNavBar tabs={TABS_FOR_MODE} activeTab={activeTab} onTabChange={onTabChange} language={language} />
 
-                <div className="glass-card rounded-lg p-4">
-                    <h3 className="font-bold mb-3 font-arabic">{texts.platformRules}</h3>
-                    <ul className="text-sm space-y-2 list-disc list-inside text-theme-text-muted font-arabic">
-                        <li>{texts.rule1}</li>
-                        <li>{texts.rule2}</li>
-                        <li>{texts.rule3}</li>
-                        <li>{texts.rule4}</li>
-                    </ul>
-                </div>
-            </aside>
+            {activeTab === AppTab.Feed && <SearchBar onSearch={setSearchQuery} language={language} />}
+            {activeTab === AppTab.Candidates && <CandidateFilters />}
+            
+            <Suspense fallback={<div className="flex justify-center items-center p-10"><Spinner /></div>}>
+                {renderActiveTab()}
+            </Suspense>
         </div>
     );
 };

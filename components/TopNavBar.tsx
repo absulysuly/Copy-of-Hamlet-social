@@ -1,6 +1,6 @@
 import React from 'react';
-import { Language } from '../types';
-import { UI_TEXT } from '../translations';
+import { Language } from '../types.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface TopNavBarProps<T extends string> {
     tabs: T[];
@@ -17,6 +17,12 @@ const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
     'Women': 'women',
     'Minorities': 'minorities',
     'Components': 'components',
+    'Polling Center': 'pollingCenter',
+    'TeaHouse': 'teaHouse',
+    'Events': 'events',
+    'Articles': 'articles',
+    'Debates': 'debates',
+    'Ask Neighbor': 'askNeighbor',
 };
 
 
@@ -36,7 +42,7 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
             <nav className="flex space-x-6 rtl:space-x-reverse px-4 sm:px-6 overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
                 {tabs.map((tab) => {
                     const translationKey = tabTranslationKeys[tab];
-                    const label = translationKey ? String(texts[translationKey] || tab) : tab;
+                    const label = translationKey ? texts[translationKey] : tab;
 
                     return (
                         <button

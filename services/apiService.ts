@@ -1,112 +1,25 @@
-import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language } from '../types';
-import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO } from '../constants';
-import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types';
-import axios from 'axios';
+import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language, PollingCenter, Question } from '../types.ts';
+import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO, MOCK_QUESTIONS } from '../constants.ts';
+import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types.ts';
 
-// API Configuration - Connect to Railway backend
-const getApiBaseURL = (): string => {
-  return (
-    process.env.NEXT_PUBLIC_API_URL ||
-    process.env.NEXT_PUBLIC_BACKUP_API ||
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    'http://localhost:4001'
-  );
+// Simulate a more realistic network delay
+const simulateFetch = <T>(data: T, delay: number = 300): Promise<T> => {
+    return new Promise(resolve => setTimeout(() => resolve(JSON.parse(JSON.stringify(data))), delay));
 };
 
-const apiClient = axios.create({
-  baseURL: getApiBaseURL(),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000,
-});
-
-// Cache backend availability check
-let backendAvailableCache: boolean | null = null;
-let cacheTimestamp = 0;
-const CACHE_DURATION = 60000; // 1 minute
-
-const isBackendAvailable = async (): Promise<boolean> => {
-  const now = Date.now();
-  if (backendAvailableCache !== null && (now - cacheTimestamp) < CACHE_DURATION) {
-    return backendAvailableCache;
-  }
-
-  try {
-    const response = await apiClient.get('/api/health', { timeout: 3000 });
-    backendAvailableCache = response.status === 200;
-    cacheTimestamp = now;
-    return backendAvailableCache;
-  } catch {
-    backendAvailableCache = false;
-    cacheTimestamp = now;
-    return false;
-  }
-};
-
-// INSTANT LOADING - No delays
-const simulateFetch = <T>(data: T): Promise<T> => {
-    return Promise.resolve(JSON.parse(JSON.stringify(data)));
-};
-
-// Real API calls with fallback to mock data
-export const getParties = async (): Promise<string[]> => {
-    try {
-        if (await isBackendAvailable()) {
-            const response = await apiClient.get('/api/parties');
-            if (response.data && Array.isArray(response.data)) {
-                return response.data;
-            }
-        }
-    } catch (error) {
-        console.warn('Backend API unavailable for parties, using mock data');
-    }
-    const parties = Array.from(new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate).map(u => u.party)));
+export const getParties = (): Promise<string[]> => {
+    const parties = [...new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate).map(u => u.party))];
     return simulateFetch(parties);
 };
 
-export const getCandidateStats = async (): Promise<{ total: number; women: number; men: number; }> => {
-    try {
-        if (await isBackendAvailable()) {
-            const response = await apiClient.get('/api/stats');
-            if (response.data) {
-                return {
-                    total: response.data.total || 0,
-                    women: response.data.byGender?.Female || response.data.women || 0,
-                    men: response.data.byGender?.Male || response.data.men || 0,
-                };
-            }
-        }
-    } catch (error) {
-        console.warn('Backend API unavailable for stats, using mock data');
-    }
+export const getCandidateStats = (): Promise<{ total: number; women: number; men: number; }> => {
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate);
     const women = candidates.filter(c => c.gender === 'Female').length;
     const men = candidates.length - women;
     return simulateFetch({ total: candidates.length, women, men });
 };
 
-export const getUsers = async (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', gender?: 'Male' | 'Female' | 'All', authorId?: string, partySlug?: string, governorateSlug?: string }): Promise<User[]> => {
-    // Try real backend for candidates
-    if (filters.role === UserRole.Candidate) {
-        try {
-            if (await isBackendAvailable()) {
-                const params: any = {};
-                if (filters.governorate && filters.governorate !== 'All') params.governorate = filters.governorate;
-                if (filters.gender && filters.gender !== 'All') params.gender = filters.gender;
-                if (filters.party && filters.party !== 'All') params.party = filters.party;
-                
-                const response = await apiClient.get('/api/candidates', { params });
-                if (response.data && Array.isArray(response.data)) {
-                    return response.data;
-                }
-            }
-        } catch (error) {
-            console.warn('Backend API unavailable for candidates, using mock data');
-        }
-    }
-    
-    // Fallback to mock data
+export const getUsers = (filters: { role?: UserRole, governorate?: Governorate | 'All', party?: string | 'All', gender?: 'Male' | 'Female' | 'All', authorId?: string, partySlug?: string, governorateSlug?: string, query?: string }): Promise<User[]> => {
     let users = MOCK_USERS;
     if (filters.role) {
         users = users.filter(u => u.role === filters.role);
@@ -129,10 +42,17 @@ export const getUsers = async (filters: { role?: UserRole, governorate?: Governo
     if (filters.governorateSlug) {
         users = users.filter(u => u.governorateSlug === filters.governorateSlug);
     }
+    if (filters.query) {
+        const lowercasedQuery = filters.query.toLowerCase();
+        users = users.filter(u => 
+            u.name.toLowerCase().includes(lowercasedQuery) ||
+            u.party.toLowerCase().includes(lowercasedQuery)
+        );
+    }
     return simulateFetch(users);
 };
 
-export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All' }): Promise<Post[]> => {
+export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, governorate?: Governorate | 'All', party?: string | 'All', query?: string }): Promise<Post[]> => {
     let posts = MOCK_POSTS;
     if (filters.type) {
         posts = posts.filter(p => p.type === filters.type);
@@ -146,6 +66,14 @@ export const getPosts = (filters: { type?: 'Post' | 'Reel', authorId?: string, g
     if (filters.party && filters.party !== 'All') {
         posts = posts.filter(p => p.author.party === filters.party);
     }
+    if (filters.query) {
+        const lowercasedQuery = filters.query.toLowerCase();
+        posts = posts.filter(p => 
+            p.content.toLowerCase().includes(lowercasedQuery) ||
+            p.author.name.toLowerCase().includes(lowercasedQuery)
+        );
+    }
+
     const sortedPosts = posts.sort((a, b) => {
         const getTime = (timestamp: string) => {
             if (timestamp.includes('hour')) return parseInt(timestamp) * 60;
@@ -192,6 +120,11 @@ export const getDebates = (filters: { governorate?: Governorate | 'All', party?:
     }
 
     return simulateFetch(debates);
+};
+
+// Fix: Add getQuestions function to provide data for the Ask a Neighbor feature.
+export const getQuestions = (): Promise<Question[]> => {
+    return simulateFetch(MOCK_QUESTIONS);
 };
 
 export const createPost = (postDetails: Partial<Post>, author: User): Promise<Post> => {
@@ -288,6 +221,43 @@ export const likePost = (postId: string): Promise<{ success: boolean }> => {
     return simulateFetch({ success: true });
 };
 
+// --- Polling Center Finder API ---
+const MOCK_POLLING_DATA = {
+    'Baghdad': {
+        'Karrada': ['Al-Jadriyah', 'Al-Wihda'],
+        'Adhamiyah': ['Hayy Ur', 'Sha\'ab'],
+    },
+    'Basra': {
+        'Basra City': ['Al-Ashar', 'Al-Jubaila'],
+        'Al-Zubair': ['Safwan', 'Umm Qasr'],
+    }
+};
+
+const MOCK_POLLING_CENTERS: PollingCenter[] = [
+    { id: 'pc1', name: 'Al-Mansour Primary School', address: '123 Al-Mansour St, Al-Jadriyah, Karrada, Baghdad', centerCode: 'BGH-KRD-001', googleMapsUrl: 'https://maps.google.com' },
+    { id: 'pc2', name: 'Basra International High School', address: '456 Corniche St, Al-Ashar, Basra City, Basra', centerCode: 'BSR-BC-001', googleMapsUrl: 'https://maps.google.com' }
+];
+
+export const getPollingDistricts = (governorate: Governorate): Promise<string[]> => {
+    const districts = MOCK_POLLING_DATA[governorate] ? Object.keys(MOCK_POLLING_DATA[governorate]) : [];
+    return simulateFetch(districts, 300);
+}
+
+export const getPollingAreas = (governorate: Governorate, district: string): Promise<string[]> => {
+    const areas = MOCK_POLLING_DATA[governorate]?.[district] || [];
+    return simulateFetch(areas, 300);
+}
+
+export const findPollingCenter = (governorate: Governorate, district: string, area: string): Promise<PollingCenter | null> => {
+    if (governorate === 'Baghdad' && district === 'Karrada' && area === 'Al-Jadriyah') {
+        return simulateFetch(MOCK_POLLING_CENTERS[0], 1000);
+    }
+    if (governorate === 'Basra' && district === 'Basra City' && area === 'Al-Ashar') {
+        return simulateFetch(MOCK_POLLING_CENTERS[1], 1000);
+    }
+    return simulateFetch(null, 1000);
+};
+
 
 // --- Tea House API ---
 export const getTeaHouseTopics = (language: Language): Promise<TeaHouseTopic[]> => {
@@ -318,28 +288,7 @@ export const submitIntegrityReport = async (formData: FormData): Promise<{ succe
     return simulateFetch({ success: true, trackingId: `IQ-REP-${Date.now()}` });
 };
 
-export const getDashboardStats = async (): Promise<any> => {
-    try {
-        if (await isBackendAvailable()) {
-            const response = await apiClient.get('/api/stats');
-            if (response.data) {
-                return {
-                    stats: {
-                        totalRegisteredVoters: response.data.totalVoters || 0,
-                        approvedCandidatesCount: response.data.total || 0,
-                        expectedTurnoutPercentage: response.data.expectedTurnout || 65,
-                    },
-                    participation: response.data.byGovernorate || IRAQI_GOVERNORATES_INFO.map(g => ({
-                        governorateId: g.id,
-                        governorateName: g.name,
-                        estimatedTurnout: 40 + Math.random() * 30
-                    }))
-                };
-            }
-        }
-    } catch (error) {
-        console.warn('Backend API unavailable for dashboard stats, using mock data');
-    }
+export const getDashboardStats = (): Promise<any> => {
     return simulateFetch({
         stats: { totalRegisteredVoters: 12500000, approvedCandidatesCount: 7769, expectedTurnoutPercentage: 65 },
         participation: IRAQI_GOVERNORATES_INFO.map(g => ({
@@ -350,35 +299,7 @@ export const getDashboardStats = async (): Promise<any> => {
     });
 };
 
-export const getGovernorateDataByName = async (name: string): Promise<{ governorate: any; candidates: Candidate[]; news: NewsArticle[] }> => {
-    try {
-        if (await isBackendAvailable()) {
-            const [govResponse, candidatesResponse] = await Promise.all([
-                apiClient.get(`/api/governorates/${encodeURIComponent(name)}`).catch(() => null),
-                apiClient.get('/api/candidates', { params: { governorate: name } }).catch(() => null),
-            ]);
-            
-            const governorate = govResponse?.data || IRAQI_GOVERNORATES_INFO.find(g => g.enName === name);
-            const candidates = candidatesResponse?.data?.map((c: any) => ({
-                id: c.id || c.candidateId,
-                name: c.name || c.fullName,
-                party: c.party || c.politicalParty,
-                imageUrl: c.imageUrl || c.avatarUrl || c.photoUrl,
-                verified: c.verified || false,
-            })) || MOCK_USERS.filter(u => u.role === UserRole.Candidate && u.governorate === name).slice(0, 12).map(c => ({
-                id: c.id, name: c.name, party: c.party, imageUrl: c.avatarUrl, verified: c.verified
-            }));
-            
-            const news = MOCK_ARTICLES.slice(0, 4).map(a => ({
-                id: a.id, title: a.title, summary: a.contentSnippet, date: a.timestamp
-            }));
-            
-            return { governorate, candidates, news };
-        }
-    } catch (error) {
-        console.warn('Backend API unavailable for governorate data, using mock data');
-    }
-    
+export const getGovernorateDataByName = (name: string): Promise<{ governorate: any; candidates: Candidate[]; news: NewsArticle[] }> => {
     const governorate = IRAQI_GOVERNORATES_INFO.find(g => g.enName === name);
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate && u.governorate === name).slice(0, 12).map(c => ({
         id: c.id, name: c.name, party: c.party, imageUrl: c.avatarUrl, verified: c.verified
@@ -400,23 +321,7 @@ export const getPartyById = (id: string): Promise<{ party: PoliticalParty; candi
     });
 };
 
-export const getAllElectionCandidates = async (): Promise<Candidate[]> => {
-    try {
-        if (await isBackendAvailable()) {
-            const response = await apiClient.get('/api/candidates');
-            if (response.data && Array.isArray(response.data)) {
-                return response.data.map((c: any) => ({
-                    id: c.id || c.candidateId,
-                    name: c.name || c.fullName,
-                    party: c.party || c.politicalParty,
-                    imageUrl: c.imageUrl || c.avatarUrl || c.photoUrl,
-                    verified: c.verified || false,
-                }));
-            }
-        }
-    } catch (error) {
-        console.warn('Backend API unavailable for all candidates, using mock data');
-    }
+export const getAllElectionCandidates = (): Promise<Candidate[]> => {
     const candidates = MOCK_USERS.filter(u => u.role === UserRole.Candidate).map(c => ({
         id: c.id, name: c.name, party: c.party, imageUrl: c.avatarUrl, verified: c.verified
     }));

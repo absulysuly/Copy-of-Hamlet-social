@@ -1,5 +1,5 @@
 import React from 'react';
-import { XMarkIcon } from './icons/Icons';
+import { XMarkIcon } from './icons/Icons.tsx';
 
 interface QRCodeModalProps {
     url: string;

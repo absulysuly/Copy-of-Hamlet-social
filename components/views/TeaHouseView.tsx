@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types';
-import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons';
-import CreateTopicModal from '../CreateTopicModal';
-import { UI_TEXT } from '../../translations';
-import * as api from '../../services/apiService';
-import Spinner from '../Spinner';
+import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types.ts';
+import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons.tsx';
+import CreateTopicModal from '../CreateTopicModal.tsx';
+import { UI_TEXT } from '../../translations.ts';
+import * as api from '../../services/apiService.ts';
+import Spinner from '../Spinner.tsx';
 
 interface TeaHouseViewProps {
     user: User | null;
@@ -143,7 +143,7 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
             <div className="text-center mb-6">
                  <button 
                     onClick={() => user ? setCreateModalOpen(true) : requestLogin()}
-                    className="send-btn max-w-xs"
+                    className="btn-primary"
                  >
                     {texts.createNewDiscussion}
                 </button>

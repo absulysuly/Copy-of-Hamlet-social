@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Candidate } from '../types';
-import * as api from '../../../services/apiService';
+import { Candidate } from '../types.ts';
+import * as api from '../../../services/apiService.ts';
 
 export const useAllCandidatesData = () => {
     const [candidates, setCandidates] = useState<Candidate[]>([]);

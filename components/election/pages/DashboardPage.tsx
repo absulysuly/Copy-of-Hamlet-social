@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDashboardData } from '../hooks/useDashboardData';
-import { UsersGroupIcon, ClipboardCheckIcon, ClockIcon, ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '../../icons/Icons';
-import { Language } from '../../../types';
-import { UI_TEXT } from '../../../translations';
+import { useDashboardData } from '../hooks/useDashboardData.ts';
+import { UsersGroupIcon, ClipboardCheckIcon, ClockIcon, ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '../../icons/Icons.tsx';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 
 
 interface DashboardPageProps {
