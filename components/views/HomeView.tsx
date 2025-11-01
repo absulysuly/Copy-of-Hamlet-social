@@ -6,7 +6,7 @@ import * as api from '../../services/apiService.ts';
 
 import ComposeView from './ComposeView.tsx';
 import PostCard from '../PostCard.tsx';
-import TopNavBar from '../TopNavBar.tsx';
+import TopNavBar from '../TopNavBar';
 import Spinner from '../Spinner.tsx';
 import ReelsView from './ReelsView.tsx';
 import CandidatesView from './CandidatesView.tsx';
