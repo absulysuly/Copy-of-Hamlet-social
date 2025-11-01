@@ -1,4 +1,4 @@
-import { colorThemes } from './utils/colorThemes.ts';
+import { colorThemes } from './utils/colorThemes';
 
 // --- ENUMS & LITERAL TYPES ---
 

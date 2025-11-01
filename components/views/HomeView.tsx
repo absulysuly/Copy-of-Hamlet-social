@@ -1,22 +1,22 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types.ts';
-import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
-import { UI_TEXT } from '../../translations.ts';
-import * as api from '../../services/apiService.ts';
+import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants';
+import { UI_TEXT } from '../../translations';
+import * as api from '../../services/apiService';
 
-import ComposeView from './ComposeView.tsx';
-import PostCard from '../PostCard.tsx';
-import TopNavBar from '../TopNavBar.tsx';
-import Spinner from '../Spinner.tsx';
-import ReelsView from './ReelsView.tsx';
-import CandidatesView from './CandidatesView.tsx';
-import SkeletonPostCard from '../SkeletonPostCard.tsx';
+import ComposeView from './ComposeView';
+import PostCard from '../PostCard';
+import TopNavBar from '../TopNavBar';
+import Spinner from '../Spinner';
+import ReelsView from './ReelsView';
+import CandidatesView from './CandidatesView';
+import SkeletonPostCard from '../SkeletonPostCard';
 
 // Lazy load views
-const WhisperView = lazy(() => import('./WhisperView.tsx'));
-const WomenCandidatesView = lazy(() => import('./WomenCandidatesView.tsx'));
-const MinoritiesView = lazy(() => import('./MinoritiesView.tsx'));
-const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView.tsx'));
+const WhisperView = lazy(() => import('./WhisperView'));
+const WomenCandidatesView = lazy(() => import('./WomenCandidatesView'));
+const MinoritiesView = lazy(() => import('./MinoritiesView'));
+const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView'));
 
 
 interface HomeViewProps {

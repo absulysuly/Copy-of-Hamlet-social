@@ -1,27 +1,27 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab } from './types.ts';
-import * as api from './services/apiService.ts';
-import Header from './components/Header.tsx';
-import Sidebar from './components/Sidebar.tsx';
-import BottomBar from './components/BottomBar.tsx';
-import LoginModal from './components/LoginModal.tsx';
-import ComposeModal from './components/ComposeModal.tsx';
-import { colorThemes } from './utils/colorThemes.ts';
-import LanguageSwitcher from './components/LanguageSwitcher.tsx';
-import PostDetailModal from './components/PostDetailModal.tsx';
-import Countdown from './components/Countdown.tsx';
-import Spinner from './components/Spinner.tsx';
+import { User, UserRole, Governorate, Language, AppTab, Post, ThemeName, MainContentTab } from './types';
+import * as api from './services/apiService';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import BottomBar from './components/BottomBar';
+import LoginModal from './components/LoginModal';
+import ComposeModal from './components/ComposeModal';
+import { colorThemes } from './utils/colorThemes';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import PostDetailModal from './components/PostDetailModal';
+import Countdown from './components/Countdown';
+import Spinner from './components/Spinner';
 
 // --- Lazy-loaded Components ---
-const HomeView = lazy(() => import('./components/views/HomeView.tsx'));
-const PublicDiscoverView = lazy(() => import('./components/views/PublicDiscoverView.tsx'));
-const SettingsView = lazy(() => import('./components/views/SettingsView.tsx'));
-const UserProfileView = lazy(() => import('./components/views/UserProfileView.tsx'));
-const CandidateProfileView = lazy(() => import('./components/views/CandidateProfileView.tsx'));
-const CandidateDashboardView = lazy(() => import('./components/views/CandidateDashboardView.tsx'));
-const FullScreenReelView = lazy(() => import('./components/views/FullScreenReelView.tsx'));
-const StoryViewModal = lazy(() => import('./components/views/StoryViewModal.tsx'));
-const HeroSection = lazy(() => import('./components/HeroSection.tsx'));
+const HomeView = lazy(() => import('./components/views/HomeView'));
+const PublicDiscoverView = lazy(() => import('./components/views/PublicDiscoverView'));
+const SettingsView = lazy(() => import('./components/views/SettingsView'));
+const UserProfileView = lazy(() => import('./components/views/UserProfileView'));
+const CandidateProfileView = lazy(() => import('./components/views/CandidateProfileView'));
+const CandidateDashboardView = lazy(() => import('./components/views/CandidateDashboardView'));
+const FullScreenReelView = lazy(() => import('./components/views/FullScreenReelView'));
+const StoryViewModal = lazy(() => import('./components/views/StoryViewModal'));
+const HeroSection = lazy(() => import('./components/HeroSection'));
 
 
 const App: React.FC = () => {

@@ -1,0 +1,22 @@
+
+> hamlet-frontend@0.1.0 build
+> next build
+
+   Γû▓ Next.js 14.1.4
+   - Environments: .env.local, .env.production
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./components/views/ElectionManagementView.tsx:57:25
+Type error: Type '{ onNavigate: (path: string) => void; language: Language; }' has no properties in common with type 'IntrinsicAttributes'.
+
+  55 |                 return <PartiesPage {...pageProps} />;
+  56 |             case '/election-hub':
+> 57 |                 return <ElectionHubPage {...pageProps} />;
+     |                         ^
+  58 |              case '/privacy-policy':
+  59 |                 return <PrivacyPolicyPage {...pageProps} />;
+  60 |             case '/terms-of-service':

@@ -1,8 +1,8 @@
 import React from 'react';
-import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
-import ApiIcon from '../icons/ApiIcon.tsx';
-import { useApiConfig } from '../hooks/useManagementData.ts';
-import Button from '../components/ui/Button.tsx';
+import ManagementPageHeader from '../components/ManagementPageHeader';
+import ApiIcon from '../icons/ApiIcon';
+import { useApiConfig } from '../hooks/useManagementData';
+import Button from '../components/ui/Button';
 
 const ApiConnectionRow: React.FC<{ api: { id: string, name: string, status: string, lastChecked: string } }> = ({ api }) => {
     const isConnected = api.status === 'Connected';
@@ -50,7 +50,7 @@ const ApiConfigPage: React.FC<{ onNavigate: (path: string) => void }> = ({ onNav
                     <p className="p-8 text-center">Loading API statuses...</p>
                 ) : (
                     <div>
-                        {apiData.map((api: any) => <ApiConnectionRow key={api.id} api={api} />)}
+                        {apiData && apiData.map((api: any) => <ApiConnectionRow key={api.id} api={api} />)}
                     </div>
                 )}
                  <div className="p-4 flex justify-end">

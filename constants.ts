@@ -1,4 +1,4 @@
-import { User, UserRole, Post, Event, Article, Debate, GovernorateInfo, Governorate, TeaHouseTopic, TeaHouseMessage, Language, MessageType } from './types.ts';
+import { User, UserRole, Post, Event, Article, Debate, GovernorateInfo, Governorate, TeaHouseTopic, TeaHouseMessage, Language, MessageType } from './types';
 
 // --- GOVERNORATE DATA (Single Source of Truth) ---
 export const IRAQI_GOVERNORATES_INFO: GovernorateInfo[] = [

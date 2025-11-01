@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Governorate, Debate, UserRole, User, Language } from '../../types.ts';
-import { DebateIcon, CalendarIcon, ChevronDownIcon } from '../icons/Icons.tsx';
-import * as api from '../../services/apiService.ts';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
+import { Governorate, Debate, UserRole, User, Language } from '../../types';
+import { DebateIcon, CalendarIcon, ChevronDownIcon } from '../icons/Icons';
+import * as api from '../../services/apiService';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
 
 interface DebatesViewProps {
     selectedGovernorate: Governorate | 'All';

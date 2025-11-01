@@ -1,7 +1,7 @@
 import React from 'react';
-import { Post, User, Language } from '../types.ts';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, XMarkIcon } from './icons/Icons.tsx';
-import AudioPlayer from './AudioPlayer.tsx';
+import { Post, User, Language } from '../types';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, XMarkIcon } from './icons/Icons';
+import AudioPlayer from './AudioPlayer';
 
 interface PostDetailModalProps {
     post: Post;
@@ -60,17 +60,20 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, user, onClose, 
                     </div>
                     
                     {/* Content */}
-                    {post.type === 'VoiceNote' ? (
-                        <AudioPlayer src={post.mediaUrl || ''} governorate={post.author.governorate} />
+                    {post.mediaUrl && post.mediaUrl.match(/\.(mp3|wav|ogg|m4a)$/i) ? (
+                        <AudioPlayer src={post.mediaUrl} governorate={post.author.governorate} />
                     ) : (
                         <div className="my-4">
                             <p className="text-theme-text-base text-base whitespace-pre-line font-arabic">{post.content}</p>
+                            {post.mediaUrl && (
+                                <img src={post.mediaUrl} alt="Post media" className="mt-4 rounded-lg w-full" />
+                            )}
                         </div>
                     )}
                 </div>
 
                 {/* Image */}
-                {post.mediaUrl && post.type !== 'VoiceNote' && (
+                {post.mediaUrl && !post.mediaUrl.match(/\.(mp3|wav|ogg|m4a)$/i) && (
                     <div className="px-2 pb-2">
                         <img
                             onClick={onClose}
