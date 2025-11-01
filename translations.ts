@@ -103,6 +103,12 @@ type Translations = {
         following: string;
         shareLinkCopied: string;
         shareNotSupported: string;
+        // FIX: Add missing translation keys for ContactMPForm
+        messageSent: string;
+        contactMP: string;
+        contactMPDesc: string;
+        contactMPPlaceholder: string;
+        sendMessage: string;
         socialLoginFailed: string;
         registrationFailed: string;
         emailNotVerified: string;
@@ -409,6 +415,11 @@ export const UI_TEXT: Translations = {
         following: 'Following',
         shareLinkCopied: 'Link to post copied to clipboard!',
         shareNotSupported: 'Sharing is not supported on this browser.',
+        messageSent: 'Message sent successfully (simulation).',
+        contactMP: 'Contact this Representative',
+        contactMPDesc: "Send a direct, private message to the representative's office.",
+        contactMPPlaceholder: 'Type your question or message here...',
+        sendMessage: 'Send Message',
         socialLoginFailed: 'Social login failed. Please try again.',
         registrationFailed: 'Registration failed. Please try again.',
         emailNotVerified: 'Email not verified yet. Please check your inbox for the verification link.',
@@ -705,6 +716,11 @@ export const UI_TEXT: Translations = {
         following: "فۆڵۆ کراوە",
         shareLinkCopied: "لینکی پۆستەکە کۆپی کرا!",
         shareNotSupported: "شەیرکردن لەم وێبگەڕەدا پشتگیری نەکراوە.",
+        messageSent: 'نامەکە بە سەرکەوتوویی نێردرا (نموونە).',
+        contactMP: 'پەیوەندی بەم نوێنەرەوە بکە',
+        contactMPDesc: 'نامەیەکی ڕاستەوخۆ و تایبەت بنێرە بۆ نووسینگەی نوێنەرەکە.',
+        contactMPPlaceholder: 'لێرە پرسیارەکەت یان نامەکەت بنووسە...',
+        sendMessage: 'ناردنی نامە',
         socialLoginFailed: "چوونەژوورەوە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         registrationFailed: "تۆمارکردن سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە.",
         emailNotVerified: "ئیمەیڵ پشتڕاست نەکراوەتەوە. تکایە سندوقی نامەکانت بپشکنە.",
@@ -1001,6 +1017,11 @@ export const UI_TEXT: Translations = {
         following: "تتابعه",
         shareLinkCopied: "تم نسخ رابط المنشور!",
         shareNotSupported: "المشاركة غير مدعومة في هذا المتصفح.",
+        messageSent: 'تم إرسال الرسالة بنجاح (محاكاة).',
+        contactMP: 'تواصل مع هذا النائب',
+        contactMPDesc: 'أرسل رسالة خاصة ومباشرة إلى مكتب النائب.',
+        contactMPPlaceholder: 'اكتب سؤالك أو رسالتك هنا...',
+        sendMessage: 'إرسال الرسالة',
         socialLoginFailed: "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
         registrationFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
         emailNotVerified: "البريد الإلكتروني لم يتم التحقق منه بعد. يرجى مراجعة بريدك الوارد.",
