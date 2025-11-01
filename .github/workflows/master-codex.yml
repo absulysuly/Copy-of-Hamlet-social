@@ -1,16 +1,10 @@
-name: 🚀 Hamlet Unified – Full Auto Pipeline
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-jobs:
   phase1_setup:
     name: Phase 1 – Railway Deployment
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Verify Prisma schema exists
         run: |
           if [ ! -f prisma/schema.prisma ]; then
@@ -19,7 +13,6 @@ jobs:
           else
             echo "✅ Prisma schema found – continuing..."
           fi
-
       - run: npm ci
       - run: npx prisma generate && npx prisma db push
       - run: bash ./deploy-railway.sh
