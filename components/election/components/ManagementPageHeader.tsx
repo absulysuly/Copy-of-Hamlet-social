@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftIcon } from '../../icons/Icons.tsx';
+import { ArrowLeftIcon } from '../../icons/Icons';
 
 interface ManagementPageHeaderProps {
     title: string;

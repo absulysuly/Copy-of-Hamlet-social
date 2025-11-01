@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppTab } from '../../types.ts';
-import { QrCodeIcon, UsersIcon, LifebuoyIcon } from '../icons/Icons.tsx';
+import { AppTab } from '../../types';
+import { QrCodeIcon, UsersIcon, LifebuoyIcon } from '../icons/Icons';
 
 interface CrossPlatformNavigationViewProps {
     onNavigateToCandidates: () => void;

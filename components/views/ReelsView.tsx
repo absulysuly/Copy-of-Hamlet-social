@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Governorate, Post, User, Language } from '../../types.ts';
-import * as api from '../../services/apiService.ts';
-import ReelCard from '../ReelCard.tsx';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
+import { Governorate, Post, User, Language } from '../../types';
+import * as api from '../../services/apiService';
+import ReelCard from '../ReelCard';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
 
 interface ReelsViewProps {
   selectedGovernorate: Governorate | 'All';

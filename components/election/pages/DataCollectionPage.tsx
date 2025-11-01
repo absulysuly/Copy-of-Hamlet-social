@@ -1,8 +1,8 @@
 import React from 'react';
-import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
-import { DatabaseIcon, PlayIcon, PauseIcon, XMarkIcon } from '../../icons/Icons.tsx';
-import { useDataCollection } from '../hooks/useManagementData.ts';
-import Button from '../components/ui/Button.tsx';
+import ManagementPageHeader from '../components/ManagementPageHeader';
+import { DatabaseIcon, PlayIcon, PauseIcon, XMarkIcon } from '../../icons/Icons';
+import { useDataCollection } from '../hooks/useManagementData';
+import Button from '../components/ui/Button';
 
 const StatCard: React.FC<{ title: string; value: string | number; }> = ({ title, value }) => (
     <div className="management-glass-card p-4 rounded-lg text-center">

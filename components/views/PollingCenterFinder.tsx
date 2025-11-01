@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Governorate, Language, PollingCenter } from '../../types.ts';
-import * as api from '../../services/apiService.ts';
-import { UI_TEXT } from '../../translations.ts';
-import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
-import { BuildingLibraryIcon, MapPinIcon, HashtagIcon, MagnifyingGlassIcon } from '../icons/Icons.tsx';
-import Spinner from '../Spinner.tsx';
+import { Governorate, Language, PollingCenter } from '../../types';
+import * as api from '../../services/apiService';
+import { UI_TEXT } from '../../translations';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants';
+import { BuildingLibraryIcon, MapPinIcon, HashtagIcon, MagnifyingGlassIcon } from '../icons/Icons';
+import Spinner from '../Spinner';
 
 interface PollingCenterFinderProps {
     language: Language;

@@ -1,6 +1,6 @@
-import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language, PollingCenter, Question } from '../types.ts';
-import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO, MOCK_QUESTIONS } from '../constants.ts';
-import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types.ts';
+import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language, PollingCenter, Question } from '../types';
+import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO, MOCK_QUESTIONS } from '../constants';
+import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types';
 
 // Simulate a more realistic network delay
 const simulateFetch = <T>(data: T, delay: number = 300): Promise<T> => {

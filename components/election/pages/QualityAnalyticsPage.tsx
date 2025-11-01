@@ -1,7 +1,7 @@
 import React from 'react';
-import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
-import { ChartIcon } from '../../icons/Icons.tsx';
-import { useQualityAnalyticsData } from '../hooks/useManagementData.ts';
+import ManagementPageHeader from '../components/ManagementPageHeader';
+import { ChartIcon } from '../../icons/Icons';
+import { useQualityAnalyticsData } from '../hooks/useManagementData';
 
 const DoughnutChart: React.FC<{ data: { verified: number, pending: number, invalid: number } }> = ({ data }) => {
     const { verified, pending, invalid } = data;

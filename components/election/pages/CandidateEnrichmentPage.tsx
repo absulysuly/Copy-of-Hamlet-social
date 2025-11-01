@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
-import { SparklesIcon } from '../../icons/Icons.tsx';
-import { useEnrichmentData, useAllCandidates } from '../hooks/useManagementData.ts';
+import ManagementPageHeader from '../components/ManagementPageHeader';
+import { SparklesIcon } from '../../icons/Icons';
+import { useEnrichmentData, useAllCandidates } from '../hooks/useManagementData';
 
 const StatCard: React.FC<{ title: string; value: string | number; }> = ({ title, value }) => (
     <div className="bg-formal-primary-100 p-4 rounded-lg text-center border-l-4 border-formal-primary-500">

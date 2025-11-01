@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Language, User, Post } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
+import { Language, User, Post } from '../types';
+import { UI_TEXT } from '../translations';
 
 interface ContactMPFormProps {
     language: Language;

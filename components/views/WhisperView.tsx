@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Post, User, Language } from '../../types.ts';
-import * as api from '../../services/apiService.ts';
-import PostCard from '../PostCard.tsx';
-import Spinner from '../Spinner.tsx';
-import { UI_TEXT } from '../../translations.ts';
-import SkeletonPostCard from '../SkeletonPostCard.tsx';
+import { Post, User, Language } from '../../types';
+import * as api from '../../services/apiService';
+import PostCard from '../PostCard';
+import Spinner from '../Spinner';
+import { UI_TEXT } from '../../translations';
+import SkeletonPostCard from '../SkeletonPostCard';
 
 
 interface WhisperViewProps {

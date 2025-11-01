@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Governorate, Language } from '../../types.ts';
-import * as api from '../../services/apiService.ts';
-import PublicDiscoverCandidateCard from '../PublicDiscoverCandidateCard.tsx';
-import { SLUG_PARTY_MAP, SLUG_GOVERNORATE_MAP, GOVERNORATE_AR_MAP } from '../../constants.ts';
-import { UI_TEXT } from '../../translations.ts';
+import { User, UserRole, Governorate, Language } from '../../types';
+import * as api from '../../services/apiService';
+import PublicDiscoverCandidateCard from '../PublicDiscoverCandidateCard';
+import { SLUG_PARTY_MAP, SLUG_GOVERNORATE_MAP, GOVERNORATE_AR_MAP } from '../../constants';
+import { UI_TEXT } from '../../translations';
 
 interface PublicDiscoverViewProps {
     language: Language;

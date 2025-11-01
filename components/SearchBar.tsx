@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
-import { MagnifyingGlassIcon } from './icons/Icons.tsx';
+import { Language } from '../types';
+import { UI_TEXT } from '../translations';
+import { MagnifyingGlassIcon } from './icons/Icons';
 import { useDebounce } from 'use-debounce';
 
 interface SearchBarProps {

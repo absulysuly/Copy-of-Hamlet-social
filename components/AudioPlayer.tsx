@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Governorate } from '../types.ts';
-import { PlayButtonIcon, PauseIcon } from './icons/Icons.tsx';
-import { GOVERNORATE_AR_MAP } from '../constants.ts';
+import { Governorate } from '../types';
+import { PlayButtonIcon, PauseIcon } from './icons/Icons';
+import { GOVERNORATE_AR_MAP } from '../constants';
 
 interface AudioPlayerProps {
     src: string;

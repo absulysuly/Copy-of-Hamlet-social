@@ -1,7 +1,7 @@
 import React from 'react';
-import IraqFlagIcon from './election/icons/IraqFlagIcon.tsx';
-import { Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
+import IraqFlagIcon from './election/icons/IraqFlagIcon';
+import { Language } from '../types';
+import { UI_TEXT } from '../translations';
 
 const ElectionHero: React.FC<{ language: Language }> = ({ language }) => {
     const texts = UI_TEXT[language];

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { XMarkIcon } from './icons/Icons.tsx';
-import { Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
+import { XMarkIcon } from './icons/Icons';
+import { Language } from '../types';
+import { UI_TEXT } from '../translations';
 
 interface CreateTopicModalProps {
     onClose: () => void;

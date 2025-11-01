@@ -1,5 +1,5 @@
 import React from 'react';
-import PoliticalPartyPortalPage from './PoliticalPartyPortalPage.tsx';
+import PoliticalPartyPortalPage from './PoliticalPartyPortalPage';
 
 interface PartiesPageProps {
     onNavigate: (path: string) => void;
