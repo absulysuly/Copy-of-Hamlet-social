@@ -4,7 +4,6 @@ export interface Candidate {
   gender: 'Male' | 'Female';
   governorate: string;
   party: string;
-  nomination_type: string;
   ballot_number: number;
 }
 

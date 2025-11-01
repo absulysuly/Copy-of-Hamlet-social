@@ -1,16 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'standalone',
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'avatar.iran.liara.run',
-                port: '',
-                pathname: '/public/**',
-            }
-        ]
-    }
+  output: 'standalone',
+  experimental: {
+    appDir: true,
+  }
 };
 
 export default nextConfig;

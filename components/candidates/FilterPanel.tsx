@@ -57,7 +57,7 @@ export default function FilterPanel({ governorates, dictionary }: FilterPanelPro
           <option value="">{dictionary.filters.allGovernorates}</option>
           {governorates.map((gov) => (
             <option key={gov.id} value={gov.name_en}>
-              {pathname.includes('/ar') ? gov.name_ar : gov.name_en}
+              {pathname.includes('/ar') || pathname.includes('/ku') ? gov.name_ar : gov.name_en}
             </option>
           ))}
         </select>

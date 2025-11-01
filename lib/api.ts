@@ -25,11 +25,6 @@ export const fetchCandidateById = async (id: string): Promise<Candidate> => {
     return data;
 };
 
-export const fetchTrendingCandidates = async (limit: number = 6): Promise<Candidate[]> => {
-    const { data } = await api.get('/api/trending', { params: { limit } });
-    return data;
-};
-
 export const fetchGovernorates = async (): Promise<Governorate[]> => {
     const { data } = await api.get('/api/governorates');
     return data;

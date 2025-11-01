@@ -1,6 +1,6 @@
-# Hamlet - Iraqi Election Platform (Next.js 14)
+# Iraq Election Platform (Next.js 14)
 
-This is a modern, bilingual, and responsive web application for browsing candidates in the Iraqi parliamentary elections, built with Next.js 14 and the App Router.
+This is a modern, multilingual (English, Arabic, Kurdish), and responsive web application for browsing candidates in the Iraqi parliamentary elections, built with Next.js 14 and the App Router.
 
 ## Tech Stack
 
@@ -15,7 +15,7 @@ This is a modern, bilingual, and responsive web application for browsing candida
 
 ## Project Structure
 
-- **`app/[lang]`**: Dynamic routes for i18n (internationalization). All pages are nested here.
+- **`app/[lang]`**: Dynamic routes for i18n. All pages are nested here.
   - **`layout.tsx`**: The root layout, including Navbar, Footer, and providers.
   - **`page.tsx`**: The Home Page.
   - **`candidates/page.tsx`**: The main candidate browsing page with filtering.
@@ -27,9 +27,9 @@ This is a modern, bilingual, and responsive web application for browsing candida
   - **`types.ts`**: TypeScript interfaces for all data models.
   - **`i18n-config.ts`**: Configuration for supported locales.
   - **`dictionaries.ts`**: Server-side function to load translation files.
-- **`dictionaries`**: JSON files for English (`en.json`) and Arabic (`ar.json`) translations.
+- **`dictionaries`**: JSON files for English (`en.json`), Arabic (`ar.json`), and Kurdish (`ku.json`) translations.
 - **`middleware.ts`**: Handles automatic locale detection and URL rewriting for i18n.
-- **`public`**: Static assets like images and fonts.
+- **`public`**: Static assets like images.
 
 ## Getting Started
 
@@ -37,7 +37,6 @@ This is a modern, bilingual, and responsive web application for browsing candida
 
 - Node.js (v18.17 or later)
 - npm, yarn, or pnpm
-- A running instance of the backend API.
 
 ### 1. Setup Environment Variables
 
@@ -53,10 +52,6 @@ Open your terminal and run:
 
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
 ```
 
 ### 3. Run the Development Server
@@ -65,20 +60,16 @@ Start the Next.js development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The application will automatically detect your browser's language and redirect you to either `/en` or `/ar`.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The application will automatically detect your browser's language and redirect you to the appropriate path (e.g., `/en`, `/ar`, or `/ku`).
 
-## Key Features Implemented
+## Build for Production
 
-- **Full Internationalization**: Complete support for English and Arabic, including RTL layout for Arabic.
-- **Server Components**: Pages are rendered on the server for optimal performance and SEO.
-- **Client Components**: Interactive elements like filtering, theme switching, and charts are handled on the client.
-- **Loading & Error States**: Uses Next.js's file-based conventions for loading skeletons and error boundaries.
-- **Responsive Design**: The UI adapts seamlessly from mobile to desktop screens.
-- **Dark/Light Mode**: User-configurable theme that persists across sessions.
-- **Dynamic SEO**: Metadata for pages (like candidate profiles) is generated dynamically based on fetched data.
+To create a production-ready build, run:
+
+```bash
+npm run build
+```
+
+This will generate an optimized version of your application in the `.next` directory, ready for deployment.
