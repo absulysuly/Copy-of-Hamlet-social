@@ -17,4 +17,3 @@ else
 fi
 
 echo "✅ Deployment script completed successfully."
-See if you're going to throw
