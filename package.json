@@ -1,10 +1,9 @@
 {
-  "name": "hamlet-frontend",
-  "version": "0.1.0",
+  "name": "copy-of-hamlet-social",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "rm -f next.config.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
