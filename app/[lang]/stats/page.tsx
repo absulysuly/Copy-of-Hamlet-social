@@ -2,11 +2,9 @@ import { fetchStats } from '@/lib/api';
 import { Locale } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
-import { FaUsers, FaUserCheck, FaMapMarkedAlt } from 'react-icons/fa';
+import { Users, UserCheck, MapMarkedAlt } from 'lucide-react';
 import StatsClient from '@/components/stats/StatsClient';
 import React from 'react';
-
-export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params: { lang },
@@ -43,10 +41,10 @@ export default async function StatsPage({
   const stats = await fetchStats();
 
   const mainStats = [
-    { icon: FaUsers, title: dictionary.page.stats.totalCandidates, value: stats.total_candidates },
-    { icon: FaUserCheck, title: dictionary.page.stats.maleCandidates, value: stats.gender_distribution.Male },
-    { icon: FaUserCheck, title: dictionary.page.stats.femaleCandidates, value: stats.gender_distribution.Female },
-    { icon: FaMapMarkedAlt, title: dictionary.page.stats.governorates, value: stats.candidates_per_governorate.length },
+    { icon: Users, title: dictionary.page.stats.totalCandidates, value: stats.total_candidates },
+    { icon: UserCheck, title: dictionary.page.stats.maleCandidates, value: stats.gender_distribution.Male },
+    { icon: UserCheck, title: dictionary.page.stats.femaleCandidates, value: stats.gender_distribution.Female },
+    { icon: MapMarkedAlt, title: dictionary.page.stats.governorates, value: stats.candidates_per_governorate.length },
   ];
 
   return (

@@ -1,229 +1,148 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post } from '../../types';
-import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants';
-import { UI_TEXT } from '../../translations';
-import * as api from '../../services/apiService';
 
-import ComposeView from './ComposeView';
-import PostCard from '../PostCard';
-import TopNavBar from '../TopNavBar';
-import Spinner from '../Spinner';
-import ReelsView from './ReelsView';
-import CandidatesView from './CandidatesView';
-import SkeletonPostCard from '../SkeletonPostCard';
+'use client';
+import React, { useState, useEffect } from 'react';
+import { useSwipeable } from 'react-swipeable';
+import { useRouter } from 'next/navigation';
+import Feed from "@/components/social/Feed";
+import { Locale } from '@/lib/i18n-config';
+import { Post, User } from '@/lib/types';
+import { motion } from 'framer-motion';
+import { Send, Sparkles } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { generateSocialPost } from '@/services/geminiService';
 
-// Lazy load views
-const WhisperView = lazy(() => import('./WhisperView'));
-const WomenCandidatesView = lazy(() => import('./WomenCandidatesView'));
-const MinoritiesView = lazy(() => import('./MinoritiesView'));
-const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView'));
-
-
-interface HomeViewProps {
-    user: User | null;
-    requestLogin: () => void;
-    selectedGovernorate: Governorate | 'All';
-    onGovernorateChange: (gov: Governorate | 'All') => void;
-    selectedParty: string | 'All';
-    onPartyChange: (party: string | 'All') => void;
-    parties: string[];
-    onSelectProfile: (profile: User) => void;
-    onSelectReel: (reel: Post) => void;
-    onSelectPost: (post: Post) => void;
-    onSelectStory: (user: User) => void;
-    language: Language;
-    activeTab: MainContentTab;
-    onTabChange: (tab: MainContentTab) => void;
-    onCompose: () => void;
-}
-
-const SUB_TABS: MainContentTab[] = [AppTab.Feed, AppTab.Real, AppTab.Candidates, AppTab.Women, AppTab.Whisper, AppTab.Components];
-
-const getThemeClassForTab = (tab: MainContentTab) => {
-    switch (tab) {
-        case AppTab.Real: return 'theme-reels';
-        case AppTab.Candidates: return 'theme-candidates';
-        case AppTab.Whisper: return 'theme-whisper';
-        default: return 'theme-default';
-    }
+// Mock current user
+const currentUser: User = {
+    name: 'You',
+    avatar: 'https://i.pravatar.cc/48?u=current_user',
+    verified: false,
 };
 
-const HomeView: React.FC<HomeViewProps> = ({ user, requestLogin, selectedGovernorate, onGovernorateChange, selectedParty, onPartyChange, parties, onSelectProfile, onSelectReel, onSelectPost, onSelectStory, language, activeTab, onTabChange, onCompose }) => {
-    
-    const [socialPosts, setSocialPosts] = useState<Post[]>([]);
-    const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-    const [genderFilter, setGenderFilter] = useState<'All' | 'Male' | 'Female'>('All');
+// Initial mock posts to show functionality
+const initialPosts: Post[] = [
+    {
+        id: 'post-1',
+        author: { name: 'Iraqi News', avatar: 'https://i.pravatar.cc/48?u=news', verified: true },
+        content: 'Election day is approaching! Make sure you are registered to vote and have a plan to get to the polls. Your voice matters.',
+        likes: 1200,
+        comments: 153,
+        shares: 45,
+        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 mins ago
+        image: 'https://picsum.photos/seed/election-day/800/400'
+    },
+    {
+        id: 'post-2',
+        author: { name: 'Community Organizer', avatar: 'https://i.pravatar.cc/48?u=organizer', verified: false },
+        content: 'We are organizing a local town hall next week to discuss key issues with candidates. All are welcome to attend and participate in the discussion.',
+        likes: 450,
+        comments: 62,
+        shares: 12,
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3), // 3 hours ago
+    }
+];
 
-    useEffect(() => {
-        if (activeTab === AppTab.Feed) {
-            const fetchFeedData = async () => {
-                setIsLoadingPosts(true);
-                try {
-                    const postsData = await api.getPosts({ governorate: selectedGovernorate, party: selectedParty });
-                    setSocialPosts(postsData);
-                } catch (error) {
-                    console.error("Failed to fetch feed data:", error);
-                } finally {
-                    setIsLoadingPosts(false);
-                }
-            };
-            fetchFeedData();
-        }
-    }, [activeTab, selectedGovernorate, selectedParty]);
+// Sub-component for creating new posts
+function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: string) => void, dictionary: any }) {
+    const [content, setContent] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
 
-    const handlePost = (postDetails: Partial<Post>) => {
-        if (!user) return;
-        api.createPost(postDetails, user).then(newPost => {
-            if (activeTab === AppTab.Feed) {
-                setSocialPosts(prevPosts => [newPost, ...prevPosts]);
-            }
-            alert("Post created successfully (simulation).");
-        });
-    };
-    
-    const handleFollow = (e: React.MouseEvent, candidateId: string) => {
-        if (!user) {
-            e.preventDefault();
-            requestLogin();
-        } else {
-            api.followCandidate(candidateId);
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (content.trim()) {
+            onCreatePost(content);
+            setContent('');
+            toast.success('Your post has been published!');
         }
     };
 
-    const texts = UI_TEXT[language];
-    
-    const CandidateFilters = () => (
-        <div className="flex flex-col gap-4 p-4 glass-card my-4 rounded-lg shadow-lg w-full max-w-md mx-auto">
-             <h2 className="text-xl font-bold text-center text-theme-text-base font-arabic">
-                Iraqi National Election Candidates
-             </h2>
-            <div>
-                <label htmlFor="gov-filter" className="block text-sm font-medium text-theme-text-muted font-arabic">{texts.governorate}</label>
-                <select id="gov-filter" value={selectedGovernorate} onChange={(e) => onGovernorateChange(e.target.value as Governorate | 'All')} className="mt-1 block w-full p-2 border border-white/20 rounded-md bg-white/10 text-theme-text-base focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right">
-                    <option value="All">{texts.allIraq}</option>
-                    {GOVERNORATES.map(gov => <option key={gov} value={gov}>{GOVERNORATE_AR_MAP[gov]}</option>)}
-                </select>
-            </div>
-            <div>
-                <label htmlFor="party-filter" className="block text-sm font-medium text-theme-text-muted font-arabic">{texts.party}</label>
-                <select id="party-filter" value={selectedParty} onChange={(e) => onPartyChange(e.target.value)} className="mt-1 block w-full p-2 border border-white/20 rounded-md bg-white/10 text-theme-text-base focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right">
-                    <option value="All">{texts.all}</option>
-                    {parties.map(party => <option key={party} value={party}>{party}</option>)}
-                </select>
-            </div>
-             <div>
-                <label htmlFor="gender-filter" className="block text-sm font-medium text-theme-text-muted font-arabic">{texts.gender}</label>
-                <select id="gender-filter" value={genderFilter} onChange={(e) => setGenderFilter(e.target.value as 'All' | 'Male' | 'Female')} className="mt-1 block w-full p-2 border border-white/20 rounded-md bg-white/10 text-theme-text-base focus:outline-none focus:ring-1 focus:ring-primary font-arabic text-right">
-                    <option value="All">{texts.all}</option>
-                    <option value="Male">{texts.male}</option>
-                    <option value="Female">{texts.female}</option>
-                </select>
-            </div>
-        </div>
-    );
-    
-    const renderTabContent = () => {
-        switch (activeTab) {
-            case AppTab.Feed:
-                return (
-                    <>
-                        <div className="mt-4">
-                            {user ? <ComposeView user={user} onPost={handlePost} language={language} postType="Post" />
-                                : <div onClick={requestLogin} className="glass-card rounded-lg p-3 flex items-center space-x-4 cursor-pointer hover:border-primary"><div className="flex-1 text-theme-text-muted font-arabic">{texts.whatsOnYourMind}</div><button className="px-4 py-2 text-sm font-bold bg-primary text-on-primary rounded-full">{texts.post}</button></div>
-                            }
-                        </div>
-                        <div className="mt-4">
-                            {isLoadingPosts ? [...Array(3)].map((_, i) => <SkeletonPostCard key={i} />)
-                                : socialPosts.length > 0 ? socialPosts.map(post => <PostCard key={post.id} post={post} user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />)
-                                : <p className="text-center py-10 text-theme-text-muted">{texts.noPostsFound}</p>
-                            }
-                        </div>
-                    </>
-                );
-            case AppTab.Real:
-                return (
-                    <div className="mt-4">
-                        <ReelsView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} onSelectReel={onSelectReel} user={user} requestLogin={requestLogin} language={language} />
-                    </div>
-                );
-            case AppTab.Candidates:
-                 return (
-                    <div className="mt-6">
-                        <CandidatesView selectedGovernorate={selectedGovernorate} selectedParty={selectedParty} selectedGender={genderFilter} onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language}/>
-                    </div>
-                );
-            case AppTab.Women:
-                return (
-                    <Suspense fallback={<Spinner />}>
-                        <WomenCandidatesView onSelectCandidate={onSelectProfile} user={user} requestLogin={requestLogin} language={language} />
-                    </Suspense>
-                );
-            case AppTab.Minorities:
-                return (
-                    <Suspense fallback={<Spinner />}>
-                        <MinoritiesView language={language} />
-                    </Suspense>
-                );
-            case AppTab.Whisper:
-                return (
-                     <div className="mt-4">
-                        {user && <div className="mb-4"><ComposeView user={user} onPost={handlePost} language={language} postType="Whisper" /></div>}
-                         <Suspense fallback={<Spinner/>}>
-                            <WhisperView user={user} requestLogin={requestLogin} language={language} onSelectAuthor={onSelectProfile} onSelectPost={onSelectPost} />
-                         </Suspense>
-                    </div>
-                );
-            case AppTab.Components:
-                return (
-                    <Suspense fallback={<Spinner />}>
-                        <CrossPlatformNavigationView onNavigateToCandidates={() => onTabChange(AppTab.Candidates)} onQrScan={() => alert('QR Scan not implemented yet.')} />
-                    </Suspense>
-                );
-            default:
-                return null;
+    const handleGenerate = async () => {
+        setIsGenerating(true);
+        try {
+            const generatedContent = await generateSocialPost();
+            setContent(generatedContent);
+        } catch (error) {
+            toast.error("Failed to generate post.");
+        } finally {
+            setIsGenerating(false);
         }
     };
-
+    
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-0 sm:p-6">
-            <main className="lg:col-span-3">
-                 <div className="flex flex-col items-center">
-                    <CandidateFilters />
-                 </div>
-                <div className="z-10 py-2 sticky top-14 lg:top-0 glass-nav lg:glass-card lg:rounded-t-xl">
-                    <TopNavBar<MainContentTab>
-                        tabs={SUB_TABS}
-                        activeTab={activeTab}
-                        onTabChange={onTabChange}
-                        language={language}
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md mb-6"
+        >
+            <form onSubmit={handleSubmit}>
+                <div className="flex items-start gap-4">
+                    <img src={currentUser.avatar} alt="Your avatar" className="w-12 h-12 rounded-full" />
+                    <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder={dictionary.placeholder}
+                        className="w-full h-24 p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                        aria-label="Create a new post"
                     />
                 </div>
-                
-                <div className={`tab-content-wrapper ${getThemeClassForTab(activeTab)} px-4 sm:px-0`}>
-                    {renderTabContent()}
+                <div className="flex justify-between items-center mt-2">
+                    <button
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={isGenerating}
+                        className="flex items-center gap-2 px-4 py-2 text-green-700 font-semibold rounded-lg disabled:opacity-50 hover:bg-green-50 dark:text-green-400 dark:hover:bg-gray-700 transition"
+                    >
+                        {isGenerating ? (
+                            <div className="w-4 h-4 border-2 border-dashed rounded-full animate-spin border-green-500"></div>
+                        ) : (
+                            <Sparkles size={16} />
+                        )}
+                        <span>{isGenerating ? dictionary.generating : dictionary.generateWithAI}</span>
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={!content.trim()}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700 transition"
+                    >
+                        <Send size={16} />
+                        <span>{dictionary.post}</span>
+                    </button>
                 </div>
-            </main>
-
-            <aside className="hidden lg:block lg:col-span-1 space-y-6 pt-2">
-                <div className="glass-card rounded-lg p-4">
-                    <h3 className="font-bold mb-3 font-arabic">{texts.whoToFollow}</h3>
-                    <div className="space-y-3">
-                        <p className="text-xs text-theme-text-muted">{texts.noCandidatesToShow}</p>
-                    </div>
-                </div>
-
-                <div className="glass-card rounded-lg p-4">
-                    <h3 className="font-bold mb-3 font-arabic">{texts.platformRules}</h3>
-                    <ul className="text-sm space-y-2 list-disc list-inside text-theme-text-muted font-arabic">
-                        <li>{texts.rule1}</li>
-                        <li>{texts.rule2}</li>
-                        <li>{texts.rule3}</li>
-                        <li>{texts.rule4}</li>
-                    </ul>
-                </div>
-            </aside>
-        </div>
+            </form>
+        </motion.div>
     );
-};
+}
 
-export default HomeView;
+
+export default function HomeView({ lang, dictionary }: { lang: Locale; dictionary: any }) {
+  const router = useRouter();
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => router.push(`/${lang}/discover`),
+    onSwipedRight: () => router.push(`/${lang}/profile`),
+    preventScrollOnSwipe: true,
+    trackMouse: true
+  });
+
+  const handleCreatePost = (content: string) => {
+      const newPost: Post = {
+          id: `post-${Date.now()}`,
+          author: currentUser,
+          content,
+          likes: 0,
+          comments: 0,
+          shares: 0,
+          timestamp: new Date(),
+      };
+      setPosts(prevPosts => [newPost, ...prevPosts]);
+  };
+
+  return (
+    <div {...handlers} className="min-h-screen">
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <ComposeCard onCreatePost={handleCreatePost} dictionary={dictionary.compose} />
+        <Feed lang={lang} posts={posts} />
+      </div>
+    </div>
+  );
+}

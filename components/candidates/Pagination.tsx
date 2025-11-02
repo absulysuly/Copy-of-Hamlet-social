@@ -5,9 +5,10 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 type PaginationProps = {
   totalPages: number;
+  dictionary: any;
 };
 
-export default function Pagination({ totalPages }: PaginationProps) {
+export default function Pagination({ totalPages, dictionary }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -15,7 +16,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
   const { replace } = useRouter();
 
   const createPageURL = (pageNumber: number | string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams);
     params.set('page', pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
@@ -34,11 +35,11 @@ export default function Pagination({ totalPages }: PaginationProps) {
         className="flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-sm text-gray-700 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
       >
         <FaArrowLeft />
-        <span>Previous</span>
+        <span>{dictionary.previous}</span>
       </button>
 
       <span className="text-sm text-gray-700 dark:text-gray-300">
-        Page {currentPage} of {totalPages}
+        {dictionary.page} {currentPage} {dictionary.of} {totalPages}
       </span>
       
       <button
@@ -46,7 +47,7 @@ export default function Pagination({ totalPages }: PaginationProps) {
         disabled={currentPage >= totalPages}
         className="flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-sm text-gray-700 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
       >
-        <span>Next</span>
+        <span>{dictionary.next}</span>
         <FaArrowRight />
       </button>
     </div>

@@ -1,6 +1,6 @@
 'use client';
 import { Candidate } from '@/lib/types';
-import { FaShareAlt, FaPrint } from 'react-icons/fa';
+import { Share2, Printer } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 
 type ClientActionsProps = {
@@ -41,14 +41,14 @@ export default function ClientActions({ candidate, dictionary }: ClientActionsPr
           onClick={handleShare}
           className="flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
         >
-          <FaShareAlt />
+          <Share2 className="h-5 w-5" />
           <span>{dictionary.page.profile.share}</span>
         </button>
         <button
           onClick={handlePrint}
           className="flex items-center justify-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-white transition hover:bg-gray-700"
         >
-          <FaPrint />
+          <Printer className="h-5 w-5" />
           <span>{dictionary.page.profile.print}</span>
         </button>
       </div>

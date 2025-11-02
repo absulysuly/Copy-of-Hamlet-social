@@ -1,26 +1,34 @@
 import type { Config } from 'tailwindcss';
+import tailwindcssRtl from 'tailwindcss-rtl';
 
 const config: Config = {
-  darkMode: ['class'],
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['var(--font-noto-sans)'],
-        arabic: ['var(--font-noto-sans-arabic)'],
-      },
       colors: {
-        'iraqi-red': '#CE1126',
-        'iraqi-green': '#007A3D',
-        'iraqi-black': '#000000',
-        'iraqi-white': '#FFFFFF',
+        'iraq-red': '#CE1126',
+        'iraq-white': '#FFFFFF',
+        'iraq-black': '#000000',
+        'iraq-green': '#007A3D',
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)'],
+        arabic: ['var(--font-arabic)'],
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic':
+          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    tailwindcssRtl,
+  ],
 };
+
 export default config;

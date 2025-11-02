@@ -5,8 +5,6 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { FaLandmark } from 'react-icons/fa';
 
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({
   params: { lang },
 }: {
@@ -42,12 +40,14 @@ export default async function GovernoratesPage({
         {governorates.map((gov) => (
           <Link
             key={gov.id}
-            href={`/${lang}/candidates?governorate=${gov.name_en}`}
+            // Fix: Changed gov.name_en to gov.name to match the type definition.
+            href={`/${lang}/candidates?governorate=${gov.name}`}
             className="group flex flex-col items-center justify-center rounded-lg bg-white p-6 text-center shadow-md transition hover:-translate-y-1 hover:shadow-lg dark:bg-gray-800 dark:hover:bg-gray-700"
           >
             <FaLandmark className="h-8 w-8 text-gray-400 transition group-hover:text-green-600 dark:text-gray-500 dark:group-hover:text-green-400" />
             <h2 className="mt-4 font-semibold text-gray-900 dark:text-white">
-              {lang === 'ar' ? gov.name_ar : gov.name_en}
+              {/* Fix: Changed gov.name_en to gov.name to match the type definition. */}
+              {lang === 'ar' ? gov.name_ar : gov.name}
             </h2>
           </Link>
         ))}
