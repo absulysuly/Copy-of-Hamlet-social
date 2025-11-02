@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@formkit/hijri-date": "^1.0.1",
     "@headlessui/react": "^2.1.2",
     "canvas-confetti": "^1.9.3",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.2.10",
+    "hijri-date-converter": "^1.0.2",
     "lucide-react": "^0.395.0",
     "negotiator": "^0.6.3",
     "next": "14.2.4",
