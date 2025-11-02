@@ -22,8 +22,12 @@ export default async function HomeStats({ dictionary }: HomeStatsProps) {
   } catch (error) {
     console.error("HomeStats fetch failed or timed out:", error);
     // Provide fallback data on error to prevent the page from crashing
+    // Fix: Added missing properties to the fallback object to match the 'Stats' type.
     stats = {
       total_candidates: 0,
+      total_parties: 0,
+      total_governorates: 0,
+      last_updated: new Date().toISOString(),
       gender_distribution: { Male: 0, Female: 0 },
       candidates_per_governorate: [],
     };

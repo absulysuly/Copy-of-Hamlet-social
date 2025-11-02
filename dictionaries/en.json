@@ -1,99 +1,100 @@
 {
   "metadata": {
-    "title": "Iraq Election Platform",
-    "description": "A modern platform to discover candidates for the Iraqi parliamentary elections. Search, compare, and stay informed."
+    "title": "Digital Diwan",
+    "description": "A social platform for the Iraqi elections."
   },
-  "nav": {
+  "navigation": {
     "home": "Home",
+    "discover": "Discover",
     "candidates": "Candidates",
-    "governorates": "Governorates",
-    "statistics": "Statistics",
-    "about": "About"
-  },
-  "footer": {
-    "title": "Footer",
-    "description": "Empowering voters with information.",
-    "copyright": "Iraq Election Platform. All rights reserved."
+    "profile": "Profile",
+    "teahouse": "Tea House"
   },
   "page": {
-    "home": {
-      "heroTitle": "Iraqi Parliamentary Elections 2025",
-      "heroSubtitle": "Your comprehensive platform to explore candidates and make informed decisions.",
-      "search": "Search",
-      "searchPlaceholder": "Search by name, party...",
-      "totalCandidates": "Total Candidates",
-      "maleCandidates": "Male Candidates",
-      "femaleCandidates": "Female Candidates",
-      "participatingGovernorates": "Participating Governorates",
-      "featuredCandidates": "Featured Candidates",
-      "featuredCandidatesDesc": "Discover candidates who are trending in your electoral district.",
-      "browseAll": "Browse All Candidates"
-    },
     "candidates": {
-      "title": "Browse Candidates",
-      "description": "Search and compare all candidates running for the Iraqi parliamentary election.",
-      "noResults": "No candidates found matching your search criteria."
+      "title": "Discover Candidates",
+      "description": "Find and filter candidates running in the Iraqi elections.",
+      "noResultsTitle": "No Candidates Found",
+      "noResultsText": "Try adjusting your search or filter criteria to find what you're looking for."
     },
-    "profile": {
-      "profileOf": "Profile of",
-      "candidateIn": "candidate in",
-      "candidateForParliament": "Candidate for the Iraqi Parliament",
-      "share": "Share",
-      "print": "Print",
-      "shareTitle": "Check out the profile of",
-      "shareText": "Take a look at the profile for",
-      "linkCopied": "Link copied to clipboard!",
-      "shareError": "Error sharing profile."
+    "about": {
+      "title": "About Us",
+      "description": "Learn more about the Digital Diwan platform and our mission.",
+      "missionTitle": "Our Mission",
+      "missionText": "Our mission is to foster a safe, engaging, and inclusive space for Iraqis to discuss politics, share concerns, and hold leaders accountable. We aim to make democracy accessible for a new generation through a modern social media experience.",
+      "featuresTitle": "Key Features",
+      "feature1": "Candidate Profiles: Detailed information about each candidate.",
+      "feature2": "Social Feed: A dynamic feed for posts, discussions, and updates.",
+      "feature3": "Community Moderation: Tools for the community to maintain a healthy dialogue.",
+      "feature4": "Multilingual Support: Available in Arabic, Kurdish, and English.",
+      "commitmentTitle": "Our Commitment",
+      "commitmentText": "We are committed to neutrality, transparency, and empowering the Iraqi people with the information they need to make informed decisions during the election cycle."
     },
     "governorates": {
-      "title": "Iraqi Governorates",
-      "description": "Explore candidates by governorate to find your local representatives."
+      "title": "Explore by Governorate",
+      "description": "Discover candidates running in each of Iraq's governorates."
     },
     "stats": {
       "title": "Election Statistics",
-      "description": "An analytical overview of the electoral data.",
+      "description": "Explore data and insights about the upcoming election.",
       "totalCandidates": "Total Candidates",
       "maleCandidates": "Male Candidates",
       "femaleCandidates": "Female Candidates",
-      "governorates": "Governorates",
+      "governorates": "Participating Governorates",
       "candidatesPerGov": "Candidates per Governorate",
       "numCandidates": "Number of Candidates",
       "genderDistribution": "Gender Distribution"
     },
-    "about": {
-      "title": "About The Platform",
-      "description": "Our mission is to provide transparent, accessible information about the Iraqi parliamentary elections to empower voters and foster democracy.",
-      "missionTitle": "Our Mission",
-      "missionText": "We strive to deliver a neutral, user-friendly platform that helps Iraqi citizens understand the political landscape, evaluate candidates, and participate confidently in the electoral process.",
-      "featuresTitle": "Key Features",
-      "feature1": "A comprehensive database of candidates with advanced search filters.",
-      "feature2": "Detailed candidate profiles including party affiliation, governorate, and ballot number.",
-      "feature3": "An interactive statistics dashboard with data visualizations.",
-      "feature4": "Bilingual support (Arabic and English) with full RTL design.",
-      "commitmentTitle": "Our Commitment to Integrity",
-      "commitmentText": "We are committed to presenting accurate, up-to-date information sourced from the Independent High Electoral Commission (IHEC). Our platform is non-partisan and dedicated solely to informing the electorate."
+    "profile": {
+      "shareTitle": "Check out this candidate:",
+      "shareText": "Learn more about",
+      "linkCopied": "Profile link copied to clipboard!",
+      "shareError": "Could not share the profile.",
+      "share": "Share",
+      "print": "Print"
+    },
+    "teahouse": {
+      "title": "The Digital Tea House",
+      "description": "Engage in live voice conversations with Naseem, your friendly host.",
+      "disconnected": "Disconnected",
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "error": "Connection Error",
+      "speakNow": "Speak now...",
+      "join": "Join Tea House",
+      "leave": "Leave Tea House"
     }
   },
   "filters": {
-    "searchByName": "Search by Name",
-    "searchPlaceholder": "Enter candidate name...",
+    "searchByName": "Search by name",
+    "searchPlaceholder": "Search for candidates...",
     "filterByGovernorate": "Filter by Governorate",
     "allGovernorates": "All Governorates",
+    "filterByParty": "Filter by Party",
+    "allParties": "All Parties",
     "filterByGender": "Filter by Gender",
     "allGenders": "All Genders"
   },
   "candidate": {
-    "governorate": "Governorate",
-    "party": "Party",
-    "ballotNumber": "Ballot Number",
-    "gender": "Gender",
     "male": "Male",
     "female": "Female",
     "candidateIn": "candidate in"
   },
+  "compose": {
+    "placeholder": "What's on your mind?",
+    "post": "Post",
+    "generateWithAI": "Generate with AI",
+    "generating": "Generating..."
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
   "notFound": {
     "title": "Page Not Found",
-    "description": "The page you are looking for does not exist.",
-    "returnHome": "Return to Homepage"
+    "description": "Sorry, we couldn't find the page you're looking for.",
+    "returnHome": "Return to Home"
   }
 }
