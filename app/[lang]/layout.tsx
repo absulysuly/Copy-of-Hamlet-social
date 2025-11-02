@@ -1,3 +1,4 @@
+
 import { Inter, Noto_Sans_Arabic } from 'next/font/google';
 import { dir } from 'i18next';
 import TopNavBar from '@/components/layout/TopNavBar';
@@ -8,6 +9,7 @@ import '../globals.css';
 import React from 'react';
 import dynamic from 'next/dynamic';
 // Fix: Imported the Locale type for strong typing of the lang parameter.
+import { getDictionary } from '@/lib/dictionaries';
 import { Locale } from '@/lib/i18n-config';
 import { Toaster } from 'react-hot-toast';
 
@@ -19,7 +21,7 @@ const DynamicChatWidget = dynamic(() => import('@/components/social/ChatWidget')
   ssr: false,
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params: { lang }
 }: {
@@ -27,6 +29,7 @@ export default function RootLayout({
   // Fix: Changed type of lang from 'string' to 'Locale' to match component props.
   params: { lang: Locale };
 }) {
+  const dictionary = await getDictionary(lang);
   const isRTL = lang === 'ar' || lang === 'ku';
   
   return (
@@ -39,9 +42,9 @@ export default function RootLayout({
           themes={['light', 'dark', 'ramadan']}
         >
           <Toaster position="bottom-center" />
-          <TopNavBar lang={lang} />
+          <TopNavBar lang={lang} dictionary={dictionary.navigation} />
           <main className="pt-16 md:pt-0 pb-16 md:pb-0">{children}</main>
-          <MobileNav lang={lang} />
+          <MobileNav lang={lang} dictionary={dictionary.navigation} />
           <DynamicChatWidget />
         </ThemeProvider>
       </body>

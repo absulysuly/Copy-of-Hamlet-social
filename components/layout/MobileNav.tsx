@@ -3,16 +3,8 @@ import Link from 'next/link';
 import { Home, Search, Users, User, Coffee } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
-export default function MobileNav({ lang }: { lang: string }) {
+export default function MobileNav({ lang, dictionary }: { lang: string, dictionary: any }) {
   const pathname = usePathname();
-
-  // A simple dictionary for nav labels, should be replaced by full i18n
-  const labels = {
-    ar: { home: 'الرئيسية', discover: 'اكتشف', candidates: 'المرشحون', teahouse: 'الديوان', profile: 'الملف الشخصي' },
-    en: { home: 'Home', discover: 'Discover', candidates: 'Candidates', teahouse: 'Tea House', profile: 'Profile' },
-    ku: { home: 'سەرەکی', discover: 'دۆزینەوە', candidates: 'کاندیدەکان', teahouse: 'دیوان', profile: 'پرۆفایل' },
-  };
-  const dictionary = labels[lang] || labels.ar;
   
   const navLinks = [
       { icon: Home, label: dictionary.home, href: '/' },

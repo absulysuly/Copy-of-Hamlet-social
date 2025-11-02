@@ -1,12 +1,11 @@
+
 import Link from 'next/link';
 import { Locale } from '@/lib/i18n-config';
 import { Home, Search, Users, User, Coffee } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
-import { getDictionary } from '@/lib/dictionaries';
 
-export default async function TopNavBar({ lang }: { lang: Locale }) {
-  const dictionary = await getDictionary(lang);
-  const nav = dictionary.navigation;
+export default function TopNavBar({ lang, dictionary }: { lang: Locale, dictionary: any }) {
+  const nav = dictionary;
 
   const navLinks = [
     { href: '/', label: nav.home },

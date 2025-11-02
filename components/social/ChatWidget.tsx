@@ -1,4 +1,5 @@
 
+
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,7 +16,7 @@ export default function ChatWidget() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-20 right-6 w-16 h-16 bg-gradient-to-r from-iraq-red to-iraq-green text-white rounded-full shadow-2xl flex items-center justify-center z-50 md:bottom-6"
+        className="fixed bottom-20 end-6 w-16 h-16 bg-gradient-to-r from-iraq-red to-iraq-green text-white rounded-full shadow-2xl flex items-center justify-center z-50 md:bottom-6"
         aria-label="Open chat widget"
       >
         <MessageCircle size={28} />
@@ -33,7 +34,7 @@ export default function ChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 w-[calc(100vw-3rem)] max-w-sm h-[60vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 md:bottom-24"
+            className="fixed bottom-24 end-6 w-[calc(100vw-3rem)] max-w-sm h-[60vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 md:bottom-24"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-iraq-red to-iraq-green p-4 flex items-center justify-between">

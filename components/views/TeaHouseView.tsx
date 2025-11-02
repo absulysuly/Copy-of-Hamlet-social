@@ -74,7 +74,7 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
     let nextStartTime = 0;
 
     useEffect(() => {
-        if (!process.env.API_KEY) {
+        if (!process.env.NEXT_PUBLIC_API_KEY) {
             console.error("Gemini API key is missing. The Tea House feature is disabled.");
             setIsApiKeyMissing(true);
             setStatus('error');
@@ -115,7 +115,7 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
             }
             streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+            const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_API_KEY as string });
             // FIX: Cast window to `any` to allow access to vendor-prefixed `webkitAudioContext` for broader browser compatibility.
             const inputAudioContext = new ((window as any).AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
             audioContextRef.current = inputAudioContext;

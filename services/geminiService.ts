@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 // The API_KEY is expected to be set in the environment variables.
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 // Initialize the GoogleGenAI client only if the API key is available.
 const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
@@ -14,7 +14,7 @@ const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
  */
 export const generateSocialPost = async (): Promise<string> => {
     if (!ai) {
-        console.warn("API_KEY for Gemini is not set. AI features are disabled.");
+        console.warn("NEXT_PUBLIC_API_KEY for Gemini is not set. AI features are disabled.");
         return "AI is currently unavailable. Please try again later.";
     }
 

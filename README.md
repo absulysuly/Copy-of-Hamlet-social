@@ -44,11 +44,13 @@ Create a file named `.env.local` in the root of the project and add the followin
 
 ```dotenv
 NEXT_PUBLIC_API_BASE_URL=https://hamlet-unified-complete-2027-production.up.railway.app
-API_KEY="YOUR_GEMINI_API_KEY"
+NEXT_PUBLIC_BACKUP_API=https://winter-leaf-f532.safaribosafar.workers.dev
+NEXT_PUBLIC_API_KEY="YOUR_GEMINI_API_KEY"
 ```
 
 - `NEXT_PUBLIC_API_BASE_URL`: The URL for the backend data API.
-- `API_KEY`: **Required for AI features.** Your API key for the Google Gemini API. This is necessary for features like AI-powered post generation and the interactive Tea House. You can obtain a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+- `NEXT_PUBLIC_BACKUP_API`: The fallback API URL (e.g., from Cloudflare Workers) to use if the primary API fails.
+- `NEXT_PUBLIC_API_KEY`: **Required for AI features.** Your API key for the Google Gemini API. This is necessary for features like AI-powered post generation and the interactive Tea House. You can obtain a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
 
 ### 2. Install Dependencies
@@ -86,7 +88,9 @@ This application is built with Next.js and is ready for production deployment. T
 3.  **Configure Environment Variables**: In the Vercel project settings, navigate to "Environment Variables" and add the following:
     -   **Key**: `NEXT_PUBLIC_API_BASE_URL`
     -   **Value**: `https://hamlet-unified-complete-2027-production.up.railway.app`
-    -   **Key**: `API_KEY`
+    -   **Key**: `NEXT_PUBLIC_BACKUP_API`
+    -   **Value**: `https://winter-leaf-f532.safaribosafar.workers.dev`
+    -   **Key**: `NEXT_PUBLIC_API_KEY`
     -   **Value**: Add your Google Gemini API key here.
 4.  **Deploy**: Click the "Deploy" button. Vercel will build and deploy your application, providing you with a live URL.
 

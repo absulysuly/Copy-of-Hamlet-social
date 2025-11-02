@@ -1,3 +1,4 @@
+
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import { i18n } from '@/lib/i18n-config';
@@ -39,7 +40,7 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute end-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-600">
+        <Menu.Items className="absolute end-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-600 rtl:origin-top-left">
           <div className="py-1">
             {i18n.locales.map((locale) => (
               <Menu.Item key={locale}>
