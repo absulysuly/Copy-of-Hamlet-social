@@ -2,7 +2,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import PostComponent from './Post'; // Renamed to avoid conflict with the type
 import { Post } from '@/lib/types';
-// FIX: Switched to a relative path for SkeletonPostCard as the path alias was not resolving correctly.
 import SkeletonPostCard from '../SkeletonPostCard';
 
 export default function Feed({ lang, posts }: { lang: string, posts: Post[] }) {
