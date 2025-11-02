@@ -1,7 +1,7 @@
 import React from 'react';
-import { User, Post, Language } from '../types.ts';
-import { XMarkIcon } from './icons/Icons.tsx';
-import ComposeView from './views/ComposeView.tsx';
+import { User, Post, Language } from '../types';
+import { XMarkIcon } from './icons/Icons';
+import ComposeView from './views/ComposeView';
 
 interface ComposeModalProps {
     user: User;

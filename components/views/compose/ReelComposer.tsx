@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User } from '../../../types.ts';
+import { User } from '../../../types';
 
 interface ReelComposerProps {
     user: User;

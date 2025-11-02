@@ -1,11 +1,11 @@
 // Fix: Populating components/views/CandidatesView.tsx with a list of candidates.
 import React, { useState, useEffect } from 'react';
-import { Governorate, User, UserRole, Language } from '../../types.ts';
-import CandidatePill from '../CandidatePill.tsx';
-import * as api from '../../services/apiService.ts';
-import { ResponsiveGrid } from '../UI/Responsive.tsx';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
+import { Governorate, User, UserRole, Language } from '../../types';
+import CandidatePill from '../CandidatePill';
+import * as api from '../../services/apiService';
+import { ResponsiveGrid } from '../UI/Responsive';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
 
 interface CandidatesViewProps {
     selectedGovernorate: Governorate | 'All';

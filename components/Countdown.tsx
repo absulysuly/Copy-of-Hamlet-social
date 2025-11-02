@@ -1,8 +1,8 @@
 import React from 'react';
-import { useCountdown } from './election/hooks/useCountdown.ts';
-import { ClockIcon } from './icons/Icons.tsx';
-import { Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
+import { useCountdown } from './election/hooks/useCountdown';
+import { ClockIcon } from './icons/Icons';
+import { Language } from '../types';
+import { UI_TEXT } from '../translations';
 
 interface CountdownProps {
     language: Language;

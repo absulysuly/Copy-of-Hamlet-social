@@ -1,81 +1,141 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { User, Post } from "../types.ts";
+import { GoogleGenAI, type GenerateContentResponse } from "@google/genai";
+import { Post, User } from "../types";
 
-const apiKey = (window as any).process?.env?.API_KEY;
+const RAW_API_KEY =
+    (typeof process !== "undefined" &&
+        (process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? process.env.GEMINI_API_KEY)) ||
+    "";
 
-let ai: GoogleGenAI | null = null;
-if (apiKey && apiKey !== 'your_google_gemini_api_key_here') {
-    ai = new GoogleGenAI({ apiKey });
-}
+const API_KEY = RAW_API_KEY && RAW_API_KEY !== "your_google_gemini_api_key_here" ? RAW_API_KEY : "";
+
+let cachedClient: GoogleGenAI | null = null;
+
+const ensureClient = (): GoogleGenAI | null => {
+    if (!API_KEY) {
+        return null;
+    }
+
+    if (!cachedClient) {
+        try {
+            cachedClient = new GoogleGenAI({ apiKey: API_KEY });
+        } catch (error) {
+            console.error("Failed to initialise Google Gemini client:", error);
+            cachedClient = null;
+        }
+    }
+
+    return cachedClient;
+};
+
+const extractText = (response: GenerateContentResponse): string => {
+    const maybeResponse = (response as unknown as { response?: { text?: () => string } }).response;
+    if (maybeResponse?.text) {
+        try {
+            const value = maybeResponse.text();
+            if (value) {
+                return value;
+            }
+        } catch (error) {
+            console.error("Failed to extract Gemini response text via response.text():", error);
+        }
+    }
+
+    const maybeText = (response as unknown as { text?: string | (() => string) }).text;
+    if (typeof maybeText === "function") {
+        return maybeText();
+    }
+    if (typeof maybeText === "string") {
+        return maybeText;
+    }
+
+    return "";
+};
+
+const FALLBACK_POST_SUGGESTIONS = [
+    (topic: string) => `Share your thoughts about ${topic} with your community!`,
+    (topic: string) => `What's your perspective on ${topic}? Let's discuss!`,
+    (topic: string) => `Join the conversation about ${topic} - your voice matters!`,
+    (topic: string) => `Share your experience with ${topic} and inspire others!`,
+];
+
+export const AI_UNAVAILABLE_MESSAGE =
+    "AI features are temporarily unavailable. The platform team is working to restore this service soon.";
+
+export const isGeminiConfigured = (): boolean => Boolean(API_KEY);
 
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
-    if (!ai) {
-        // Fallback suggestions
-        const fallbacks = [
-            `Share your thoughts about ${topic} with your community!`,
-            `What's your perspective on ${topic}? Let's discuss!`,
-            `Join the conversation about ${topic} - your voice matters!`,
-            `Share your experience with ${topic} and inspire others!`
-        ];
-        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    const fallback = FALLBACK_POST_SUGGESTIONS[Math.floor(Math.random() * FALLBACK_POST_SUGGESTIONS.length)](topic);
+    const client = ensureClient();
+
+    if (!client) {
+        return fallback;
     }
-    
+
     try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Generate a short, engaging social media post about: "${topic}"`
+        const response = await client.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Generate a short, engaging social media post about: "${topic}"`,
         });
-        return response.text;
+
+        return extractText(response) || fallback;
     } catch (error) {
-        console.error("AI service error:", error);
+        console.error("AI post suggestion error:", error);
+        return fallback;
     }
-    
-    // Final fallback
-    return `Share your thoughts about ${topic} with your community!`;
 };
 
-export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 'ar'): Promise<string> => {
-    if (!text) return "";
-    
-    if (!ai) {
-        return text; // Return original text if no API key or AI client
+export const translateText = async (
+    text: string,
+    targetLanguage: "en" | "ku" | "ar",
+): Promise<string> => {
+    if (!text) {
+        return "";
     }
-    
+
+    const client = ensureClient();
+    if (!client) {
+        return text;
+    }
+
     try {
         const languageMap = {
-            en: 'English',
-            ku: 'Kurdish (Sorani)',
-            ar: 'Arabic',
-        };
-        
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Translate to ${languageMap[targetLanguage]}: "${text}"`
+            en: "English",
+            ku: "Kurdish (Sorani)",
+            ar: "Arabic",
+        } as const;
+
+        const response = await client.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Translate to ${languageMap[targetLanguage]}: "${text}"`,
         });
-        
-        return response.text;
+
+        return extractText(response) || text;
     } catch (error) {
         console.error("Translation error:", error);
+        return text;
     }
-    
-    return text; // Return original text on error
 };
 
-export const generateCandidateResponse = async (candidate: User, question: string, recentPosts: Partial<Post>[]): Promise<string> => {
-    if (!ai) {
+export const generateCandidateResponse = async (
+    candidate: User,
+    question: string,
+    recentPosts: Partial<Post>[],
+): Promise<string> => {
+    const client = ensureClient();
+    if (!client) {
         return "Thank you for your question. As an AI simulation, I'd recommend looking at the candidate's recent posts for information on this topic. A real response would be forthcoming from their office.";
     }
 
-    const postSnippets = recentPosts.map(p => `- "${p.content?.substring(0, 100)}..."`).join('\n');
+    const postSnippets = recentPosts.map((p) => `- "${p.content?.substring(0, 100)}..."`).join("\n");
     const context = `
         You are simulating a response from an Iraqi Member of Parliament (MP).
         MP's Profile:
         - Name: ${candidate.name}
         - Political Party: ${candidate.party}
         - Governorate: ${candidate.governorate}
-        - Biography: ${candidate.bio || 'Not provided.'}
+        - Biography: ${candidate.bio || "Not provided."}
         - Snippets from recent posts:
-        ${postSnippets || '- No recent posts provided.'}
+        ${postSnippets || "- No recent posts provided."}
 
         Based *only* on the information above, answer the following question from a citizen.
         Your response should be in the first person, as if you are the MP.
@@ -84,22 +144,23 @@ export const generateCandidateResponse = async (candidate: User, question: strin
     `;
 
     try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+        const response = await client.models.generateContent({
+            model: "gemini-2.5-flash",
             contents: `Question from citizen: "${question}"`,
             config: {
-                systemInstruction: context
-            }
+                systemInstruction: context,
+            },
         });
-        return response.text;
+        return extractText(response) || AI_UNAVAILABLE_MESSAGE;
     } catch (error) {
         console.error("AI MP Response service error:", error);
-        return "An error occurred while generating a response. Please try again.";
+        return AI_UNAVAILABLE_MESSAGE;
     }
 };
 
 export const generateAnswerForNeighbor = async (question: string, governorate: string): Promise<string> => {
-    if (!ai) {
+    const client = ensureClient();
+    if (!client) {
         return "Thank you for your question. As an AI assistant, I can provide general information. For specific local issues, consulting official sources or local representatives is always recommended.";
     }
 
@@ -117,16 +178,34 @@ export const generateAnswerForNeighbor = async (question: string, governorate: s
     `;
 
     try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+        const response = await client.models.generateContent({
+            model: "gemini-2.5-flash",
             contents: `Question: "${question}"`,
             config: {
-                systemInstruction: context
-            }
+                systemInstruction: context,
+            },
         });
-        return response.text;
+        return extractText(response) || AI_UNAVAILABLE_MESSAGE;
     } catch (error) {
         console.error("Hayy AI service error:", error);
-        return "I am sorry, but I was unable to process your request at this time. Please try again later.";
+        return AI_UNAVAILABLE_MESSAGE;
+    }
+};
+
+export const generateTeaHouseResponse = async (message: string): Promise<string> => {
+    const client = ensureClient();
+    if (!client) {
+        return AI_UNAVAILABLE_MESSAGE;
+    }
+
+    try {
+        const response = await client.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Respond empathetically and constructively to the following community discussion message: "${message}"`,
+        });
+        return extractText(response) || AI_UNAVAILABLE_MESSAGE;
+    } catch (error) {
+        console.error("Tea House AI service error:", error);
+        return AI_UNAVAILABLE_MESSAGE;
     }
 };

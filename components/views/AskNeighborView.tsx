@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Question, Answer, Language } from '../../types.ts';
-import * as api from '../../services/apiService.ts';
-import * as gemini from '../../services/geminiService.ts';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
-import { QuestionMarkCircleIcon, LightBulbIcon } from '../icons/Icons.tsx';
+import { User, Question, Answer, Language } from '../../types';
+import * as api from '../../services/apiService';
+import * as gemini from '../../services/geminiService';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
+import { QuestionMarkCircleIcon, LightBulbIcon } from '../icons/Icons';
 
 interface AskNeighborViewProps {
     user: User | null;
@@ -33,7 +33,8 @@ const QuestionCard: React.FC<{
     question: Question;
     onAskAI: (questionId: string, questionText: string, governorate: string) => void;
     isGeneratingAI: boolean;
-}> = ({ question, onAskAI, isGeneratingAI }) => {
+    aiAvailable: boolean;
+}> = ({ question, onAskAI, isGeneratingAI, aiAvailable }) => {
     const texts = UI_TEXT['en']; // Assuming a default for now
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -50,11 +51,11 @@ const QuestionCard: React.FC<{
                         </button>
                         <button
                             onClick={() => onAskAI(question.id, question.questionText, question.governorate)}
-                            disabled={isGeneratingAI}
+                            disabled={!aiAvailable || isGeneratingAI}
                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary/20 text-primary rounded-full hover:bg-primary/30 disabled:opacity-50"
                         >
                             {isGeneratingAI ? <Spinner /> : <LightBulbIcon className="w-4 h-4" />}
-                            <span>{texts.askAI}</span>
+                            <span>{aiAvailable ? texts.askAI : 'AI Offline'}</span>
                         </button>
                     </div>
                 </div>
@@ -77,7 +78,11 @@ const AskNeighborView: React.FC<AskNeighborViewProps> = ({ user, requestLogin, l
     const [isLoading, setIsLoading] = useState(true);
     const [newQuestion, setNewQuestion] = useState('');
     const [generatingAIFor, setGeneratingAIFor] = useState<string | null>(null);
+    const [aiStatusMessage, setAiStatusMessage] = useState<string | null>(
+        gemini.isGeminiConfigured() ? null : gemini.AI_UNAVAILABLE_MESSAGE
+    );
     const texts = UI_TEXT[language];
+    const aiConfigured = gemini.isGeminiConfigured();
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -128,9 +133,14 @@ const AskNeighborView: React.FC<AskNeighborViewProps> = ({ user, requestLogin, l
                     ? { ...q, answers: [aiAnswer, ...q.answers] }
                     : q
             ));
+            if (!gemini.isGeminiConfigured()) {
+                setAiStatusMessage(gemini.AI_UNAVAILABLE_MESSAGE);
+            } else {
+                setAiStatusMessage(null);
+            }
         } catch (error) {
             console.error("AI answer generation failed:", error);
-            alert("Failed to get an answer from AI.");
+            setAiStatusMessage(gemini.AI_UNAVAILABLE_MESSAGE);
         } finally {
             setGeneratingAIFor(null);
         }
@@ -159,6 +169,12 @@ const AskNeighborView: React.FC<AskNeighborViewProps> = ({ user, requestLogin, l
                 </div>
             </div>
 
+            {aiStatusMessage && (
+                <div className="mb-4 rounded-lg border border-yellow-400/40 bg-yellow-400/10 px-4 py-3 text-sm text-yellow-100" role="status">
+                    {aiStatusMessage}
+                </div>
+            )}
+
             {isLoading ? <Spinner /> : (
                 <div className="space-y-4">
                     {questions.map(q => (
@@ -167,6 +183,7 @@ const AskNeighborView: React.FC<AskNeighborViewProps> = ({ user, requestLogin, l
                             question={q}
                             onAskAI={handleAskAI}
                             isGeneratingAI={generatingAIFor === q.id}
+                            aiAvailable={aiConfigured}
                         />
                     ))}
                 </div>

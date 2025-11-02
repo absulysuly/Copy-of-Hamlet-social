@@ -1,6 +1,6 @@
 import React from 'react';
-import { Post, User } from '../../types.ts';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, DonateIcon, ArrowLeftIcon } from '../icons/Icons.tsx';
+import { Post, User } from '../../types';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, DonateIcon, ArrowLeftIcon } from '../icons/Icons';
 
 interface FullScreenReelViewProps {
     reel: Post;

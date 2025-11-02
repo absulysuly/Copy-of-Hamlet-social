@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types.ts';
-import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons.tsx';
-import CreateTopicModal from '../CreateTopicModal.tsx';
-import { UI_TEXT } from '../../translations.ts';
-import * as api from '../../services/apiService.ts';
-import Spinner from '../Spinner.tsx';
+import { User, Language, TeaHouseTopic, TeaHouseMessage, UserRole } from '../../types';
+import { TeaHouseIcon, ArrowLeftIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons';
+import CreateTopicModal from '../CreateTopicModal';
+import { UI_TEXT } from '../../translations';
+import * as api from '../../services/apiService';
+import Spinner from '../Spinner';
+import * as gemini from '../../services/geminiService';
 
 interface TeaHouseViewProps {
     user: User | null;
@@ -20,7 +21,21 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
     const [newMessage, setNewMessage] = useState('');
     const [isLoadingTopics, setIsLoadingTopics] = useState(true);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+    const [isGeneratingAiResponse, setIsGeneratingAiResponse] = useState(false);
+    const [aiStatusMessage, setAiStatusMessage] = useState<string | null>(
+        gemini.isGeminiConfigured() ? null : gemini.AI_UNAVAILABLE_MESSAGE
+    );
     const texts = UI_TEXT[language];
+
+    const aiAssistant: User = {
+        id: 'tea-house-ai',
+        name: 'Tea House AI',
+        role: UserRole.Voter,
+        avatarUrl: 'https://www.gstatic.com/lamda/images/sparkle_resting_v2_darkmode_227533908ff218654087.gif',
+        verified: false,
+        party: 'Digital Democracy',
+        governorate: 'Baghdad',
+    };
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -68,11 +83,49 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
         }
     };
 
-    const handleSendMessage = () => {
-        if (!newMessage.trim() || !selectedTopic) return;
-        console.log("Sending message (simulation):", newMessage);
-        // In a real app, you'd call an API to send the message.
+    const handleSendMessage = async () => {
+        const trimmedMessage = newMessage.trim();
+        if (!trimmedMessage || !selectedTopic) return;
+
+        if (!user) {
+            requestLogin();
+            return;
+        }
+
+        const userMessage: TeaHouseMessage = {
+            id: `msg-${Date.now()}`,
+            author: user,
+            type: 'text',
+            content: trimmedMessage,
+            timestamp: 'Just now',
+        };
+
+        setMessages(prev => [...prev, userMessage]);
         setNewMessage('');
+
+        setIsGeneratingAiResponse(true);
+        try {
+            const aiReply = await gemini.generateTeaHouseResponse(trimmedMessage);
+            const aiMessage: TeaHouseMessage = {
+                id: `ai-${Date.now()}`,
+                author: aiAssistant,
+                type: 'text',
+                content: aiReply,
+                timestamp: 'Just now',
+            };
+
+            setMessages(prev => [...prev, aiMessage]);
+            if (!gemini.isGeminiConfigured()) {
+                setAiStatusMessage(gemini.AI_UNAVAILABLE_MESSAGE);
+            } else {
+                setAiStatusMessage(null);
+            }
+        } catch (error) {
+            console.error('Failed to generate Tea House AI response:', error);
+            setAiStatusMessage(gemini.AI_UNAVAILABLE_MESSAGE);
+        } finally {
+            setIsGeneratingAiResponse(false);
+        }
     };
     
     // --- RENDER LOGIC ---
@@ -112,19 +165,25 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
 
                 <footer className="fixed bottom-0 left-0 right-0 lg:left-64 teahouse-composer p-2">
                      <div className="max-w-2xl mx-auto flex items-center space-x-2">
-                        <button className="p-3 rounded-full hover:bg-white/10 text-theme-text-muted"><PhotoIcon className="w-6 h-6"/></button>
-                        <button className="p-3 rounded-full hover:bg-white/10 text-theme-text-muted"><DocumentIcon className="w-6 h-6"/></button>
+                        <button className="p-3 rounded-full hover:bg-white/10 text-theme-text-muted" type="button"><PhotoIcon className="w-6 h-6"/></button>
+                        <button className="p-3 rounded-full hover:bg-white/10 text-theme-text-muted" type="button"><DocumentIcon className="w-6 h-6"/></button>
                         <input
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             placeholder={texts.typeAMessage}
                             className="flex-grow p-3 border border-[var(--color-glass-border)] rounded-full bg-white/10 placeholder-theme-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
+                            aria-label={texts.typeAMessage}
                         />
-                        <button onClick={handleSendMessage} className="p-3 rounded-full bg-primary text-on-primary hover:brightness-110">
-                            <PencilIcon className="w-6 h-6" />
+                        <button onClick={handleSendMessage} className="p-3 rounded-full bg-primary text-on-primary hover:brightness-110 disabled:opacity-50" disabled={!newMessage.trim() || isGeneratingAiResponse} type="button">
+                            {isGeneratingAiResponse ? <Spinner /> : <PencilIcon className="w-6 h-6" />}
                         </button>
                     </div>
+                    {aiStatusMessage && (
+                        <div className="mt-2 text-center text-xs text-theme-text-muted">
+                            {aiStatusMessage}
+                        </div>
+                    )}
                 </footer>
             </div>
         );
@@ -149,6 +208,13 @@ const TeaHouseView: React.FC<TeaHouseViewProps> = ({ user, requestLogin, languag
                 </button>
             </div>
             
+            {aiStatusMessage && (
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-yellow-400/40 bg-yellow-400/10 px-4 py-2 text-sm text-yellow-100">
+                    <TeaHouseIcon className="h-5 w-5" />
+                    <span>{aiStatusMessage}</span>
+                </div>
+            )}
+
             {isLoadingTopics ? <Spinner /> : (
                 <div className="space-y-3">
                     {topics.map(topic => (

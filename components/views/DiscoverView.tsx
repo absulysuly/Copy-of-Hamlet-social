@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from '../../types.ts';
+import { User } from '../../types';
 
 const DiscoverView: React.FC<{
     user: User | null;

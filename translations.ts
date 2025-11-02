@@ -1,4 +1,4 @@
-import { Language } from './types.ts';
+import { Language } from './types';
 
 type Translations = {
     [key in Language]: {
