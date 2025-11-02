@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Post, Language } from '../../types.ts';
-import { VerifiedIcon, EditIcon } from '../icons/Icons.tsx';
-import PostCard from '../PostCard.tsx';
-import ComposeView from './ComposeView.tsx';
-import EditProfileModal from '../EditProfileModal.tsx';
-import * as api from '../../services/apiService.ts';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
+import { User, UserRole, Post, Language } from '../../types';
+import { VerifiedIcon, EditIcon } from '../icons/Icons';
+import PostCard from '../PostCard';
+import ComposeView from './ComposeView';
+import EditProfileModal from '../EditProfileModal';
+import * as api from '../../services/apiService';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
 
 interface UserProfileViewProps {
     user: User;

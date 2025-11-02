@@ -1,7 +1,7 @@
 import React from 'react';
-import ManagementPageHeader from '../components/ManagementPageHeader.tsx';
-import { IdentificationIcon } from '../../icons/Icons.tsx';
-import { useContactValidationData } from '../hooks/useManagementData.ts';
+import ManagementPageHeader from '../components/ManagementPageHeader';
+import { IdentificationIcon } from '../../icons/Icons';
+import { useContactValidationData } from '../hooks/useManagementData';
 
 const QualityScore: React.FC<{ score: number }> = ({ score }) => {
     const getColor = () => {

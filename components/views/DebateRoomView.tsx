@@ -1,7 +1,7 @@
 // Fix: Populating components/views/DebateRoomView.tsx with a placeholder component.
 import React from 'react';
-import { Language } from '../../types.ts';
-import { UI_TEXT } from '../../translations.ts';
+import { Language } from '../../types';
+import { UI_TEXT } from '../../translations';
 
 interface DebateRoomViewProps {
     language: Language;

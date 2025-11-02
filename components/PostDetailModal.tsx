@@ -1,7 +1,7 @@
 import React from 'react';
-import { Post, User, Language } from '../types.ts';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, XMarkIcon } from './icons/Icons.tsx';
-import AudioPlayer from './AudioPlayer.tsx';
+import { Post, User, Language } from '../types';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, XMarkIcon } from './icons/Icons';
+import AudioPlayer from './AudioPlayer';
 
 interface PostDetailModalProps {
     post: Post;

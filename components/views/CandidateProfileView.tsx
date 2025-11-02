@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Post, Language } from '../../types.ts';
-import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, ShareIcon, FemaleIcon } from '../icons/Icons.tsx';
-import PostCard from '../PostCard.tsx';
-import * as api from '../../services/apiService.ts';
-import QRCodeModal from '../QRCodeModal.tsx';
-import { UI_TEXT } from '../../translations.ts';
+import { User, UserRole, Post, Language } from '../../types';
+import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, ShareIcon, FemaleIcon } from '../icons/Icons';
+import PostCard from '../PostCard';
+import * as api from '../../services/apiService';
+import QRCodeModal from '../QRCodeModal';
+import { UI_TEXT } from '../../translations';
 
 interface CandidateProfileViewProps {
     candidate: User;

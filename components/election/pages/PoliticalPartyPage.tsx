@@ -1,9 +1,9 @@
 
 import React from 'react';
-import Card from '../components/ui/Card.tsx';
-import { usePartyData } from '../hooks/usePartyData.ts';
-import { Candidate } from '../types.ts';
-import { VerifiedIcon } from '../../icons/Icons.tsx';
+import Card from '../components/ui/Card';
+import { usePartyData } from '../hooks/usePartyData';
+import { Candidate } from '../types';
+import { VerifiedIcon } from '../../icons/Icons';
 
 interface PoliticalPartyPageProps {
     id: string;

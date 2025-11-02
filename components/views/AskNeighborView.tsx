@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Question, Answer, Language } from '../../types.ts';
-import * as api from '../../services/apiService.ts';
-import * as gemini from '../../services/geminiService.ts';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
-import { QuestionMarkCircleIcon, LightBulbIcon } from '../icons/Icons.tsx';
+import { User, Question, Answer, Language } from '../../types';
+import * as api from '../../services/apiService';
+import * as gemini from '../../services/geminiService';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
+import { QuestionMarkCircleIcon, LightBulbIcon } from '../icons/Icons';
 
 interface AskNeighborViewProps {
     user: User | null;

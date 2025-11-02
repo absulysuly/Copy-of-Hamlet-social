@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Card from '../components/ui/Card.tsx';
-import Input from '../components/ui/Input.tsx';
-import Select from '../components/ui/Select.tsx';
-import Button from '../components/ui/Button.tsx';
-import { IRAQI_GOVERNORATES_INFO } from '../../../constants.ts';
-import CheckCircleIcon from '../icons/CheckCircleIcon.tsx';
-import { Language } from '../../../types.ts';
-import { UI_TEXT } from '../../../translations.ts';
+import Card from '../components/ui/Card';
+import Input from '../components/ui/Input';
+import Select from '../components/ui/Select';
+import Button from '../components/ui/Button';
+import { IRAQI_GOVERNORATES_INFO } from '../../../constants';
+import CheckCircleIcon from '../icons/CheckCircleIcon';
+import { Language } from '../../../types';
+import { UI_TEXT } from '../../../translations';
 
 interface VoterRegistrationPageProps {
     language: Language;

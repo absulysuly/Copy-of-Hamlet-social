@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { User, UserRole, Language } from '../types.ts';
-import { XMarkIcon, ArrowLeftIcon, GoogleIcon, FacebookIcon, EnvelopeIcon } from './icons/Icons.tsx';
-import LanguageSwitcher from './LanguageSwitcher.tsx';
-import { UI_TEXT } from '../translations.ts';
-import * as api from '../services/apiService.ts';
+import { User, UserRole, Language } from '../types';
+import { XMarkIcon, ArrowLeftIcon, GoogleIcon, FacebookIcon, EnvelopeIcon } from './icons/Icons';
+import LanguageSwitcher from './LanguageSwitcher';
+import { UI_TEXT } from '../translations';
+import * as api from '../services/apiService';
 
 interface LoginModalProps {
     onLogin: (user: User) => void;
