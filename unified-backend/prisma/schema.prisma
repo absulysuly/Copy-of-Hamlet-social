@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum VerificationStatus {
+  unverified
+  pending
+  verified
+  rejected
+}
+
+model Candidate {
+  id                       String             @id @default(cuid())
+  uniqueCandidateId        String             @unique
+  voterNumber              Int?               @unique
+  ballotNumber             String
+  partyNameArabic          String
+  partyNameEnglish         String?
+  candidateSequence        Int?
+  nominationType           String
+  governorate              String
+  sex                      String
+  fullNameArabic           String
+  fullNameEnglish          String?
+  email                    String?            @unique
+  phone                    String?
+  bio                      String?
+  photoUrl                 String?
+  coverPhotoUrl            String?
+  verificationStatus       VerificationStatus @default(unverified)
+  verificationDocuments    String[]
+  verifiedAt               DateTime?
+  verifiedBy               String?
+  profileCompletionPercent Int                @default(30)
+  viewsCount               Int                @default(0)
+  supportersCount          Int                @default(0)
+  postsCount               Int                @default(0)
+  eventsCount              Int                @default(0)
+  referralCode             String             @unique
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+  lastActiveAt             DateTime?
+
+  @@index([governorate])
+  @@index([verificationStatus])
+  @@index([partyNameArabic])
+  @@index([supportersCount])
+  @@index([viewsCount])
+  @@index([createdAt])
+  @@index([sex])
+  @@map("candidates")
+}
