@@ -1,75 +1,55 @@
-# Iraq Election Platform (Next.js 14)
+# ???? Iraqi Election Platform 2025
 
-This is a modern, multilingual (English, Arabic, Kurdish), and responsive web application for browsing candidates in the Iraqi parliamentary elections, built with Next.js 14 and the App Router.
+A modern, bilingual election platform for Iraqi parliamentary elections.
 
-## Tech Stack
+## ?? Features
+
+? **Multi-language Support**: Arabic, English, Kurdish (with RTL)  
+? **Candidate Database**: Browse 7,768+ candidates  
+? **Search & Filter**: By name, governorate, gender, party  
+? **Statistics Dashboard**: Real-time election stats  
+? **Governorate Pages**: View candidates by province  
+? **Dark/Light Theme**: User preference support  
+? **Mobile Responsive**: Works on all devices  
+
+## ?? Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **API Client**: Axios
-- **Charts**: Recharts
-- **UI Icons**: React Icons
-- **Internationalization (i18n)**: Next.js Middleware with `server-only` dictionaries
-- **Theme**: Dark/Light mode with `next-themes`
+- **Styling**: TailwindCSS
+- **Icons**: React Icons
+- **Deployment**: Vercel
 
-## Project Structure
+## ?? Pages
 
-- **`app/[lang]`**: Dynamic routes for i18n. All pages are nested here.
-  - **`layout.tsx`**: The root layout, including Navbar, Footer, and providers.
-  - **`page.tsx`**: The Home Page.
-  - **`candidates/page.tsx`**: The main candidate browsing page with filtering.
-  - **`candidates/[id]/page.tsx`**: The dynamic page for a single candidate's profile.
-  - **`loading.tsx` & `error.tsx`**: Next.js conventions for handling loading states and errors.
-- **`components`**: Reusable React components, organized by feature (layout, home, candidates, stats, ui).
-- **`lib`**: Core logic, utilities, and API communication.
-  - **`api.ts`**: Axios instance and functions for fetching data from the backend.
-  - **`types.ts`**: TypeScript interfaces for all data models.
-  - **`i18n-config.ts`**: Configuration for supported locales.
-  - **`dictionaries.ts`**: Server-side function to load translation files.
-- **`dictionaries`**: JSON files for English (`en.json`), Arabic (`ar.json`), and Kurdish (`ku.json`) translations.
-- **`middleware.ts`**: Handles automatic locale detection and URL rewriting for i18n.
-- **`public`**: Static assets like images.
+- **Home**: Hero section with search and featured candidates
+- **Candidates**: Full list with filtering and pagination
+- **Governorates**: Browse by Iraqi provinces (18 governorates)
+- **Statistics**: Visual analytics and trends
+- **About**: Platform information
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v18.17 or later)
-- npm, yarn, or pnpm
-
-### 1. Setup Environment Variables
-
-Create a file named `.env.local` in the root of the project and add the URL for your backend API:
-
-```
-NEXT_PUBLIC_API_BASE_URL=http://localhost:4001
-```
-
-### 2. Install Dependencies
-
-Open your terminal and run:
+## ??? Development
 
 ```bash
+# Install dependencies
 npm install
-```
 
-### 3. Run the Development Server
-
-Start the Next.js development server:
-
-```bash
+# Run development server
 npm run dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The application will automatically detect your browser's language and redirect you to the appropriate path (e.g., `/en`, `/ar`, or `/ku`).
-
-## Build for Production
-
-To create a production-ready build, run:
-
-```bash
+# Build for production
 npm run build
+
+# Start production server
+npm start
 ```
 
-This will generate an optimized version of your application in the `.next` directory, ready for deployment.
+## ?? Environment Variables
+
+```env
+NEXT_PUBLIC_API_BASE_URL=your-backend-api-url
+```
+
+## ?? License
+
+Private - Iraqi Election Platform 2025
