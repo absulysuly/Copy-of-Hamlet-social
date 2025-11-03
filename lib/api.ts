@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Candidate, Governorate, Stats, PaginatedCandidates } from './types';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4001',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://iraq-election-backend-production.up.railway.app',
   headers: {
     'Content-Type': 'application/json',
   },
