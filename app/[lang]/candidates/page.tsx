@@ -18,65 +18,63 @@ export async function generateMetadata({
   };
 }
 
+type CandidatesPageProps = {
+  params: { lang: Locale };
+  searchParams: {
+    page?: string;
+    query?: string;
+    governorate?: string;
+    gender?: 'Male' | 'Female';
+    sort?: string;
+  };
+};
+
 export default async function CandidatesPage({
   params: { lang },
   searchParams,
-}: {
-  params: { lang: Locale };
-  searchParams?: {
-    query?: string;
-    governorate?: string;
-    gender?: 'male' | 'female';
-    page?: string;
-  };
-}) {
+}: CandidatesPageProps) {
   const dictionary = await getDictionary(lang);
-  const governorates = await fetchGovernorates();
-
-  const currentPage = Number(searchParams?.page) || 1;
-  const query = searchParams?.query || '';
-  const governorate = searchParams?.governorate || '';
-  const gender = searchParams?.gender;
-
-  // Set a limit for candidates per page
+  const page = Number(searchParams.page) || 1;
   const limit = 12;
 
-  const { data: candidates, total } = await fetchCandidates({
-    page: currentPage,
-    limit: limit,
-    query,
-    governorate,
-    gender,
-  });
-
+  const [candidatesResponse, governorates] = await Promise.all([
+    fetchCandidates({
+      page,
+      limit,
+      query: searchParams.query,
+      governorate: searchParams.governorate,
+      gender: searchParams.gender,
+      sort: searchParams.sort,
+    }),
+    fetchGovernorates(),
+  ]);
+  
+  const { data: candidates, total } = candidatesResponse;
   const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {dictionary.page.candidates.title}
-        </h1>
-      </div>
+      <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
+        {dictionary.page.candidates.title}
+      </h1>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
         <aside className="lg:col-span-1">
-          <FilterPanel governorates={governorates} dictionary={dictionary.filters} />
+          <FilterPanel governorates={governorates} dictionary={dictionary} />
         </aside>
-
         <main className="lg:col-span-3">
           {candidates.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {candidates.map((candidate) => (
-                <CandidateCard key={candidate.id} candidate={candidate} dictionary={dictionary.candidate} lang={lang} />
+                <CandidateCard key={candidate.id} candidate={candidate} dictionary={dictionary} lang={lang} />
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-600">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{dictionary.page.candidates.noResultsTitle}</h3>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{dictionary.page.candidates.noResultsText}</p>
+            <div className="flex h-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-600 dark:bg-gray-800/50">
+              <p className="text-gray-500 dark:text-gray-400">{dictionary.page.candidates.noResults}</p>
             </div>
           )}
-          {totalPages > 1 && <Pagination totalPages={totalPages} dictionary={dictionary.pagination} />}
+
+          {totalPages > 1 && <Pagination totalPages={totalPages} />}
         </main>
       </div>
     </div>

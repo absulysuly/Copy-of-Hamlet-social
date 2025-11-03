@@ -2,7 +2,7 @@ import { fetchStats } from '@/lib/api';
 import { Locale } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
-import { Users, UserCheck, Map } from 'lucide-react';
+import { FaUsers, FaUserCheck, FaMapMarkedAlt } from 'react-icons/fa';
 import StatsClient from '@/components/stats/StatsClient';
 import React from 'react';
 
@@ -41,10 +41,10 @@ export default async function StatsPage({
   const stats = await fetchStats();
 
   const mainStats = [
-    { icon: Users, title: dictionary.page.stats.totalCandidates, value: stats.total_candidates },
-    { icon: UserCheck, title: dictionary.page.stats.maleCandidates, value: stats.gender_distribution.Male },
-    { icon: UserCheck, title: dictionary.page.stats.femaleCandidates, value: stats.gender_distribution.Female },
-    { icon: Map, title: dictionary.page.stats.governorates, value: stats.candidates_per_governorate.length },
+    { icon: FaUsers, title: dictionary.page.stats.totalCandidates, value: stats.total_candidates },
+    { icon: FaUserCheck, title: dictionary.page.stats.maleCandidates, value: stats.gender_distribution.Male },
+    { icon: FaUserCheck, title: dictionary.page.stats.femaleCandidates, value: stats.gender_distribution.Female },
+    { icon: FaMapMarkedAlt, title: dictionary.page.stats.governorates, value: stats.candidates_per_governorate.length },
   ];
 
   return (

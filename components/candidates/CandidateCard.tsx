@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Candidate } from '@/lib/types';
 import { Locale } from '@/lib/i18n-config';
-import { Landmark, User, CheckCircle } from 'lucide-react';
+import { FaLandmark, FaUserTie, FaHashtag } from 'react-icons/fa';
 import React from 'react';
 
 type CandidateCardProps = {
@@ -16,25 +16,26 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, dictionary, la
     <Link href={`/${lang}/candidates/${candidate.id}`}>
       <div className="flex h-full items-center space-x-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-green-500 rtl:space-x-reverse">
         <Image
-          src={candidate.photo || `https://avatar.iran.liara.run/public/${candidate.gender === 'female' ? 'girl' : 'boy'}?username=${candidate.id}`}
+          src={`https://avatar.iran.liara.run/public/${candidate.gender === 'Female' ? 'girl' : 'boy'}?username=${candidate.id}`}
           alt={candidate.name}
           width={64}
           height={64}
-          className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+          className="h-16 w-16 flex-shrink-0 rounded-full"
         />
         <div className="flex-1">
-          <h3 className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
-            <span>{lang === 'ar' && candidate.name_ar ? candidate.name_ar : candidate.name}</span>
-            {candidate.verified && <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400" />}
-          </h3>
+          <h3 className="font-bold text-gray-900 dark:text-white">{candidate.name}</h3>
           <div className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
-              <Landmark className="h-4 w-4" />
+              <FaLandmark />
               <span>{candidate.governorate}</span>
             </div>
             <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
+              <FaUserTie />
               <span>{candidate.party}</span>
+            </div>
+             <div className="flex items-center gap-2">
+              <FaHashtag />
+              <span>{dictionary.candidate.ballotNumber}: {candidate.ballot_number}</span>
             </div>
           </div>
         </div>

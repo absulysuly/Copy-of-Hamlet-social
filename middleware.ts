@@ -1,47 +1,38 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+
 import { i18n } from './lib/i18n-config';
 
-const { locales, defaultLocale } = i18n;
+import { match as matchLocale } from '@formatjs/intl-localematcher';
+import Negotiator from 'negotiator';
 
-// Map of common language prefixes to our supported locales
-const langMap: { [key: string]: string } = {
-  'en': 'en',
-  'ar': 'ar',
-  'ku': 'ku',
-};
+function getLocale(request: NextRequest): string | undefined {
+  const negotiatorHeaders: Record<string, string> = {};
+  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
 
-function getLocale(request: NextRequest): string {
-  const acceptLanguage = request.headers.get('accept-language');
-  if (!acceptLanguage) {
-    return defaultLocale;
-  }
+  // @ts-ignore locales are readonly
+  const locales: string[] = i18n.locales;
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
 
-  const firstLang = acceptLanguage.split(',')[0].split('-')[0].toLowerCase();
-  
-  return langMap[firstLang] || defaultLocale;
+  const locale = matchLocale(languages, locales, i18n.defaultLocale);
+  return locale;
 }
 
-
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  const pathname = request.nextUrl.pathname;
+
+  const pathnameIsMissingLocale = i18n.locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
-  
-  if (pathnameHasLocale) return;
-  
-  const locale = getLocale(request);
-  
-  // Prepend the locale to the path.
-  // Handle the root path ('/') separately to avoid a trailing slash.
-  request.nextUrl.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+
+  if (pathnameIsMissingLocale) {
+    const locale = getLocale(request);
+    return NextResponse.redirect(
+      new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
+    );
+  }
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|images|favicon.ico).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico).*)'],
 };

@@ -1,7 +1,5 @@
 {
-  "name": "digital-diwan",
-  "description": "The Digital Diwan: Iraq's social platform for civic engagement. Discuss, connect, and hold leaders accountable.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "name": "Smart Campaign-basicsolid",
+  "description": "A safe, engaging space for Iraqis to discuss politics, share concerns, and hold leaders accountable — using voice, text, and community moderation to foster inclusive dialogue before, during, and after elections.",
+  "requestFramePermissions": []
 }

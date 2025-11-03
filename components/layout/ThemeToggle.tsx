@@ -1,6 +1,6 @@
 'use client';
 import { useTheme } from 'next-themes';
-import { Sun, Moon } from 'lucide-react';
+import { FaSun, FaMoon } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 
 export default function ThemeToggle() {
@@ -25,7 +25,7 @@ export default function ThemeToggle() {
       className="rounded-md p-2 text-gray-700 hover:bg-gray-100 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-700"
       aria-label="Toggle dark mode"
     >
-      {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      {theme === 'dark' ? <FaSun className="h-5 w-5" /> : <FaMoon className="h-5 w-5" />}
     </button>
   );
 }

@@ -1,8 +1,7 @@
-
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import { i18n } from '@/lib/i18n-config';
-import { Globe } from 'lucide-react';
+import { FaGlobe } from 'react-icons/fa';
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { cn } from '@/lib/utils';
@@ -28,7 +27,7 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="inline-flex w-full justify-center rounded-md p-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-700">
-          <Globe className="h-5 w-5" aria-hidden="true" />
+          <FaGlobe className="h-5 w-5" aria-hidden="true" />
         </Menu.Button>
       </div>
       <Transition
@@ -40,7 +39,7 @@ export default function LanguageSwitcher({ lang }: { lang: string }) {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute end-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-600 rtl:origin-top-left">
+        <Menu.Items className="absolute end-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-600">
           <div className="py-1">
             {i18n.locales.map((locale) => (
               <Menu.Item key={locale}>

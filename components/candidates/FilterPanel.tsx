@@ -56,10 +56,8 @@ export default function FilterPanel({ governorates, dictionary }: FilterPanelPro
         >
           <option value="">{dictionary.filters.allGovernorates}</option>
           {governorates.map((gov) => (
-            // Fix: Changed gov.name_en to gov.name to match the type definition.
-            <option key={gov.id} value={gov.name}>
-              {/* Fix: Changed gov.name_en to gov.name to match the type definition. */}
-              {pathname.includes('/ar') || pathname.includes('/ku') ? gov.name_ar : gov.name}
+            <option key={gov.id} value={gov.name_en}>
+              {pathname.includes('/ar') || pathname.includes('/ku') ? gov.name_ar : gov.name_en}
             </option>
           ))}
         </select>
@@ -75,9 +73,8 @@ export default function FilterPanel({ governorates, dictionary }: FilterPanelPro
           className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 p-2 shadow-sm focus:border-green-500 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           <option value="">{dictionary.filters.allGenders}</option>
-          {/* Fix: Changed gender values to lowercase to match the API. */}
-          <option value="male">{dictionary.candidate.male}</option>
-          <option value="female">{dictionary.candidate.female}</option>
+          <option value="Male">{dictionary.candidate.male}</option>
+          <option value="Female">{dictionary.candidate.female}</option>
         </select>
       </div>
     </aside>

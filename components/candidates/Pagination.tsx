@@ -5,10 +5,9 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 type PaginationProps = {
   totalPages: number;
-  dictionary: any;
 };
 
-export default function Pagination({ totalPages, dictionary }: PaginationProps) {
+export default function Pagination({ totalPages }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -35,11 +34,11 @@ export default function Pagination({ totalPages, dictionary }: PaginationProps) 
         className="flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-sm text-gray-700 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
       >
         <FaArrowLeft />
-        <span>{dictionary.previous}</span>
+        <span>Previous</span>
       </button>
 
       <span className="text-sm text-gray-700 dark:text-gray-300">
-        {dictionary.page} {currentPage} {dictionary.of} {totalPages}
+        Page {currentPage} of {totalPages}
       </span>
       
       <button
@@ -47,7 +46,7 @@ export default function Pagination({ totalPages, dictionary }: PaginationProps) 
         disabled={currentPage >= totalPages}
         className="flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-sm text-gray-700 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
       >
-        <span>{dictionary.next}</span>
+        <span>Next</span>
         <FaArrowRight />
       </button>
     </div>
