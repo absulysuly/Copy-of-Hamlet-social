@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@formkit/hijri-date": "^1.0.1",
+    "hijri-date-converter": "^1.0.2",
     "@google/genai": "^1.28.0",
     "@headlessui/react": "^2.1.2",
     "canvas-confetti": "^1.9.3",
