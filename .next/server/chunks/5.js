@@ -1,1 +1,0 @@
-"use strict";exports.id=5,exports.ids=[5],exports.modules={72005:(e,t,o)=>{o.r(t),o.d(t,{$$typeof:()=>d,__esModule:()=>a,default:()=>c});var r=o(68570);let s=(0,r.createProxy)(String.raw`/workspace/components/social/ChatWidget.tsx`),{__esModule:a,$$typeof:d}=s;s.default;let c=(0,r.createProxy)(String.raw`/workspace/components/social/ChatWidget.tsx#default`)}};
