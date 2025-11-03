@@ -26,7 +26,7 @@ export const generateSocialPost = async (): Promise<string> => {
             contents: prompt,
         });
         
-        return response.text;
+        return response.text || "Generated content unavailable.";
     } catch (error) {
         console.error("Error generating social post:", error);
         return "Couldn't generate a post right now. Try again in a moment!";
