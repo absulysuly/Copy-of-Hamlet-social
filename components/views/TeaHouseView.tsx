@@ -147,7 +147,7 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                         const scriptProcessor = inputAudioContext.createScriptProcessor(4096, 1, 1);
                         scriptProcessorRef.current = scriptProcessor;
 
-                        scriptProcessor.onaudioprocess = (audioProcessingEvent) => {
+                        scriptProcessor.onaudioprocess = (audioProcessingEvent: AudioProcessingEvent) => {
                             const inputData = audioProcessingEvent.inputBuffer.getChannelData(0);
                             const pcmBlob = createBlob(inputData);
                             sessionPromise.current?.then((session) => {
@@ -162,22 +162,24 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                         // The logic is updated to append text to the last transcript entry and use `turnComplete` to finalize it.
                         if (message.serverContent?.inputTranscription) {
                             const { text } = message.serverContent.inputTranscription;
+                            const transcriptText = text || '';
                             setTranscripts(prev => {
                                 const last = prev[prev.length - 1];
                                 if (last && last.author === 'user' && !last.isFinal) {
-                                    return [...prev.slice(0, -1), { ...last, text: last.text + text }];
+                                    return [...prev.slice(0, -1), { ...last, text: last.text + transcriptText }];
                                 }
-                                return [...prev, { id: Date.now(), text, author: 'user', isFinal: false }];
+                                return [...prev, { id: Date.now(), text: transcriptText, author: 'user', isFinal: false }];
                             });
                         }
                         if (message.serverContent?.outputTranscription) {
                             const { text } = message.serverContent.outputTranscription;
+                            const transcriptText = text || '';
                             setTranscripts(prev => {
                                 const last = prev[prev.length - 1];
                                 if (last && last.author === 'model' && !last.isFinal) {
-                                    return [...prev.slice(0, -1), { ...last, text: last.text + text }];
+                                    return [...prev.slice(0, -1), { ...last, text: last.text + transcriptText }];
                                 }
-                                return [...prev, { id: Date.now(), text, author: 'model', isFinal: false }];
+                                return [...prev, { id: Date.now(), text: transcriptText, author: 'model', isFinal: false }];
                             });
                         }
                         if (message.serverContent?.turnComplete) {
@@ -185,7 +187,7 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                                 prev.map(entry => (entry.isFinal ? entry : { ...entry, isFinal: true }))
                             );
                         }
-                        if (message.serverContent?.modelTurn?.parts[0]?.inlineData?.data) {
+                        if (message.serverContent?.modelTurn?.parts && message.serverContent.modelTurn.parts[0]?.inlineData?.data) {
                             const base64Audio = message.serverContent.modelTurn.parts[0].inlineData.data;
                             nextStartTime = Math.max(nextStartTime, outputAudioContext.currentTime);
                             const audioBuffer = await decodeAudioData(decode(base64Audio), outputAudioContext, 24000, 1);

@@ -1,11 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
+    // Removed 'output: export' to support dynamic routes and API calls
     trailingSlash: true,
     images: {
         unoptimized: true
-    },
-    distDir: 'out'
+    }
 };
 
 export default nextConfig;
