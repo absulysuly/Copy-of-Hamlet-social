@@ -1,8 +1,12 @@
 import { getDictionary } from '@/lib/dictionaries';
-import { Locale } from '@/lib/i18n-config';
+import { Locale, i18n } from '@/lib/i18n-config';
 import { Metadata } from 'next';
 import TeaHouseView from '@/components/views/TeaHouseView';
 import { MessageCircle } from 'lucide-react';
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ lang: locale }));
+}
 
 export async function generateMetadata({
   params: { lang },

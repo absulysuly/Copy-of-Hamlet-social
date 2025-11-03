@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react';
 import CommentThread from './CommentThread';
 import { formatDistanceToNow } from 'date-fns';
-import { ar, enUS, ku } from 'date-fns/locale';
+import { ar, enUS } from 'date-fns/locale';
 import { likePost } from '@/lib/api';
 import { toast } from 'react-hot-toast';
 import { Post } from '@/lib/types'; // Using the new, correct Post type
@@ -39,10 +39,10 @@ export default function PostComponent({ post, lang }: PostProps) { // Renamed co
     }
   };
 
-  const localeMap = {
+  const localeMap: Record<string, any> = {
     ar: ar,
     en: enUS,
-    ku: ku
+    ku: ar // Kurdish uses Arabic locale as fallback
   };
 
   return (
