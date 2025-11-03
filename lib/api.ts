@@ -109,23 +109,23 @@ export const fetchCandidates = async (params: {
     if (params.gender) queryParams.append('gender', params.gender);
     if (params.sort) queryParams.append('sort', params.sort);
 
-    return apiRequest<PaginatedCandidates>(`/api/candidates?${queryParams.toString()}`);
+    return apiRequest<PaginatedCandidates>(`/portal/candidates?${queryParams.toString()}`);
 };
 
 export const fetchCandidateById = async (id: string): Promise<Candidate> => {
-    return apiRequest<Candidate>(`/api/candidates/${id}`);
+    return apiRequest<Candidate>(`/portal/candidates/${id}`);
 };
 
 export const fetchGovernorates = async (): Promise<Governorate[]> => {
-    return apiRequest<Governorate[]>('/api/governorates');
+    return apiRequest<Governorate[]>('/portal/governorates');
 };
 
 export const fetchParties = async (): Promise<Party[]> => {
-    return apiRequest<Party[]>('/api/parties');
+    return apiRequest<Party[]>('/portal/parties');
 };
 
 export const fetchStats = async (): Promise<Stats> => {
-    return apiRequest<Stats>('/api/stats');
+    return apiRequest<Stats>('/portal/stats');
 };
 
 export const likePost = async (postId: string): Promise<{ success: boolean }> => {

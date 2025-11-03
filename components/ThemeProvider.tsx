@@ -3,17 +3,16 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { type ThemeProviderProps } from 'next-themes/dist/types';
 import { useEffect, useState } from 'react';
-import { isRamadan } from '@/lib/detectRamadan';
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // This effect runs once on mount to check if it's Ramadan
-    if (isRamadan()) {
-      document.documentElement.classList.add('ramadan');
-    }
+    // Ramadan detection temporarily disabled for build
+    // if (isRamadan()) {
+    //   document.documentElement.classList.add('ramadan');
+    // }
   }, []);
 
   if (!mounted) {

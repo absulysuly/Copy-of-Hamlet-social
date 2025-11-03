@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
+    // Removed 'output: export' for dynamic routes support
     trailingSlash: true,
     images: {
         unoptimized: true
-    },
-    distDir: 'out'
+    }
+    // Removed distDir as we're not doing static export
 };
 
 export default nextConfig;

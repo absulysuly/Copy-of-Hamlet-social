@@ -1,10 +1,16 @@
 import { fetchCandidates, fetchGovernorates } from '@/lib/api';
-import { Locale } from '@/lib/i18n-config';
+import { Locale, i18n } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
 import CandidateCard from '@/components/candidates/CandidateCard';
 import FilterPanel from '@/components/candidates/FilterPanel';
 import Pagination from '@/components/candidates/Pagination';
+
+export const dynamic = 'force-dynamic';
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ lang: locale }));
+}
 
 export async function generateMetadata({
   params: { lang },

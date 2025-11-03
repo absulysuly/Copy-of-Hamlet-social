@@ -1,10 +1,16 @@
 import { fetchStats } from '@/lib/api';
-import { Locale } from '@/lib/i18n-config';
+import { Locale, i18n } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
 import { Users, UserCheck, Map } from 'lucide-react';
 import StatsClient from '@/components/stats/StatsClient';
 import React from 'react';
+
+export const dynamic = 'force-dynamic';
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ lang: locale }));
+}
 
 export async function generateMetadata({
   params: { lang },
