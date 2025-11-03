@@ -1,12 +1,15 @@
 import axios from 'axios';
 import { Candidate, Governorate, Stats, PaginatedCandidates } from './types';
 
+// Railway Backend with 7,769 Iraqi Candidates
+const RAILWAY_BACKEND = 'https://iraq-election-masterpiece-production.up.railway.app';
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4001',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || RAILWAY_BACKEND,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 5000, // 5 second timeout
+  timeout: 10000, // 10 second timeout for Railway
 });
 
 export const fetchCandidates = async (params: {
