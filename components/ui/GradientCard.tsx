@@ -1,3 +1,5 @@
+// FIX: Added 'use client' directive. Components using client-side features like hooks (used internally by framer-motion) must be marked as client components in Next.js App Router.
+'use client';
 // Fix: Added missing import for React.
 import React from 'react';
 import { motion } from 'framer-motion';

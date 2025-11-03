@@ -1,0 +1,1 @@
+// This file is obsolete in the Next.js project structure and should be deleted.

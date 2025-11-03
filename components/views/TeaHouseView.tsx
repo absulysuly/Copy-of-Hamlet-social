@@ -1,9 +1,10 @@
 'use client';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob } from '@google/genai';
+// FIX: Removed `LiveSession` as it is not an exported member of '@google/genai'.
+import { GoogleGenAI, LiveServerMessage, Modality, Blob } from '@google/genai';
 import { motion, AnimatePresence } from 'framer-motion';
 import IraqiHeader from '../ui/IraqiHeader';
-import { Mic, MicOff, Zap } from 'lucide-react';
+import { Mic, MicOff } from 'lucide-react';
 
 // Base64 encoding/decoding functions
 function encode(bytes: Uint8Array) {
@@ -66,10 +67,12 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
     const [transcripts, setTranscripts] = useState<TranscriptEntry[]>([]);
     const [isApiKeyMissing, setIsApiKeyMissing] = useState(false);
 
-    const sessionPromise = useRef<Promise<LiveSession> | null>(null);
+    // FIX: Use `any` for the session promise ref type as `LiveSession` is not exported.
+    const sessionPromise = useRef<Promise<any> | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
     const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
+    const transcriptContainerRef = useRef<HTMLDivElement>(null);
     const sources = useRef<Set<AudioBufferSourceNode>>(new Set()).current;
     let nextStartTime = 0;
 
@@ -80,6 +83,12 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
             setStatus('error');
         }
     }, []);
+
+    useEffect(() => {
+        if (transcriptContainerRef.current) {
+            transcriptContainerRef.current.scrollTop = transcriptContainerRef.current.scrollHeight;
+        }
+    }, [transcripts]);
 
     const handleDisconnect = useCallback(() => {
         if (sessionPromise.current) {
@@ -149,25 +158,32 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                         scriptProcessor.connect(inputAudioContext.destination);
                     },
                     onmessage: async (message: LiveServerMessage) => {
+                        // FIX: The `Transcription` type does not have an `isFinal` property.
+                        // The logic is updated to append text to the last transcript entry and use `turnComplete` to finalize it.
                         if (message.serverContent?.inputTranscription) {
-                            const { text, isFinal } = message.serverContent.inputTranscription;
+                            const { text } = message.serverContent.inputTranscription;
                             setTranscripts(prev => {
                                 const last = prev[prev.length - 1];
                                 if (last && last.author === 'user' && !last.isFinal) {
-                                    return [...prev.slice(0, -1), { ...last, text, isFinal }];
+                                    return [...prev.slice(0, -1), { ...last, text: last.text + text }];
                                 }
-                                return [...prev, { id: Date.now(), text, author: 'user', isFinal }];
+                                return [...prev, { id: Date.now(), text, author: 'user', isFinal: false }];
                             });
                         }
                         if (message.serverContent?.outputTranscription) {
-                             const { text, isFinal } = message.serverContent.outputTranscription;
+                            const { text } = message.serverContent.outputTranscription;
                             setTranscripts(prev => {
                                 const last = prev[prev.length - 1];
                                 if (last && last.author === 'model' && !last.isFinal) {
-                                    return [...prev.slice(0, -1), { ...last, text, isFinal }];
+                                    return [...prev.slice(0, -1), { ...last, text: last.text + text }];
                                 }
-                                return [...prev, { id: Date.now(), text, author: 'model', isFinal }];
+                                return [...prev, { id: Date.now(), text, author: 'model', isFinal: false }];
                             });
+                        }
+                        if (message.serverContent?.turnComplete) {
+                            setTranscripts(prev =>
+                                prev.map(entry => (entry.isFinal ? entry : { ...entry, isFinal: true }))
+                            );
                         }
                         if (message.serverContent?.modelTurn?.parts[0]?.inlineData?.data) {
                             const base64Audio = message.serverContent.modelTurn.parts[0].inlineData.data;
@@ -230,7 +246,7 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                         {status === 'connected' && <p className="animate-pulse text-sm text-green-600 dark:text-green-400">{dictionary.page.teahouse.speakNow}</p>}
                     </div>
 
-                    <div className="scrollbar-hide mb-6 h-80 space-y-4 overflow-y-auto rounded-lg bg-gray-50 p-4 dark:bg-gray-900/50">
+                    <div ref={transcriptContainerRef} className="scrollbar-hide mb-6 h-80 space-y-4 overflow-y-auto rounded-lg bg-gray-50 p-4 dark:bg-gray-900/50">
                         <AnimatePresence>
                         {transcripts.map((entry) => (
                              <motion.div

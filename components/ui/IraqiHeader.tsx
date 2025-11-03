@@ -1,3 +1,5 @@
+// FIX: Added 'use client' directive. Components using client-side features like hooks (used internally by framer-motion) must be marked as client components in Next.js App Router.
+'use client';
 import { motion } from 'framer-motion';
 
 const IraqiHeader = ({ title, subtitle }: { title: string, subtitle: string }) => {

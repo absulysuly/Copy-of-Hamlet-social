@@ -1,8 +1,6 @@
 
-import { Inter, Noto_Sans_Arabic } from 'next/font/google';
 import TopNavBar from '@/components/layout/TopNavBar';
 import MobileNav from '@/components/layout/MobileNav';
-import ChatWidget from '@/components/social/ChatWidget';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import '../globals.css';
 import React from 'react';
@@ -11,9 +9,6 @@ import dynamic from 'next/dynamic';
 import { getDictionary } from '@/lib/dictionaries';
 import { Locale } from '@/lib/i18n-config';
 import { Toaster } from 'react-hot-toast';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const notoArabic = Noto_Sans_Arabic({ subsets: ['arabic'], variable: '--font-arabic' });
 
 // Dynamically import ChatWidget to ensure it's client-side only
 const DynamicChatWidget = dynamic(() => import('@/components/social/ChatWidget'), {
@@ -32,7 +27,7 @@ export default async function RootLayout({
   const isRTL = lang === 'ar' || lang === 'ku';
   
   return (
-    <html lang={lang} dir={isRTL ? 'rtl' : 'ltr'} className={`${inter.variable} ${notoArabic.variable}`} suppressHydrationWarning>
+    <html lang={lang} dir={isRTL ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"

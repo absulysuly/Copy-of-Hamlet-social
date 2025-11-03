@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { Send, Sparkles } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { generateSocialPost } from '@/services/geminiService';
+import SkeletonPostCard from '@/components/SkeletonPostCard';
 
 // Mock current user
 const currentUser: User = {
@@ -115,7 +116,18 @@ function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: str
 
 export default function HomeView({ lang, dictionary }: { lang: Locale; dictionary: any }) {
   const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate fetching posts to show a loading state
+    const timer = setTimeout(() => {
+        setPosts(initialPosts);
+        setIsLoading(false);
+    }, 1500); // Simulate a 1.5 second network request
+
+    return () => clearTimeout(timer); // Cleanup on component unmount
+  }, []);
 
   const handlers = useSwipeable({
     onSwipedLeft: () => router.push(`/${lang}/discover`),
@@ -141,7 +153,14 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
     <div {...handlers} className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-6">
         <ComposeCard onCreatePost={handleCreatePost} dictionary={dictionary.compose} />
-        <Feed lang={lang} posts={posts} />
+        {isLoading ? (
+            <div className="space-y-4">
+                <SkeletonPostCard />
+                <SkeletonPostCard />
+            </div>
+        ) : (
+            <Feed lang={lang} posts={posts} />
+        )}
       </div>
     </div>
   );

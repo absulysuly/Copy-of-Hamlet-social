@@ -15,8 +15,26 @@ const config: Config = {
         'iraq-green': '#007A3D',
       },
       fontFamily: {
-        sans: ['var(--font-inter)'],
-        arabic: ['var(--font-arabic)'],
+        sans: [
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          '"Noto Sans"',
+          'sans-serif',
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+          '"Noto Color Emoji"',
+        ],
+        arabic: [
+          'Noto Sans Arabic',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

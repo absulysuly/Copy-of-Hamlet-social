@@ -3,6 +3,34 @@ import { Candidate, Governorate, Stats, PaginatedCandidates, Party } from './typ
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
 
+/**
+ * Attempts to fetch a resource with a retry mechanism using exponential backoff.
+ * @param url The URL to fetch.
+ * @param options The request options.
+ * @param retries The number of retry attempts.
+ * @param initialTimeout The initial timeout in milliseconds.
+ * @returns A promise that resolves to the Response object.
+ */
+async function fetchWithRetry(url: string, options?: RequestInit, retries = 3, initialTimeout = 1000): Promise<Response> {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url, options);
+            // Don't retry on 4xx client errors, but do on 5xx server errors
+            if (response.ok || (response.status >= 400 && response.status < 500)) {
+                return response;
+            }
+        } catch (error) {
+            // This catches network errors. We retry on those.
+            if (i === retries - 1) throw error; // Rethrow last error
+        }
+        // Wait with exponential backoff before the next retry
+        await new Promise(resolve => setTimeout(resolve, initialTimeout * Math.pow(2, i)));
+    }
+    // This should only be reached if all retries fail.
+    throw new Error(`API request to ${url} failed after ${retries} retries.`);
+}
+
+
 async function fetchWithFallback<T>(
   endpoint: string,
   options?: RequestInit
@@ -15,8 +43,8 @@ async function fetchWithFallback<T>(
   let response: Response;
 
   try {
-    response = await fetch(primaryUrl, options);
-    // If the primary server has a 5xx issue, trigger fallback by throwing an error
+    response = await fetchWithRetry(primaryUrl, options);
+    // If the primary server has a 5xx issue after retries, trigger fallback
     if (response.status >= 500) {
       throw new Error(`Primary API server error: ${response.status}`);
     }
@@ -25,7 +53,7 @@ async function fetchWithFallback<T>(
     if (BACKUP_API_URL) {
       const backupUrl = `${BACKUP_API_URL}${endpoint}`;
       try {
-        response = await fetch(backupUrl, options);
+        response = await fetchWithRetry(backupUrl, options);
       } catch (backupError) {
          console.error(`Backup API request to ${backupUrl} also failed:`, backupError);
          // Re-throw the backup error if it fails
