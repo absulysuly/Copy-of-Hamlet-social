@@ -1,0 +1,67 @@
+{
+  "name": "iraq-election-api-masterpiece",
+  "version": "3.0.0",
+  "description": "Production-grade backend API for Iraqi Parliamentary Elections 2025 - Complete solution with all features",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "build": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:seed": "node prisma/seed.js",
+    "db:seed:full": "SEED_COUNT=7769 node prisma/seed.js",
+    "db:seed:test": "SEED_COUNT=100 node prisma/seed.js",
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "db:studio": "prisma studio",
+    "test": "node tests/api.test.js",
+    "test:health": "curl http://localhost:4001/health",
+    "test:candidates": "curl http://localhost:4001/api/candidates?limit=5",
+    "logs": "tail -f logs/app.log",
+    "deploy": "npm run build && npm run db:migrate && npm start",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [
+    "iraq",
+    "election",
+    "api",
+    "backend",
+    "democracy",
+    "parliamentary",
+    "voting",
+    "candidates",
+    "governorates",
+    "political-parties"
+  ],
+  "author": {
+    "name": "absulysuly",
+    "url": "https://github.com/absulysuly"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/absulysuly/iraq-election-backend"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3",
+    "prisma": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

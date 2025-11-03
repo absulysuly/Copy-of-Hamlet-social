@@ -1,0 +1,104 @@
+// Prisma Schema for Iraq Election Platform
+// Database: PostgreSQL
+// Description: Complete schema for Iraqi Parliamentary Elections 2025
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Verification status for candidates
+enum VerificationStatus {
+  unverified
+  pending
+  verified
+  rejected
+}
+
+// Main Candidate model
+model Candidate {
+  // Primary identifiers
+  id                       String             @id @default(cuid())
+  uniqueCandidateId        String             @unique
+  voterNumber              Int?               @unique
+  
+  // Election details
+  ballotNumber             String
+  candidateSequence        Int?
+  nominationType           String             // "Party List" or "Individual"
+  governorate              String             // Iraqi governorate name
+  
+  // Personal information
+  sex                      String             // MALE, FEMALE
+  fullNameArabic           String
+  fullNameEnglish          String?
+  
+  // Party affiliation
+  partyNameArabic          String
+  partyNameEnglish         String?
+  
+  // Contact information
+  email                    String?            @unique
+  phone                    String?            @unique
+  
+  // Profile information
+  bio                      String?            @db.Text
+  photoUrl                 String?
+  coverPhotoUrl            String?
+  
+  // Verification
+  verificationStatus       VerificationStatus @default(unverified)
+  verificationDocuments    String[]           @default([])
+  verifiedAt               DateTime?
+  verifiedBy               String?
+  
+  // Profile completeness
+  profileCompletionPercent Int                @default(30)
+  
+  // Engagement metrics
+  viewsCount               Int                @default(0)
+  supportersCount          Int                @default(0)
+  postsCount               Int                @default(0)
+  eventsCount              Int                @default(0)
+  
+  // Referral system
+  referralCode             String             @unique
+  
+  // Timestamps
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+  lastActiveAt             DateTime?
+  
+  // Indexes for performance
+  @@index([governorate])
+  @@index([verificationStatus])
+  @@index([partyNameArabic])
+  @@index([supportersCount])
+  @@index([viewsCount])
+  @@index([createdAt])
+  @@index([sex])
+  @@index([nominationType])
+  @@index([ballotNumber])
+  @@index([fullNameArabic])
+  @@index([fullNameEnglish])
+  
+  // Composite indexes for common queries
+  @@index([governorate, sex])
+  @@index([governorate, partyNameArabic])
+  @@index([verificationStatus, viewsCount])
+  
+  @@map("candidates")
+}
+
+// You can add more models here as needed:
+// - Governorates (with metadata)
+// - Parties (with detailed information)
+// - ElectionResults
+// - VotingStations
+// - CampaignEvents
+// - etc.
