@@ -1,6 +1,6 @@
 import React from 'react';
-import { Post } from '../types.ts';
-import { PlayIcon, VerifiedIcon, HeartIcon, CommentIcon } from './icons/Icons.tsx';
+import { Post } from '../types';
+import { PlayIcon, VerifiedIcon, HeartIcon, CommentIcon } from './icons/Icons';
 
 interface ReelCardProps {
     reel: Post;

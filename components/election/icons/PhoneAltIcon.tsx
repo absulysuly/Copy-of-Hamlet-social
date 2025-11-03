@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconProps } from '../../icons/Icons.tsx';
+import { IconProps } from '../../icons/Icons';
 
 const PhoneAltIcon: React.FC<IconProps> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>

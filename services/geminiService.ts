@@ -1,5 +1,5 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { User, Post } from "../types.ts";
+import { User, Post } from "../types";
 
 const apiKey = (window as any).process?.env?.API_KEY;
 

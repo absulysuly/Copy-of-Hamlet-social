@@ -1,6 +1,6 @@
-import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language, PollingCenter, Question } from '../types.ts';
-import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO, MOCK_QUESTIONS } from '../constants.ts';
-import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types.ts';
+import { User, UserRole, Post, Event, Article, Debate, Governorate, TeaHouseTopic, TeaHouseMessage, Language, PollingCenter, Question } from '../types';
+import { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, IRAQI_GOVERNORATES_INFO, MOCK_QUESTIONS } from '../constants';
+import { Candidate, NewsArticle, PoliticalParty } from '../components/election/types';
 
 // Simulate a more realistic network delay
 const simulateFetch = <T>(data: T, delay: number = 300): Promise<T> => {
@@ -239,12 +239,13 @@ const MOCK_POLLING_CENTERS: PollingCenter[] = [
 ];
 
 export const getPollingDistricts = (governorate: Governorate): Promise<string[]> => {
-    const districts = MOCK_POLLING_DATA[governorate] ? Object.keys(MOCK_POLLING_DATA[governorate]) : [];
+    const districts = MOCK_POLLING_DATA[governorate as keyof typeof MOCK_POLLING_DATA] ? Object.keys(MOCK_POLLING_DATA[governorate as keyof typeof MOCK_POLLING_DATA]) : [];
     return simulateFetch(districts, 300);
 }
 
 export const getPollingAreas = (governorate: Governorate, district: string): Promise<string[]> => {
-    const areas = MOCK_POLLING_DATA[governorate]?.[district] || [];
+    const govData = MOCK_POLLING_DATA[governorate as keyof typeof MOCK_POLLING_DATA] || {};
+    const areas = (govData as any)[district] || [];
     return simulateFetch(areas, 300);
 }
 

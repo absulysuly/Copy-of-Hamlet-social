@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Post, User, Language } from '../types.ts';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon, FemaleIcon } from './icons/Icons.tsx';
-import * as api from '../services/apiService.ts';
-import { UI_TEXT } from '../translations.ts';
-import AudioPlayer from './AudioPlayer.tsx';
+import { Post, User, Language } from '../types';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon, FemaleIcon } from './icons/Icons';
+import * as api from '../services/apiService';
+import { UI_TEXT } from '../translations';
+import AudioPlayer from './AudioPlayer';
 
 interface PostCardProps {
     post: Post;

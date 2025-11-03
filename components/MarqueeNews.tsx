@@ -1,7 +1,7 @@
 import React from 'react';
-import { Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
-import { SparklesIcon } from './icons/Icons.tsx';
+import { Language } from '../types';
+import { UI_TEXT } from '../translations';
+import { SparklesIcon } from './icons/Icons';
 
 interface MarqueeNewsProps {
     language: Language;

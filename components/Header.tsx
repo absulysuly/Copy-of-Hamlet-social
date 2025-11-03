@@ -1,7 +1,7 @@
 import React from 'react';
-import { User, AppTab, Language } from '../types.ts';
-import { UsersIcon, SearchIcon, BellIcon } from './icons/Icons.tsx';
-import { UI_TEXT } from '../translations.ts';
+import { User, AppTab, Language } from '../types';
+import { UsersIcon, SearchIcon, BellIcon } from './icons/Icons';
+import { UI_TEXT } from '../translations';
 
 interface HeaderProps {
     user: User | null;

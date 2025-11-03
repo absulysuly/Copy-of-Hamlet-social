@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Card from '../components/ui/Card.tsx';
-import Select from '../components/ui/Select.tsx';
-import { useAllCandidatesData } from '../hooks/useAllCandidatesData.ts';
-import { Candidate } from '../types.ts';
-import ScaleIcon from '../icons/ScaleIcon.tsx';
+import Card from '../components/ui/Card';
+import Select from '../components/ui/Select';
+import { useAllCandidatesData } from '../hooks/useAllCandidatesData';
+import { Candidate } from '../types';
+import ScaleIcon from '../icons/ScaleIcon';
 
 const ComparisonColumn: React.FC<{ candidate: Candidate | null }> = ({ candidate }) => {
     if (!candidate) {

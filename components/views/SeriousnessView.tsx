@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Governorate, Article, Language } from '../../types.ts';
-import { LinkIcon } from '../icons/Icons.tsx';
-import * as api from '../../services/apiService.ts';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
+import { Governorate, Article, Language } from '../../types';
+import { LinkIcon } from '../icons/Icons';
+import * as api from '../../services/apiService';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
 
 interface SeriousnessViewProps {
     selectedGovernorate: Governorate | 'All';

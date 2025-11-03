@@ -1,30 +1,30 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, HomeViewMode } from '../../types.ts';
-import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants.ts';
-import { UI_TEXT } from '../../translations.ts';
-import * as api from '../../services/apiService.ts';
+import { User, UserRole, Governorate, Language, MainContentTab, AppTab, Post, HomeViewMode } from '../../types';
+import { GOVERNORATES, GOVERNORATE_AR_MAP } from '../../constants';
+import { UI_TEXT } from '../../translations';
+import * as api from '../../services/apiService';
 
-import ComposeView from './ComposeView.tsx';
-import PostCard from '../PostCard.tsx';
-import TopNavBar from '../TopNavBar.tsx';
-import Spinner from '../Spinner.tsx';
-import ReelsView from './ReelsView.tsx';
-import CandidatesView from './CandidatesView.tsx';
-import SkeletonPostCard from '../SkeletonPostCard.tsx';
-import SearchBar from '../SearchBar.tsx';
+import ComposeView from './ComposeView';
+import PostCard from '../PostCard';
+import TopNavBar from '../TopNavBar';
+import Spinner from '../Spinner';
+import ReelsView from './ReelsView';
+import CandidatesView from './CandidatesView';
+import SkeletonPostCard from '../SkeletonPostCard';
+import SearchBar from '../SearchBar';
 
 // Lazy load views
-const WhisperView = lazy(() => import('./WhisperView.tsx'));
-const WomenCandidatesView = lazy(() => import('./WomenCandidatesView.tsx'));
-const MinoritiesView = lazy(() => import('./MinoritiesView.tsx'));
-const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView.tsx'));
-const PollingCenterFinder = lazy(() => import('./PollingCenterFinder.tsx'));
-const DebatesView = lazy(() => import('./DebatesView.tsx'));
-const EventsView = lazy(() => import('./EventsView.tsx'));
-const SeriousnessView = lazy(() => import('./SeriousnessView.tsx'));
-const TeaHouseView = lazy(() => import('./TeaHouseView.tsx'));
-const HeroSection = lazy(() => import('../HeroSection.tsx'));
-const AskNeighborView = lazy(() => import('./AskNeighborView.tsx'));
+const WhisperView = lazy(() => import('./WhisperView'));
+const WomenCandidatesView = lazy(() => import('./WomenCandidatesView'));
+const MinoritiesView = lazy(() => import('./MinoritiesView'));
+const CrossPlatformNavigationView = lazy(() => import('./CrossPlatformNavigationView'));
+const PollingCenterFinder = lazy(() => import('./PollingCenterFinder'));
+const DebatesView = lazy(() => import('./DebatesView'));
+const EventsView = lazy(() => import('./EventsView'));
+const SeriousnessView = lazy(() => import('./SeriousnessView'));
+const TeaHouseView = lazy(() => import('./TeaHouseView'));
+const HeroSection = lazy(() => import('../HeroSection'));
+const AskNeighborView = lazy(() => import('./AskNeighborView'));
 
 
 interface HomeViewProps {

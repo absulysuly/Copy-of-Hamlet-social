@@ -1,7 +1,7 @@
 import React from 'react';
-import { HomeViewMode, Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
-import { UsersIcon, ChartIcon } from './icons/Icons.tsx';
+import { HomeViewMode, Language } from '../types';
+import { UI_TEXT } from '../translations';
+import { UsersIcon, ChartIcon } from './icons/Icons';
 
 interface ViewModeSwitcherProps {
     activeMode: HomeViewMode;

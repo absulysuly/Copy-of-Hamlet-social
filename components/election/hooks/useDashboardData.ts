@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import * as api from '../../../services/apiService.ts';
+import * as api from '../../../services/apiService';
 
 export const useDashboardData = () => {
     const [data, setData] = useState<any | null>(null);

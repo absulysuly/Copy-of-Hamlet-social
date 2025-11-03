@@ -1,7 +1,7 @@
 
 import React from 'react';
-import Card from '../components/ui/Card.tsx';
-import Button from '../components/ui/Button.tsx';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 
 // Mock data, in a real app this would come from an API.
 const MOCK_PARTIES = [

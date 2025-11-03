@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from '../components/ui/Card.tsx';
+import Card from '../components/ui/Card';
 
 const PrivacyPolicyPage: React.FC = () => {
     return (

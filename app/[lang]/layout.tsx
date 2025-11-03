@@ -1,13 +1,17 @@
 import type { Metadata } from 'next';
 import { Noto_Sans, Noto_Sans_Arabic } from 'next/font/google';
 import { Locale, i18n } from '@/lib/i18n-config';
-import { dir } from 'i18next';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { getDictionary } from '@/lib/dictionaries';
 import '../globals.css';
 import React from 'react';
+
+// Helper function to determine text direction
+const dir = (locale: string) => {
+  return locale === 'ar' || locale === 'ku' ? 'rtl' : 'ltr';
+};
 
 const noto_sans = Noto_Sans({
   subsets: ['latin'],

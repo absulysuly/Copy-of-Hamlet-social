@@ -1,6 +1,6 @@
 import React from 'react';
-import { Language } from '../../types.ts';
-import { UI_TEXT } from '../../translations.ts';
+import { Language } from '../../types';
+import { UI_TEXT } from '../../translations';
 
 const MinoritiesView: React.FC<{ language: Language }> = ({ language }) => {
     const texts = UI_TEXT[language];

@@ -1,9 +1,9 @@
 // Fix: Populating components/CandidatePill.tsx with a reusable candidate component.
 import React, { useState } from 'react';
-import { User, Language } from '../types.ts';
-import { VerifiedIcon, PlusIcon, CheckIcon, FemaleIcon } from './icons/Icons.tsx';
-import * as api from '../services/apiService.ts';
-import { UI_TEXT } from '../translations.ts';
+import { User, Language } from '../types';
+import { VerifiedIcon, PlusIcon, CheckIcon, FemaleIcon } from './icons/Icons';
+import * as api from '../services/apiService';
+import { UI_TEXT } from '../translations';
 
 interface CandidatePillProps {
     candidate: User;

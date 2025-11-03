@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconProps } from '../../icons/Icons.tsx';
+import { IconProps } from '../../icons/Icons';
 
 const ApiIcon: React.FC<IconProps> = (props) => (
     <svg 

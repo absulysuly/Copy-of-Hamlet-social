@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole } from '../types.ts';
-import * as api from '../services/apiService.ts';
-import Spinner from './Spinner.tsx';
+import { User, UserRole } from '../types';
+import * as api from '../services/apiService';
+import Spinner from './Spinner';
 
 const HeroSection: React.FC = () => {
     const [candidates, setCandidates] = useState<User[]>([]);

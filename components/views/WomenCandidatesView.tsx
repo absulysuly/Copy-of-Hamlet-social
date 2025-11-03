@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Language } from '../../types.ts';
-import CandidatePill from '../CandidatePill.tsx';
-import * as api from '../../services/apiService.ts';
-import { ResponsiveGrid } from '../UI/Responsive.tsx';
-import { UI_TEXT } from '../../translations.ts';
-import Spinner from '../Spinner.tsx';
+import { User, UserRole, Language } from '../../types';
+import CandidatePill from '../CandidatePill';
+import * as api from '../../services/apiService';
+import { ResponsiveGrid } from '../UI/Responsive';
+import { UI_TEXT } from '../../translations';
+import Spinner from '../Spinner';
 
 interface WomenCandidatesViewProps {
     onSelectCandidate: (candidate: User) => void;

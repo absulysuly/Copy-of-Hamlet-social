@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ThemeName, Language } from '../../types.ts';
-import ColorThemeSelector from '../UI/ColorThemeSelector.tsx';
-import { UI_TEXT } from '../../translations.ts';
+import { ThemeName, Language } from '../../types';
+import ColorThemeSelector from '../UI/ColorThemeSelector';
+import { UI_TEXT } from '../../translations';
 
 interface SettingsViewProps {
     isHighContrast: boolean;
