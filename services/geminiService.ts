@@ -1,7 +1,7 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { User, Post } from "../types";
 
-const apiKey = (window as any).process?.env?.API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
 let ai: GoogleGenAI | null = null;
 if (apiKey && apiKey !== 'your_google_gemini_api_key_here') {
