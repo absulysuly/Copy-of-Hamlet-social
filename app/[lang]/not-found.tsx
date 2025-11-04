@@ -4,15 +4,15 @@ import { Locale, i18n } from '@/lib/i18n-config';
 import { headers } from 'next/headers';
 
 // This function is a workaround to get the language from the path in a not-found component.
-function getLang(): Locale {
-    const headersList = headers();
+async function getLang(): Promise<Locale> {
+    const headersList = await headers();
     const pathname = headersList.get('x-next-pathname') || '';
     const lang = pathname.split('/')[1] as Locale;
     return i18n.locales.includes(lang) ? lang : i18n.defaultLocale;
 }
 
 export default async function NotFound() {
-  const lang = getLang();
+  const lang = await getLang();
   const dictionary = await getDictionary(lang);
   
   return (

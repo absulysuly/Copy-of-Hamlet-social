@@ -7,12 +7,14 @@ import { FaLandmark } from 'react-icons/fa';
 
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export async function generateMetadata({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
   return {
     title: `${dictionary.page.governorates.title} | ${dictionary.metadata.title}`,
@@ -21,10 +23,11 @@ export async function generateMetadata({
 }
 
 export default async function GovernoratesPage({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }) {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
   const governorates = await fetchGovernorates();
 

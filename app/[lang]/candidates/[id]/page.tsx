@@ -7,17 +7,20 @@ import Image from 'next/image';
 import ClientActions from '@/components/ClientActions';
 import { notFound } from 'next/navigation';
 
+export const runtime = 'edge';
+
 type Props = {
-  params: { id: string; lang: Locale };
+  params: Promise<{ id: string; lang: Locale }>;
 };
 
 export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const dictionary = await getDictionary(params.lang);
+  const { id, lang } = await params;
+  const dictionary = await getDictionary(lang);
   try {
-    const candidate = await fetchCandidateById(params.id);
+    const candidate = await fetchCandidateById(id);
 
     return {
       title: `${candidate.name} | ${dictionary.metadata.title}`,
@@ -32,10 +35,11 @@ export async function generateMetadata(
 }
 
 export default async function CandidateProfilePage({ params }: Props) {
-  const dictionary = await getDictionary(params.lang);
+  const { id, lang } = await params;
+  const dictionary = await getDictionary(lang);
   
   try {
-    const candidate = await fetchCandidateById(params.id);
+    const candidate = await fetchCandidateById(id);
 
     const details = [
       {
