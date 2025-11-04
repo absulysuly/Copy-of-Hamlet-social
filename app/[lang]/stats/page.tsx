@@ -8,12 +8,14 @@ import React from 'react';
 
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export async function generateMetadata({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
   return {
     title: `${dictionary.page.stats.title} | ${dictionary.metadata.title}`,
@@ -36,10 +38,11 @@ const StatCard: React.FC<{ icon: React.ElementType, title: string, value: string
 )
 
 export default async function StatsPage({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }) {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
   const stats = await fetchStats();
 

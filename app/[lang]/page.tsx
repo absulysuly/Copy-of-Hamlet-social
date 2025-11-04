@@ -6,12 +6,14 @@ import FeaturedCandidates from '@/components/home/FeaturedCandidates';
 
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export default async function Home({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }) {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
 
   return (

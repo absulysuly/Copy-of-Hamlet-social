@@ -2,11 +2,14 @@ import { getDictionary } from '@/lib/dictionaries';
 import { Locale } from '@/lib/i18n-config';
 import { Metadata } from 'next';
 
+export const runtime = 'edge';
+
 export async function generateMetadata({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
   return {
     title: `${dictionary.page.about.title} | ${dictionary.metadata.title}`,
@@ -15,10 +18,11 @@ export async function generateMetadata({
 }
 
 export default async function AboutPage({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }) {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
 
   return (

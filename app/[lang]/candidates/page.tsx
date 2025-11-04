@@ -8,12 +8,14 @@ import Pagination from '@/components/candidates/Pagination';
 
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export async function generateMetadata({
-  params: { lang },
+  params,
 }: {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
+  const { lang } = await params;
   const dictionary = await getDictionary(lang);
   return {
     title: `${dictionary.page.candidates.title} | ${dictionary.metadata.title}`,
@@ -22,32 +24,34 @@ export async function generateMetadata({
 }
 
 type CandidatesPageProps = {
-  params: { lang: Locale };
-  searchParams: {
+  params: Promise<{ lang: Locale }>;
+  searchParams: Promise<{
     page?: string;
     query?: string;
     governorate?: string;
     gender?: 'Male' | 'Female';
     sort?: string;
-  };
+  }>;
 };
 
 export default async function CandidatesPage({
-  params: { lang },
+  params,
   searchParams,
 }: CandidatesPageProps) {
+  const { lang } = await params;
+  const searchParamsResolved = await searchParams;
   const dictionary = await getDictionary(lang);
-  const page = Number(searchParams.page) || 1;
+  const page = Number(searchParamsResolved.page) || 1;
   const limit = 12;
 
   const [candidatesResponse, governorates] = await Promise.all([
     fetchCandidates({
       page,
       limit,
-      query: searchParams.query,
-      governorate: searchParams.governorate,
-      gender: searchParams.gender,
-      sort: searchParams.sort,
+      query: searchParamsResolved.query,
+      governorate: searchParamsResolved.governorate,
+      gender: searchParamsResolved.gender,
+      sort: searchParamsResolved.sort,
     }),
     fetchGovernorates(),
   ]);
