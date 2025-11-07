@@ -1,99 +1,40 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { User, Post } from "../types.ts";
+import type { User, Post } from '../types.ts';
 
-const apiKey = (window as any).process?.env?.API_KEY;
-
-let ai: GoogleGenAI | null = null;
-if (apiKey && apiKey !== 'your_google_gemini_api_key_here') {
-    ai = new GoogleGenAI({ apiKey });
-}
+const POST_FALLBACKS = [
+    'شارك أفكارك مع مجتمعك اليوم.',
+    'ما هو رأيك؟ افتح النقاش مع الآخرين.',
+    'صوتك مهم — شاركنا تجربتك الآن.',
+    'اكتب رسالة تلهم الآخرين للتحرك.'
+];
 
 export const generatePostSuggestion = async (topic: string): Promise<string> => {
-    if (!ai) {
-        // Fallback suggestions
-        const fallbacks = [
-            `Share your thoughts about ${topic} with your community!`,
-            `What's your perspective on ${topic}? Let's discuss!`,
-            `Join the conversation about ${topic} - your voice matters!`,
-            `Share your experience with ${topic} and inspire others!`
-        ];
-        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-    }
-    
-    try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Generate a short, engaging social media post about: "${topic}"`
-        });
-        return response.text;
-    } catch (error) {
-        console.error("AI service error:", error);
-    }
-    
-    // Final fallback
-    return `Share your thoughts about ${topic} with your community!`;
+    const sanitizedTopic = topic.trim();
+    const baseSuggestion = sanitizedTopic ? `شارك أفكارك حول "${sanitizedTopic}" ودع الآخرين يعرفون موقفك.` : POST_FALLBACKS[0];
+    return baseSuggestion;
 };
 
 export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 'ar'): Promise<string> => {
-    if (!text) return "";
-    
-    if (!ai) {
-        return text; // Return original text if no API key or AI client
+    if (!text) {
+        return '';
     }
-    
-    try {
-        const languageMap = {
-            en: 'English',
-            ku: 'Kurdish (Sorani)',
-            ar: 'Arabic',
-        };
-        
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Translate to ${languageMap[targetLanguage]}: "${text}"`
-        });
-        
-        return response.text;
-    } catch (error) {
-        console.error("Translation error:", error);
-    }
-    
-    return text; // Return original text on error
+    // Without external AI access we return the original text.
+    return text;
 };
 
-export const generateLikelyMpResponse = async (candidate: User, question: string, recentPosts: Partial<Post>[]): Promise<string> => {
-    if (!ai) {
-        return "Thank you for your question. As an AI simulation, I'd recommend looking at the candidate's recent posts for information on this topic. A real response would be forthcoming from their office.";
-    }
+export const generateLikelyMpResponse = async (
+    candidate: User,
+    question: string,
+    recentPosts: Partial<Post>[]
+): Promise<string> => {
+    const snippets = recentPosts
+        .map((post) => (post.content ? `- "${post.content.slice(0, 80)}..."` : null))
+        .filter(Boolean)
+        .join('\n');
 
-    const postSnippets = recentPosts.map(p => `- "${p.content?.substring(0, 100)}..."`).join('\n');
-    const context = `
-        You are simulating a response from an Iraqi Member of Parliament (MP).
-        MP's Profile:
-        - Name: ${candidate.name}
-        - Political Party: ${candidate.party}
-        - Governorate: ${candidate.governorate}
-        - Biography: ${candidate.bio || 'Not provided.'}
-        - Snippets from recent posts:
-        ${postSnippets || '- No recent posts provided.'}
-
-        Based *only* on the information above, answer the following question from a citizen.
-        Your response should be in the first person, as if you are the MP.
-        Keep the response concise, professional, and relevant to an Iraqi political context.
-        If the information is not available to answer the question, politely state that you will look into the matter.
-    `;
-
-    try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Question from citizen: "${question}"`,
-            config: {
-                systemInstruction: context
-            }
-        });
-        return response.text;
-    } catch (error) {
-        console.error("AI MP Response service error:", error);
-        return "An error occurred while generating a response. Please try again.";
-    }
+    return [
+        `شكرًا لسؤالك. أنا ${candidate.name} من حزب ${candidate.party}.`,
+        question ? `بخصوص سؤالك: "${question.trim()}"، سأعمل على دراسة التفاصيل وتقديم متابعة رسمية.` : 'سأعمل على متابعة هذا الموضوع مع الفريق المختص.',
+        snippets ? 'إليك بعض النقاط التي عملنا عليها مؤخرًا:\n' + snippets : 'سأقوم بمشاركة التحديثات معكم حال توفرها.',
+        'أقدّر اهتمامك وسأبقى على تواصل.'
+    ].join('\n\n');
 };

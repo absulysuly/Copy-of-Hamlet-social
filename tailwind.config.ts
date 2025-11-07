@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-noto-sans)'],
-        arabic: ['var(--font-noto-sans-arabic)'],
+        sans: ['"Noto Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        arabic: ['"Noto Sans Arabic"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         'iraqi-red': '#CE1126',

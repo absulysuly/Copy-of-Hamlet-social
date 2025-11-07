@@ -7,7 +7,14 @@ import React from 'react';
 
 type CandidateCardProps = {
   candidate: Candidate;
-  dictionary: any;
+  dictionary: {
+    governorate: string;
+    party: string;
+    ballotNumber: string;
+    gender: string;
+    male: string;
+    female: string;
+  };
   lang: Locale;
 };
 
@@ -33,9 +40,9 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, dictionary, la
               <FaUserTie />
               <span>{candidate.party}</span>
             </div>
-             <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <FaHashtag />
-              <span>{dictionary.candidate.ballotNumber}: {candidate.ballot_number}</span>
+              <span>{dictionary.ballotNumber}: {candidate.ballot_number}</span>
             </div>
           </div>
         </div>

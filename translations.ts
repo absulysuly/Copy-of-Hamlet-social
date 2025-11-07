@@ -19,6 +19,11 @@ type Translations = {
         candidateDescription: string;
         teaHouse: string;
         teaHouseFooter: string;
+        contactMP: string;
+        contactMPDesc: string;
+        contactMPPlaceholder: string;
+        sendMessage: string;
+        messageSent: string;
         register: string;
         fullName: string;
         emailAddress: string;
@@ -318,6 +323,11 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'Create posts, share your message, and engage with voters.',
         teaHouse: 'Tea House',
         teaHouseFooter: "People's Diwaniya",
+        contactMP: 'Contact Member of Parliament',
+        contactMPDesc: 'Send a message to this representative and share your concerns.',
+        contactMPPlaceholder: 'Write your message...',
+        sendMessage: 'Send Message',
+        messageSent: 'Your message has been sent.',
         register: 'Register',
         fullName: 'Full Name',
         emailAddress: 'Email Address',
@@ -607,6 +617,11 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'پۆست دروست بکە، پەیامەکەت بڵاوبکەرەوە و لەگەڵ دەنگدەران بەردەوام بە.',
         teaHouse: 'چایخانە',
         teaHouseFooter: 'دیوەخانی گەل',
+        contactMP: 'پەیوەندی بە ئەندامی پەرلەمان بکە',
+        contactMPDesc: 'نامەیەک بنێرە بۆ ئەم پەرلەمانتارە و نیگەرانییەکانت بەڵگە بکە.',
+        contactMPPlaceholder: 'نامەکەت بنووسە...',
+        sendMessage: 'نامە بنێرە',
+        messageSent: 'نامەکەت نێردرا.',
         register: 'تۆمارکردن',
         fullName: 'ناوی تەواو',
         emailAddress: 'ئیمەیڵ',
@@ -896,6 +911,11 @@ export const UI_TEXT: Translations = {
         candidateDescription: 'أنشئ منشورات، شارك رسالتك، وتفاعل مع الناخبين.',
         teaHouse: 'المقهى',
         teaHouseFooter: 'ديوانية الشعب',
+        contactMP: 'تواصل مع النائب',
+        contactMPDesc: 'أرسل رسالة إلى هذا الممثل وشارك مخاوفك.',
+        contactMPPlaceholder: 'اكتب رسالتك...',
+        sendMessage: 'إرسال الرسالة',
+        messageSent: 'تم إرسال رسالتك.',
         register: 'تسجيل',
         fullName: 'الاسم الكامل',
         emailAddress: 'البريد الإلكتروني',
