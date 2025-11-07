@@ -8,7 +8,14 @@ const simulateFetch = <T>(data: T, delay: number = 300): Promise<T> => {
 };
 
 export const getParties = (): Promise<string[]> => {
-    const parties = [...new Set(MOCK_USERS.filter(u => u.role === UserRole.Candidate).map(u => u.party))];
+    const seen: Record<string, true> = {};
+    const parties: string[] = [];
+    for (const user of MOCK_USERS) {
+        if (user.role === UserRole.Candidate && !seen[user.party]) {
+            seen[user.party] = true;
+            parties.push(user.party);
+        }
+    }
     return simulateFetch(parties);
 };
 
@@ -217,7 +224,7 @@ export const likePost = (postId: string): Promise<{ success: boolean }> => {
 };
 
 // --- Polling Center Finder API ---
-const MOCK_POLLING_DATA = {
+const MOCK_POLLING_DATA: Record<string, Record<string, string[]>> = {
     'Baghdad': {
         'Karrada': ['Al-Jadriyah', 'Al-Wihda'],
         'Adhamiyah': ['Hayy Ur', 'Sha\'ab'],
@@ -236,12 +243,12 @@ const MOCK_POLLING_CENTERS: PollingCenter[] = [
 export const getPollingDistricts = (governorate: Governorate): Promise<string[]> => {
     const districts = MOCK_POLLING_DATA[governorate] ? Object.keys(MOCK_POLLING_DATA[governorate]) : [];
     return simulateFetch(districts, 300);
-}
+};
 
 export const getPollingAreas = (governorate: Governorate, district: string): Promise<string[]> => {
     const areas = MOCK_POLLING_DATA[governorate]?.[district] || [];
     return simulateFetch(areas, 300);
-}
+};
 
 export const findPollingCenter = (governorate: Governorate, district: string, area: string): Promise<PollingCenter | null> => {
     if (governorate === 'Baghdad' && district === 'Karrada' && area === 'Al-Jadriyah') {

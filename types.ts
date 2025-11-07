@@ -84,7 +84,7 @@ export interface Post {
     likes: number;
     comments: number;
     shares: number;
-    type: 'Post' | 'Reel';
+    type: 'Post' | 'Reel' | 'VoiceNote';
     mediaUrl?: string;
     isSponsored?: boolean;
     privacy?: PostPrivacy;

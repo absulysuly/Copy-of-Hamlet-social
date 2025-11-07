@@ -1,7 +1,13 @@
 import React from 'react';
+import type { Language } from '../../../types.ts';
 import Card from '../components/ui/Card.tsx';
 
-const TermsOfServicePage: React.FC = () => {
+interface StaticPageProps {
+    onNavigate?: (path: string) => void;
+    language: Language;
+}
+
+const TermsOfServicePage: React.FC<StaticPageProps> = () => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="max-w-4xl mx-auto">

@@ -65,7 +65,7 @@ export default async function CandidatesPage({
           {candidates.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {candidates.map((candidate) => (
-                <CandidateCard key={candidate.id} candidate={candidate} dictionary={dictionary} lang={lang} />
+                <CandidateCard key={candidate.id} candidate={candidate} dictionary={dictionary.candidate} lang={lang} />
               ))}
             </div>
           ) : (
