@@ -1,0 +1,50 @@
+HEY CLAUDE! Here's the situation:
+
+I have an Iraqi Election Platform with:
+
+1. FRONTEND: Already deployed on Vercel
+   URL: https://test-new-frontend.vercel.app
+   Repo: https://github.com/absulysuly/DigitalDemocracy.Iraq
+
+2. DATABASE: Empty Postgres on Railway
+   URL: postgresql://postgres:ULbaXjTrdDBavxJnNScVSQkLmhqOonMc@crossover.proxy.rlwy.net:42786/railway
+
+3. BACKEND: Ready but NOT deployed yet
+   Location: /workspace/iraq-election-masterpiece/
+   Contains: Complete API with 7,769 Iraqi candidates ready to seed
+
+WHAT I NEED:
+
+1. Deploy the backend to Railway
+2. Seed the database with Iraqi election data
+3. Connect frontend to backend
+
+THE FILES:
+
+- frontend-api.ts = Frontend API service (put in lib/api.ts)
+- Backend code = Complete in /workspace/iraq-election-masterpiece/
+- Instructions = Full deployment guide
+
+BACKEND NEEDS TO:
+- Connect to existing Postgres database (URL above)
+- Deploy to Railway
+- Run migrations
+- Seed 7,769 Iraqi candidates
+- Give me the Railway URL
+
+THEN:
+- I'll set NEXT_PUBLIC_API_BASE_URL in Vercel to the Railway URL
+- Redeploy frontend
+- DONE!
+
+CAN YOU HELP ME DEPLOY THE BACKEND TO RAILWAY?
+
+The backend is production-ready with:
+? 14 API endpoints
+? 7,769 candidates (seed script ready)
+? 18 Iraqi governorates
+? 16 political parties
+? Complete security (Helmet, rate limiting)
+? All documentation
+
+Just needs to be deployed!

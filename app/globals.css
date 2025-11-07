@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #6C2BD9;
+  --color-secondary: #00D9FF;
+  --color-accent: #FF2E97;
+  --color-dark-bg: #0A0E27;
+  --color-glass-surface: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  background-color: var(--color-dark-bg);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(108, 43, 217, 0.3), transparent 35%),
+    radial-gradient(circle at 85% 30%, rgba(0, 217, 255, 0.2), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(255, 46, 151, 0.25), transparent 45%);
+  background-attachment: fixed;
+}
+
+.glass-card {
+  background: rgba(26, 22, 37, 0.6);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(108, 43, 217, 0.4);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
