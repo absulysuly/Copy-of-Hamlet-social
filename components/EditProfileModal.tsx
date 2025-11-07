@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { User, Language } from '../types';
-import { XMarkIcon } from './icons/Icons';
-import { UI_TEXT } from '../translations';
+import { User, Language } from '../types.ts';
+import { XMarkIcon } from './icons/Icons.tsx';
+import { UI_TEXT } from '../translations.ts';
 
 interface EditProfileModalProps {
     user: User;

@@ -6,9 +6,6 @@ import CandidateCard from '@/components/candidates/CandidateCard';
 import FilterPanel from '@/components/candidates/FilterPanel';
 import Pagination from '@/components/candidates/Pagination';
 
-// Force dynamic rendering to avoid build-time API calls
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({
   params: { lang },
 }: {

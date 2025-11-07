@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import * as api from '../../../services/apiService';
+import * as api from '../../../services/apiService.ts';
+import { DashboardData } from '../../../types.ts';
 
 export const useDashboardData = () => {
-    const [data, setData] = useState<any | null>(null);
+    const [data, setData] = useState<DashboardData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 

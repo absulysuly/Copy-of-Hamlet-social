@@ -1,9 +1,9 @@
 import React from 'react';
-import { Language } from '../../../types';
-import { UI_TEXT } from '../../../translations';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 // Fix: Import IconProps to correctly type the icon prop in FeatureCard.
-import { IconProps, UsersIcon, UserCircleIcon, EyeIcon, ChartIcon, LifebuoyIcon, ScaleIcon, SparklesIcon, IdentificationIcon, DatabaseIcon } from '../../icons/Icons';
-import ApiIcon from '../icons/ApiIcon';
+import { IconProps, UsersIcon, UserCircleIcon, EyeIcon, ChartIcon, LifebuoyIcon, ScaleIcon, SparklesIcon, IdentificationIcon, DatabaseIcon } from '../../icons/Icons.tsx';
+import ApiIcon from '../icons/ApiIcon.tsx';
 
 
 interface LandingPageProps {

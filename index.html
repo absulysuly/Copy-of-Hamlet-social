@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Campaign</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Beautiful Glass-morphism Styles -->
+    <style>
+        :root {
+            --color-primary: #0D9488;
+            --color-primary-rgb: 13, 148, 136;
+            --color-primary-dark: #096B61;
+            --color-primary-darker: #07524B;
+            --color-primary-100: #CCFBF1;
+            --color-secondary: #2DD4BF;
+            --color-accent: #F000B8;
+            --color-background: #100C1C;
+            --color-background-soft: #1A1625;
+            --color-background-image: radial-gradient(circle at 15% 50%, rgba(240, 0, 184, 0.6), transparent 35%),
+                radial-gradient(circle at 85% 30%, rgba(45, 212, 191, 0.4), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(91, 33, 182, 0.5), transparent 45%);
+            --color-glass-bg: rgba(26, 22, 37, 0.6);
+            --color-glass-border: rgba(255, 255, 255, 0.1);
+            --color-card-bg: rgba(26, 22, 37, 0.7);
+            --color-card-text: #F1F5F9;
+            --color-text-base: #F1F5F9;
+            --color-text-muted: #CBD5E1;
+            --color-text-deep: #F1F5F9;
+            --color-text-on-primary: #FFFFFF;
+            --color-primary-glow: rgba(13, 148, 136, 0.6);
+            --color-border: rgba(255, 255, 255, 0.1);
+            --color-border-dark: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            background-color: var(--color-background);
+            background-image: var(--color-background-image);
+            background-attachment: fixed;
+            color: var(--color-text-base);
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+        }
+
+        .glass-card {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--color-glass-border);
+            color: var(--color-card-text);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.07);
+            border-color: var(--color-primary);
+        }
+
+        .hero-election-bg {
+            background-color: var(--color-primary-darker);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M50 0 L61.2 34.5 H100 L70 55.9 L79.4 90.5 L50 69.1 L20.6 90.5 L30 55.9 L0 34.5 H38.8 z' /%3E%3C/g%3E%3C/svg%3E");
+            background-size: 50px 50px;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-on-primary);
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .glass-nav {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-glass-border);
+        }
+        
+        .theme-election {
+            --color-primary: #2B6CB0; 
+            --color-primary-rgb: 43, 108, 176;
+            --color-secondary: #4299E1;
+            --color-accent: '#ECC94B';
+            --color-background: #F7FAFC;
+            --color-background-image: none;
+            --color-glass-bg: rgba(255, 255, 255, 0.8);
+            --color-glass-border: #E2E8F0;
+            --color-card-bg: #FFFFFF;
+            --color-card-text: '#1A202C';
+            --color-text-base: #2D3748;
+            --color-text-muted: #718096;
+            --color-text-on-primary: #FFFFFF;
+        }
+        .theme-election .glass-card {
+            background: #FFFFFF;
+            border-color: #E2E8F0;
+            color: #1A202C;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .theme-election .glass-card:hover {
+            border-color: var(--color-primary);
+        }
+        .theme-election .text-white { 
+            color: var(--color-text-base);
+        }
+         .theme-election .top-nav-bar {
+            border-bottom-color: #E2E8F0;
+        }
+        
+        .theme-election .polling-form-select {
+            background-color: #F7FAFC;
+            border-color: #E2E8F0;
+            color: #2D3748;
+        }
+
+        .theme-election .polling-form-select:disabled {
+            background-color: #EDF2F7;
+        }
+        
+        .view-mode-switcher button {
+            transition: all 0.3s ease;
+        }
+
+        .view-mode-switcher button.active {
+            background-color: var(--color-primary);
+            color: var(--color-text-on-primary);
+            box-shadow: 0 4px 14px 0 rgba(var(--color-primary-rgb), 0.38);
+        }
+
+        .view-mode-switcher button.inactive {
+             background-color: transparent;
+             color: var(--color-text-muted);
+        }
+        
+        .teahouse-composer {
+            background: var(--color-background);
+            border-top: 1px solid var(--color-glass-border);
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        .message-bubble.is-user {
+            background-color: var(--color-primary);
+            color: var(--color-text-on-primary);
+            border-bottom-right-radius: 4px;
+        }
+        .message-bubble.is-other {
+            background-color: rgba(255,255,255,0.1);
+            border-bottom-left-radius: 4px;
+        }
+
+        .search-bar-input {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid var(--color-glass-border);
+            color: var(--color-text-base);
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .search-bar-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px var(--color-primary-glow);
+        }
+        .theme-election .search-bar-input {
+            background-color: #F7FAFC;
+            border-color: #E2E8F0;
+            color: #2D3748;
+        }
+         .theme-election .search-bar-input:focus {
+             border-color: var(--color-primary);
+             box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+         }
+
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 15px -5px var(--color-primary-glow);
+                border-color: var(--color-primary);
+            }
+            to {
+                box-shadow: 0 0 25px 5px var(--color-primary-glow);
+                border-color: var(--color-primary);
+            }
+        }
+
+        .glow {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .animate-marquee {
+            animation: marquee 40s linear infinite;
+        }
+        
+        /* Polling Center Styles */
+        .polling-form-select {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid var(--color-glass-border);
+            color: var(--color-text-base);
+        }
+        .polling-form-select:disabled {
+            background-color: rgba(0,0,0,0.2);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-spinner {
+            border-color: transparent;
+            border-top-color: var(--color-text-on-primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down {
+            animation: slideDown 0.5s ease-out forwards;
+        }
+
+
+        /* Mobile compatibility */
+        @media (max-width: 768px) {
+            .glass-card {
+                backdrop-filter: none;
+                background: rgba(26, 22, 37, 0.9);
+            }
+             .theme-election .glass-card {
+                background: #FFFFFF;
+            }
+            .hero-election-bg {
+                background-attachment: scroll;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+        
+        /* For hiding scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0",
+    "vite": "https://aistudiocdn.com/vite@^7.1.10",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.4",
+    "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
+    "tailwind-merge": "https://aistudiocdn.com/tailwind-merge@^3.3.1",
+    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.6.0",
+    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.14",
+    "clsx": "https://aistudiocdn.com/clsx@^2.1.1",
+    "react-icons/": "https://aistudiocdn.com/react-icons@^5.5.0/",
+    "axios": "https://aistudiocdn.com/axios@^1.12.2",
+    "i18next": "https://aistudiocdn.com/i18next@^25.6.0",
+    "next/": "https://aistudiocdn.com/next@^15.5.6/",
+    "next": "https://aistudiocdn.com/next@^15.5.6",
+    "@headlessui/react": "https://aistudiocdn.com/@headlessui/react@^2.2.9",
+    "next-themes/": "https://aistudiocdn.com/next-themes@^0.4.6/",
+    "next-themes": "https://aistudiocdn.com/next-themes@^0.4.6",
+    "server-only": "https://aistudiocdn.com/server-only@^0.0.1",
+    "negotiator": "https://aistudiocdn.com/negotiator@^1.0.0",
+    "use-debounce": "https://aistudiocdn.com/use-debounce@^10.0.6",
+    "@formatjs/intl-localematcher": "https://aistudiocdn.com/@formatjs/intl-localematcher@^0.6.2"
+  }
+}
+</script>
+</head>
+<body class="bg-neutral-gray-light">
+    <!-- Environment Variables -->
+    <script>
+        window.process = {
+            env: {
+                VITE_USE_MOCKS: 'true',
+                API_KEY: 'your_google_gemini_api_key_here',
+                VITE_ELECTION_DATE: '2025-11-11T08:00:00Z',
+                VITE_APP_VERSION: '0.1.0'
+            }
+        };
+    </script>
+    
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>

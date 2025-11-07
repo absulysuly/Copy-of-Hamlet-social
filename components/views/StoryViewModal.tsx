@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Post, Language } from '../../types';
-import * as api from '../../services/apiService';
-import { XMarkIcon } from '../icons/Icons';
-import { UI_TEXT } from '../../translations';
+import { User, Post, Language } from '../../types.ts';
+import * as api from '../../services/apiService.ts';
+import { XMarkIcon } from '../icons/Icons.tsx';
+import { UI_TEXT } from '../../translations.ts';
 
 interface StoryViewModalProps {
     storyUser: User;

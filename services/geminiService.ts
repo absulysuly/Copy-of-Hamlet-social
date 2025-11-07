@@ -1,5 +1,5 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { User, Post } from "../types";
+import { User, Post } from "../types.ts";
 
 const apiKey = (window as any).process?.env?.API_KEY;
 
@@ -61,7 +61,7 @@ export const translateText = async (text: string, targetLanguage: 'en' | 'ku' | 
     return text; // Return original text on error
 };
 
-export const generateCandidateResponse = async (candidate: User, question: string, recentPosts: Partial<Post>[]): Promise<string> => {
+export const generateLikelyMpResponse = async (candidate: User, question: string, recentPosts: Partial<Post>[]): Promise<string> => {
     if (!ai) {
         return "Thank you for your question. As an AI simulation, I'd recommend looking at the candidate's recent posts for information on this topic. A real response would be forthcoming from their office.";
     }
@@ -95,38 +95,5 @@ export const generateCandidateResponse = async (candidate: User, question: strin
     } catch (error) {
         console.error("AI MP Response service error:", error);
         return "An error occurred while generating a response. Please try again.";
-    }
-};
-
-export const generateAnswerForNeighbor = async (question: string, governorate: string): Promise<string> => {
-    if (!ai) {
-        return "Thank you for your question. As an AI assistant, I can provide general information. For specific local issues, consulting official sources or local representatives is always recommended.";
-    }
-
-    const context = `
-        You are "Hayy AI", a helpful and neutral AI assistant for an Iraqi social platform.
-        Your goal is to provide informative, balanced, and constructive answers to questions from Iraqi citizens.
-        The question is from a user in the ${governorate} governorate.
-        Your answer should be:
-        - Non-partisan and objective.
-        - Respectful of all Iraqi communities and viewpoints.
-        - Focused on providing factual information or helpful context.
-        - If the question is about a local issue, acknowledge the local context if possible but provide a general, helpful response.
-        - Keep the answer concise and easy to understand for a general audience.
-        - Answer in the same language as the question.
-    `;
-
-    try {
-        const response: GenerateContentResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Question: "${question}"`,
-            config: {
-                systemInstruction: context
-            }
-        });
-        return response.text;
-    } catch (error) {
-        console.error("Hayy AI service error:", error);
-        return "I am sorry, but I was unable to process your request at this time. Please try again later.";
     }
 };

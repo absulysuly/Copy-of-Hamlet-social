@@ -1,25 +1,25 @@
 import React from 'react';
-import { Language } from '../../types';
+import { Language } from '../../types.ts';
 
 // Election portal components
-import LandingPage from '../election/pages/LandingPage';
-import DashboardPage from '../election/pages/DashboardPage';
-import IntegrityHubPage from '../election/pages/IntegrityHubPage';
-import InternationalPortalPage from '../election/pages/InternationalPortalPage';
-import GovernoratePage from '../election/pages/GovernoratePage';
-import PoliticalPartyPage from '../election/pages/PoliticalPartyPage';
-import PartiesPage from '../election/pages/PartiesPage';
-import ElectionHubPage from '../election/pages/ElectionHubPage';
-import PrivacyPolicyPage from '../election/pages/PrivacyPolicyPage';
-import TermsOfServicePage from '../election/pages/TermsOfServicePage';
-import PricingPage from '../election/pages/PricingPage';
-import CandidateComparisonPage from '../election/pages/CandidateComparisonPage';
-import VoterRegistrationPage from '../election/pages/VoterRegistrationPage';
-import ApiConfigPage from '../election/pages/ApiConfigPage';
-import DataCollectionPage from '../election/pages/DataCollectionPage';
-import ContactValidationPage from '../election/pages/ContactValidationPage';
-import CandidateEnrichmentPage from '../election/pages/CandidateEnrichmentPage';
-import QualityAnalyticsPage from '../election/pages/QualityAnalyticsPage';
+import LandingPage from '../election/pages/LandingPage.tsx';
+import DashboardPage from '../election/pages/DashboardPage.tsx';
+import IntegrityHubPage from '../election/pages/IntegrityHubPage.tsx';
+import InternationalPortalPage from '../election/pages/InternationalPortalPage.tsx';
+import GovernoratePage from '../election/pages/GovernoratePage.tsx';
+import PoliticalPartyPage from '../election/pages/PoliticalPartyPage.tsx';
+import PartiesPage from '../election/pages/PartiesPage.tsx';
+import ElectionHubPage from '../election/pages/ElectionHubPage.tsx';
+import PrivacyPolicyPage from '../election/pages/PrivacyPolicyPage.tsx';
+import TermsOfServicePage from '../election/pages/TermsOfServicePage.tsx';
+import PricingPage from '../election/pages/PricingPage.tsx';
+import CandidateComparisonPage from '../election/pages/CandidateComparisonPage.tsx';
+import VoterRegistrationPage from '../election/pages/VoterRegistrationPage.tsx';
+import ApiConfigPage from '../election/pages/ApiConfigPage.tsx';
+import DataCollectionPage from '../election/pages/DataCollectionPage.tsx';
+import ContactValidationPage from '../election/pages/ContactValidationPage.tsx';
+import CandidateEnrichmentPage from '../election/pages/CandidateEnrichmentPage.tsx';
+import QualityAnalyticsPage from '../election/pages/QualityAnalyticsPage.tsx';
 
 
 interface ElectionManagementViewProps {
@@ -35,52 +35,47 @@ const ElectionManagementView: React.FC<ElectionManagementViewProps> = ({ path, o
         // A simple router based on the path prop
         if (path.startsWith('/governorate/')) {
             const name = path.split('/')[2];
-            // FIX: Pass only the props expected by GovernoratePage.
-            return <GovernoratePage name={name} onNavigate={onNavigate} />;
+            return <GovernoratePage name={name} {...pageProps} />;
         }
          if (path.startsWith('/party/')) {
             const id = path.split('/')[2];
-            // FIX: Pass only the props expected by PoliticalPartyPage.
-            return <PoliticalPartyPage id={id} onNavigate={onNavigate} />;
+            return <PoliticalPartyPage id={id} {...pageProps} />;
         }
         
         switch (path) {
             case '/':
                 return <LandingPage {...pageProps} />;
-            // FIX: The following components were being passed all of `pageProps` (onNavigate and language)
-            // regardless of which props they actually accept. The calls have been corrected to only pass
-            // the props that each component is defined to receive, resolving multiple type errors.
             case '/dashboard':
-                return <DashboardPage language={language} />;
+                return <DashboardPage {...pageProps} />;
             case '/integrity-hub':
-                return <IntegrityHubPage language={language} />;
+                return <IntegrityHubPage {...pageProps} />;
             case '/international-portal':
-                return <InternationalPortalPage language={language} />;
+                return <InternationalPortalPage {...pageProps} />;
             case '/parties':
-                return <PartiesPage onNavigate={onNavigate} />;
+                return <PartiesPage {...pageProps} />;
             case '/election-hub':
-                return <ElectionHubPage />;
+                return <ElectionHubPage {...pageProps} />;
              case '/privacy-policy':
-                return <PrivacyPolicyPage />;
+                return <PrivacyPolicyPage {...pageProps} />;
             case '/terms-of-service':
-                return <TermsOfServicePage />;
+                return <TermsOfServicePage {...pageProps} />;
             case '/pricing':
-                return <PricingPage />;
+                return <PricingPage {...pageProps} />;
             case '/compare':
-                return <CandidateComparisonPage />;
+                return <CandidateComparisonPage {...pageProps} />;
              case '/voter-registration':
-                return <VoterRegistrationPage language={language} />;
+                return <VoterRegistrationPage {...pageProps} />;
             // New Data Management Routes
             case '/api-config':
-                return <ApiConfigPage onNavigate={onNavigate} />;
+                return <ApiConfigPage {...pageProps} />;
             case '/data-collection':
-                return <DataCollectionPage onNavigate={onNavigate} />;
+                return <DataCollectionPage {...pageProps} />;
             case '/contact-validation':
-                return <ContactValidationPage onNavigate={onNavigate} />;
+                return <ContactValidationPage {...pageProps} />;
             case '/candidate-enrichment':
-                return <CandidateEnrichmentPage onNavigate={onNavigate} />;
+                return <CandidateEnrichmentPage {...pageProps} />;
             case '/quality-analytics':
-                return <QualityAnalyticsPage onNavigate={onNavigate} />;
+                return <QualityAnalyticsPage {...pageProps} />;
             default:
                 return <LandingPage {...pageProps} />;
         }

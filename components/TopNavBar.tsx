@@ -1,6 +1,6 @@
 import React from 'react';
-import { Language } from '../types';
-import { UI_TEXT } from '../translations';
+import { Language } from '../types.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface TopNavBarProps<T extends string> {
     tabs: T[];
@@ -22,7 +22,6 @@ const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
     'Events': 'events',
     'Articles': 'articles',
     'Debates': 'debates',
-    'Ask Neighbor': 'askNeighbor',
 };
 
 
@@ -42,9 +41,7 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
             <nav className="flex space-x-6 rtl:space-x-reverse px-4 sm:px-6 overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
                 {tabs.map((tab) => {
                     const translationKey = tabTranslationKeys[tab];
-                    // FIX: TypeScript infers the type of `texts[translationKey]` too broadly. Cast to string
-                    // because we know that all values in `tabTranslationKeys` map to string properties.
-                    const label = translationKey ? texts[translationKey] as string : tab;
+                    const label = translationKey ? texts[translationKey] : tab;
 
                     return (
                         <button

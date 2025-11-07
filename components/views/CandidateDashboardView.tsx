@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, Post, Language } from '../../types';
-import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, TikTokIcon, InstagramIcon, FacebookIcon, XIcon, YouTubeIcon, LinkIcon, DownloadIcon } from '../icons/Icons';
-import PostCard from '../PostCard';
-import * as api from '../../services/apiService';
-import QRCodeDisplay from '../QRCodeDisplay';
-import { UI_TEXT } from '../../translations';
-import Spinner from '../Spinner';
+import { User, UserRole, Post, Language } from '../../types.ts';
+import { VerifiedIcon, WhatsAppIcon, PhoneIcon, EmailIcon, MessageIcon, TikTokIcon, InstagramIcon, FacebookIcon, XIcon, YouTubeIcon, LinkIcon, DownloadIcon } from '../icons/Icons.tsx';
+import PostCard from '../PostCard.tsx';
+import * as api from '../../services/apiService.ts';
+import QRCodeDisplay from '../QRCodeDisplay.tsx';
+import { UI_TEXT } from '../../translations.ts';
+import Spinner from '../Spinner.tsx';
 
 interface CandidateDashboardViewProps {
     user: User;

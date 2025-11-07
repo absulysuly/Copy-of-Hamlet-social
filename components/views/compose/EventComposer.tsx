@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { User } from '../../../types';
-import { CalendarIcon } from '../../icons/Icons';
+import { User } from '../../../types.ts';
+import { CalendarIcon } from '../../icons/Icons.tsx';
 
 interface EventComposerProps {
     user: User;

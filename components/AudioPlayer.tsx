@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Governorate } from '../types';
-import { PlayButtonIcon, PauseIcon } from './icons/Icons';
-import { GOVERNORATE_AR_MAP } from '../constants';
+import { Governorate } from '../types.ts';
+import { PlayButtonIcon, PauseIcon } from './icons/Icons.tsx';
+import { getWaveformData, drawWaveform } from '../utils/waveform.ts';
+import { GOVERNORATE_AR_MAP } from '../constants.ts';
 
 interface AudioPlayerProps {
     src: string;
@@ -18,14 +19,48 @@ const formatTime = (time: number) => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
+/**
+ * Draws a generic, static waveform as a fallback when the real audio data cannot be fetched.
+ */
+const drawFallbackWaveform = (canvas: HTMLCanvasElement, color: string) => {
+    const samples = 100;
+    // A simple sine wave pattern for a visually appealing fallback
+    const fakeData = Array.from({length: samples}, (_, i) => {
+        const x = i / (samples - 1); // progress from 0 to 1
+        const sine = Math.sin(x * Math.PI * 2 * 2.5); // 2.5 full waves
+        const envelope = Math.pow(Math.sin(x * Math.PI), 0.7); // Envelope to make ends taper
+        return (Math.abs(sine) * envelope * 0.8) + 0.15; // Combine and add base height
+    });
+    drawWaveform(canvas, fakeData, color);
+};
+
+
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate, compact = false }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    // Effect to setup audio event listeners for time updates
     useEffect(() => {
+        const canvas = canvasRef.current;
+        const waveformColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#0D9488';
+        
+        if (canvas && src && !isLoaded) {
+            getWaveformData(src)
+              .then(audioData => {
+                  if (audioData) {
+                      drawWaveform(canvas, audioData, waveformColor);
+                  } else {
+                      // If fetching/processing fails (e.g., CORS), draw a fallback
+                      drawFallbackWaveform(canvas, waveformColor);
+                  }
+                  setIsLoaded(true);
+              });
+        }
+
         const audio = audioRef.current;
         if (audio) {
             const setAudioData = () => {
@@ -43,7 +78,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate, compact = f
                 audio.removeEventListener("timeupdate", setAudioTime);
             }
         }
-    }, []);
+    }, [src, isLoaded]);
 
     const togglePlayPause = () => {
         const audio = audioRef.current;
@@ -61,7 +96,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate, compact = f
         }
     };
     
-    // Effect to sync component state with audio element state
     useEffect(() => {
         const audio = audioRef.current;
         if (audio) {
@@ -94,13 +128,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate, compact = f
                     {isPlaying ? <PauseIcon className="w-5 h-5" /> : <PlayButtonIcon className="w-5 h-5" />}
                 </button>
                 <div className="flex-grow">
-                    <div className="relative h-8 w-full flex items-center">
-                        <div className="w-full h-1.5 bg-white/30 rounded-full">
-                            <div
-                                className="h-1.5 bg-white/60 rounded-full"
-                                style={{ width: `${progress}%` }}
-                            />
-                        </div>
+                    <div className="relative h-8 w-full">
+                        <canvas ref={canvasRef} className="w-full h-full" />
+                        <div
+                            className="absolute top-0 left-0 h-full bg-white/30"
+                            style={{ width: `${progress}%` }}
+                        />
                     </div>
                      <div className="flex justify-between items-center mt-1 text-xs opacity-70">
                         <span>{formatTime(currentTime)}</span>
@@ -122,13 +155,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, governorate, compact = f
                 {isPlaying ? <PauseIcon className="w-6 h-6" /> : <PlayButtonIcon className="w-6 h-6" />}
             </button>
             <div className="flex-grow">
-                <div className="relative h-12 w-full flex items-center">
-                    <div className="w-full h-2 bg-slate-700/50 rounded-full">
-                        <div
-                            className="h-2 bg-primary rounded-full"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
+                <div className="relative h-12 w-full">
+                    <canvas ref={canvasRef} className="w-full h-full" />
+                    <div
+                        className="absolute top-0 left-0 h-full bg-primary/30"
+                        style={{ width: `${progress}%` }}
+                    />
                 </div>
                  <div className="flex justify-between items-center mt-1 text-xs text-theme-text-muted">
                     <span>{formatTime(currentTime)}</span>

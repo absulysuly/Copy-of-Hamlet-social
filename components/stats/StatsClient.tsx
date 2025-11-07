@@ -7,7 +7,7 @@ type StatsClientProps = {
     dictionary: any;
 }
 
-const COLORS = ['#0088FE', '#FF8042'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 export default function StatsClient({ stats, dictionary }: StatsClientProps) {
 
@@ -17,7 +17,7 @@ export default function StatsClient({ stats, dictionary }: StatsClientProps) {
     ];
 
     const governorateData = stats.candidates_per_governorate
-        .slice()
+        .slice() // Create a copy to avoid mutating the original prop
         .sort((a, b) => b.candidate_count - a.candidate_count);
 
     return (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Candidate, PoliticalParty } from '../types';
-import * as api from '../../../services/apiService';
+import { Candidate, PoliticalParty } from '../types.ts';
+import * as api from '../../../services/apiService.ts';
 
 export const usePartyData = (id: string | undefined) => {
     const [data, setData] = useState<{ party: PoliticalParty; candidates: Candidate[] } | null>(null);

@@ -1,39 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { Language } from '../types';
-import { UI_TEXT } from '../translations';
-import { MagnifyingGlassIcon } from './icons/Icons';
-import { useDebounce } from 'use-debounce';
+import React, { useState } from 'react';
+import { SearchIcon } from './icons/Icons.tsx';
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
-    language: Language;
+    placeholder: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, language }) => {
-    const texts = UI_TEXT[language];
-    const [text, setText] = useState('');
-    const [debouncedValue] = useDebounce(text, 500);
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder }) => {
+    const [query, setQuery] = useState('');
 
-    useEffect(() => {
-        onSearch(debouncedValue);
-    }, [debouncedValue, onSearch]);
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSearch(query);
+    };
+    
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
+        if (e.target.value === '') {
+            onSearch('');
+        }
+    }
 
     return (
-        <div className="w-full my-4 px-4 sm:px-0">
+        <form onSubmit={handleSearch} className="w-full">
             <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none rtl:left-auto rtl:right-0 rtl:pr-3">
-                    <MagnifyingGlassIcon className="w-5 h-5 text-theme-text-muted" />
-                </div>
                 <input
                     type="search"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder={texts.search}
-                    className="w-full pl-10 pr-4 py-3 rounded-full search-bar-input focus:outline-none rtl:pl-4 rtl:pr-10"
-                    aria-label={texts.search}
+                    value={query}
+                    onChange={handleInputChange}
+                    className="search-bar-input w-full p-3 pl-10 rounded-full"
+                    placeholder={placeholder}
                 />
+                <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" aria-label="Search">
+                    <SearchIcon className="w-5 h-5" />
+                </button>
             </div>
-        </div>
+        </form>
     );
 };
 

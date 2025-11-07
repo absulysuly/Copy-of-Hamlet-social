@@ -1,4 +1,4 @@
-import { colorThemes } from './utils/colorThemes';
+import { colorThemes } from './utils/colorThemes.ts';
 
 // --- ENUMS & LITERAL TYPES ---
 
@@ -27,8 +27,7 @@ export enum AppTab {
     TeaHouse = 'TeaHouse',
     Events = 'Events',
     Articles = 'Articles',
-    Debates = 'Debates',
-    AskNeighbor = 'Ask Neighbor',
+    Debates = 'Debates'
 }
 
 export interface GovernorateInfo {
@@ -45,7 +44,7 @@ export type Language = 'en' | 'ar' | 'ku';
 export type Governorate = 'Baghdad' | 'Basra' | 'Nineveh' | 'Erbil' | 'Anbar' | 'Dhi Qar' | 'Salah al-Din' | 'Diyala' | 'Kirkuk' | 'Sulaymaniyah' | 'Babil' | 'Wasit' | 'Maysan' | 'Muthanna' | 'Qadisiyyah' | 'Najaf' | 'Karbala' | 'Dohuk';
 
 
-export type MainContentTab = AppTab.Feed | AppTab.Real | AppTab.Candidates | AppTab.Whisper | AppTab.Women | AppTab.Minorities | AppTab.Components | AppTab.PollingCenter | AppTab.TeaHouse | AppTab.Events | AppTab.Articles | AppTab.Debates | AppTab.AskNeighbor;
+export type MainContentTab = AppTab.Feed | AppTab.Real | AppTab.Candidates | AppTab.Whisper | AppTab.Women | AppTab.Minorities | AppTab.Components | AppTab.PollingCenter | AppTab.TeaHouse | AppTab.Events | AppTab.Articles | AppTab.Debates;
 
 export type HomeViewMode = 'Social' | 'Election';
 
@@ -85,26 +84,10 @@ export interface Post {
     likes: number;
     comments: number;
     shares: number;
-    type: 'Post' | 'Reel' | 'VoiceNote';
+    type: 'Post' | 'Reel';
     mediaUrl?: string;
     isSponsored?: boolean;
     privacy?: PostPrivacy;
-}
-
-export interface Answer {
-    id: string;
-    author: User | { name: 'AI', avatarUrl: string };
-    answerText: string;
-    timestamp: string;
-}
-
-export interface Question {
-    id: string;
-    author: User;
-    questionText: string;
-    timestamp: string;
-    answers: Answer[];
-    governorate: Governorate;
 }
 
 export interface Event {
@@ -166,4 +149,20 @@ export interface PollingCenter {
     address: string;
     centerCode: string;
     googleMapsUrl: string;
+}
+
+// Fix: Add GovernorateParticipation interface for use in the election dashboard.
+export interface GovernorateParticipation {
+    governorateId: number;
+    governorateName: string;
+    estimatedTurnout: number;
+}
+
+export interface DashboardData {
+    stats: {
+        totalRegisteredVoters: number;
+        approvedCandidatesCount: number;
+        expectedTurnoutPercentage: number;
+    };
+    participation: GovernorateParticipation[];
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { AppTab, UserRole, User, Language } from '../types';
-import { DashboardIcon, SettingsIcon, UsersIcon, HomeIcon } from './icons/Icons';
-import { UI_TEXT } from '../translations';
+import { AppTab, UserRole, User, Language } from '../types.ts';
+import { DashboardIcon, SettingsIcon, UsersIcon, HomeIcon } from './icons/Icons.tsx';
+import { UI_TEXT } from '../translations.ts';
 
 interface SidebarProps {
     user: User | null;

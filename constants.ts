@@ -1,4 +1,4 @@
-import { User, UserRole, Post, Event, Article, Debate, GovernorateInfo, Governorate, TeaHouseTopic, TeaHouseMessage, Language, MessageType, Question, Answer } from './types';
+import { User, UserRole, Post, Event, Article, Debate, GovernorateInfo, Governorate, TeaHouseTopic, TeaHouseMessage, Language, MessageType } from './types.ts';
 
 // --- GOVERNORATE DATA (Single Source of Truth) ---
 export const IRAQI_GOVERNORATES_INFO: GovernorateInfo[] = [
@@ -93,7 +93,6 @@ const MOCK_ARTICLES: Article[] = [];
 const MOCK_DEBATES: Debate[] = [];
 const MOCK_TEA_HOUSE_TOPICS: TeaHouseTopic[] = [];
 const MOCK_TEA_HOUSE_MESSAGES: { [topicId: string]: TeaHouseMessage[] } = {};
-const MOCK_QUESTIONS: Question[] = [];
 
 // Helper function to get a random item from an array
 const getRandom = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
@@ -195,25 +194,7 @@ const generatePosts = (count: number) => {
 
     for (let i = 0; i < count; i++) {
         const author = getRandom(candidates);
-        const type: Post['type'] = getRandom(['Post', 'Post', 'Post', 'Reel', 'VoiceNote']);
-        
-        if (type === 'VoiceNote') {
-             MOCK_POSTS.push({
-                id: `post-${i + 1}`,
-                author,
-                content: `رسالة صوتية حول ${getRandom(placeholders.topic)}`,
-                timestamp: `${Math.floor(Math.random() * 5)}h ago`,
-                likes: Math.floor(Math.random() * 500),
-                comments: Math.floor(Math.random() * 50),
-                shares: Math.floor(Math.random() * 20),
-                type: 'VoiceNote',
-                // Using a placeholder audio file
-                mediaUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 
-                isSponsored: Math.random() > 0.95,
-            });
-            continue;
-        }
-        
+        const type: Post['type'] = getRandom(['Post', 'Post', 'Post', 'Reel']);
         let contentTemplate = getRandom(postTemplates[type]);
         
         Object.keys(placeholders).forEach(key => {
@@ -349,33 +330,6 @@ const generateTeaHouseTopicsAndMessages = () => {
   ];
 };
 
-const generateQuestions = () => {
-    const users = MOCK_USERS.filter(u => u.role === UserRole.Voter);
-    if (users.length === 0) return;
-
-    MOCK_QUESTIONS.push(
-        {
-            id: 'q1',
-            author: getRandom(users),
-            questionText: 'ما هي الخطط المقترحة لتحسين قطاع التعليم في محافظة نينوى؟',
-            timestamp: '2h ago',
-            governorate: 'Nineveh',
-            answers: [
-                { id: 'a1-1', author: getRandom(MOCK_USERS.filter(u => u.role === UserRole.Candidate)), answerText: 'نحن نخطط لزيادة ميزانية التعليم وبناء مدارس جديدة.', timestamp: '1h ago' },
-            ]
-        },
-        {
-            id: 'q2',
-            author: getRandom(users),
-            questionText: 'كيف يمكن للمرشحين معالجة مشكلة البطالة بين الشباب في البصرة؟',
-            timestamp: '5h ago',
-            governorate: 'Basra',
-            answers: []
-        }
-    );
-};
-
-
 // --- Initial Data Population ---
 if (MOCK_USERS.length === 0) {
     // Add a default voter user
@@ -387,7 +341,6 @@ if (MOCK_USERS.length === 0) {
     generateDebates(10);
     generateTeaHouseTopicsAndMessages();
     generateWhispers(50);
-    generateQuestions();
 }
 
-export { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES, MOCK_QUESTIONS };
+export { MOCK_USERS, MOCK_POSTS, MOCK_WHISPERS, MOCK_EVENTS, MOCK_ARTICLES, MOCK_DEBATES, MOCK_TEA_HOUSE_TOPICS, MOCK_TEA_HOUSE_MESSAGES };

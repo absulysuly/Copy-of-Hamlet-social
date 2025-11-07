@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Post, User, Language } from '../types';
-import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon, FemaleIcon } from './icons/Icons';
-import * as api from '../services/apiService';
-import { UI_TEXT } from '../translations';
-import AudioPlayer from './AudioPlayer';
+import { Post, User, Language } from '../types.ts';
+import { VerifiedIcon, HeartIcon, CommentIcon, ShareIcon, MoreIcon, SparklesIcon, FemaleIcon } from './icons/Icons.tsx';
+import * as api from '../services/apiService.ts';
+import { UI_TEXT } from '../translations.ts';
 
 interface PostCardProps {
     post: Post;
@@ -111,13 +110,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, user, requestLogin, language,
                     </div>
                 </div>
                 
-                {post.type === 'VoiceNote' && post.mediaUrl ? (
-                    <AudioPlayer src={post.mediaUrl} governorate={post.author.governorate} />
-                ) : (
-                    <div className="my-4 glass-card rounded-lg p-4 post-content-wrapper">
-                        <p className="text-theme-text-base text-sm whitespace-pre-line font-arabic">{post.content}</p>
-                    </div>
-                )}
+                <div className="my-4 glass-card rounded-lg p-4 post-content-wrapper">
+                    <p className="text-theme-text-base text-sm whitespace-pre-line font-arabic">{post.content}</p>
+                </div>
             </div>
 
             {post.mediaUrl && post.type === 'Post' && (

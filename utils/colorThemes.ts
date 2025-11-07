@@ -1,4 +1,4 @@
-import { transparentize } from './helpers';
+import { transparentize } from './helpers.ts';
 
 export const colorThemes = {
   euphratesTeal: {

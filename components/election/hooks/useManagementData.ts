@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import * as api from '../../../services/apiService';
-import { User, UserRole } from '../../../types';
+import * as api from '../../../services/apiService.ts';
+import { User, UserRole } from '../../../types.ts';
 
 const useApiData = <T>(fetcher: () => Promise<T>) => {
     const [state, setState] = useState<{ data: T | null, isLoading: boolean, error: Error | null }>({ data: null, isLoading: true, error: null });

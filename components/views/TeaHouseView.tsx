@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types';
-import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons';
-import CreateTopicModal from '../CreateTopicModal';
-import { UI_TEXT } from '../../translations';
-import * as api from '../../services/apiService';
-import Spinner from '../Spinner';
+import { User, Language, TeaHouseTopic, TeaHouseMessage } from '../../types.ts';
+import { TeaHouseIcon, ArrowLeftIcon, MicIcon, DocumentIcon, PhotoIcon, PencilIcon } from '../icons/Icons.tsx';
+import CreateTopicModal from '../CreateTopicModal.tsx';
+import { UI_TEXT } from '../../translations.ts';
+import * as api from '../../services/apiService.ts';
+import Spinner from '../Spinner.tsx';
 
 interface TeaHouseViewProps {
     user: User | null;

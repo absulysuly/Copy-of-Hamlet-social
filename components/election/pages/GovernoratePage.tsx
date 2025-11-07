@@ -1,9 +1,9 @@
 // Fix: Implementing the GovernoratePage component to display local election data.
 import React from 'react';
-import Card from '../components/ui/Card';
-import { useGovernorateData } from '../hooks/useGovernorateData';
-import { Candidate, NewsArticle } from '../types';
-import { VerifiedIcon, ArrowLeftIcon } from '../../icons/Icons';
+import Card from '../components/ui/Card.tsx';
+import { useGovernorateData } from '../hooks/useGovernorateData.ts';
+import { Candidate, NewsArticle } from '../types.ts';
+import { VerifiedIcon, ArrowLeftIcon } from '../../icons/Icons.tsx';
 
 interface GovernoratePageProps {
     name: string;

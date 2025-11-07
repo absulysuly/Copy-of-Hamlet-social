@@ -5,9 +5,6 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { FaLandmark } from 'react-icons/fa';
 
-// Force dynamic rendering to avoid build-time API calls
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({
   params: { lang },
 }: {

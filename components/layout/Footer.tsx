@@ -19,6 +19,9 @@ export default function Footer({ dictionary }: { dictionary: any }) {
               {dictionary.description}
             </p>
           </div>
+          <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+            {/* Can add more link columns here */}
+          </div>
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8 dark:border-gray-700">
           <p className="text-base text-gray-400 xl:text-center">

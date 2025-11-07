@@ -4,9 +4,6 @@ import Hero from '@/components/home/Hero';
 import HomeStats from '@/components/home/HomeStats';
 import FeaturedCandidates from '@/components/home/FeaturedCandidates';
 
-// Force dynamic rendering to avoid build-time API calls
-export const dynamic = 'force-dynamic';
-
 export default async function Home({
   params: { lang },
 }: {

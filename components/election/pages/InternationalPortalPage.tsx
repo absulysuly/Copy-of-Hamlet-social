@@ -1,13 +1,13 @@
 
 
 import React from 'react';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
-import ApiIcon from '../icons/ApiIcon';
-import DocumentTextIcon from '../icons/DocumentTextIcon';
-import UsersIcon from '../icons/UsersIcon';
-import { Language } from '../../../types';
-import { UI_TEXT } from '../../../translations';
+import Card from '../components/ui/Card.tsx';
+import Button from '../components/ui/Button.tsx';
+import ApiIcon from '../icons/ApiIcon.tsx';
+import DocumentTextIcon from '../icons/DocumentTextIcon.tsx';
+import UsersIcon from '../icons/UsersIcon.tsx';
+import { Language } from '../../../types.ts';
+import { UI_TEXT } from '../../../translations.ts';
 
 interface InternationalPortalPageProps {
     language: Language;

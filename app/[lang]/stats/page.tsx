@@ -6,9 +6,6 @@ import { FaUsers, FaUserCheck, FaMapMarkedAlt } from 'react-icons/fa';
 import StatsClient from '@/components/stats/StatsClient';
 import React from 'react';
 
-// Force dynamic rendering to avoid build-time API calls
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({
   params: { lang },
 }: {
