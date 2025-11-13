@@ -1,6 +1,7 @@
-import React from 'react';
-import { Language } from '../types.ts';
-import { UI_TEXT } from '../translations.ts';
+'use client';
+
+import type { Language } from '../types';
+import { UI_TEXT } from '../translations';
 
 interface TopNavBarProps<T extends string> {
     tabs: T[];
@@ -24,7 +25,6 @@ const tabTranslationKeys: { [key: string]: keyof (typeof UI_TEXT)['en'] } = {
     'Debates': 'debates',
 };
 
-
 function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }: TopNavBarProps<T>) {
     const texts = UI_TEXT[language];
     const navBarClasses = 'border-b border-[var(--color-glass-border)] top-nav-bar';
@@ -38,7 +38,10 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
 
     return (
         <div className={navBarClasses}>
-            <nav className="flex space-x-6 rtl:space-x-reverse px-4 sm:px-6 overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
+            <nav
+                className="flex space-x-6 rtl:space-x-reverse px-4 sm:px-6 overflow-x-auto no-scrollbar -mb-px"
+                aria-label="Tabs"
+            >
                 {tabs.map((tab) => {
                     const translationKey = tabTranslationKeys[tab];
                     const label = translationKey ? texts[translationKey] : tab;
@@ -48,6 +51,7 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
                             key={tab}
                             onClick={() => onTabChange(tab)}
                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors font-arabic ${getTabClasses(tab)}`}
+                            type="button"
                         >
                             {label}
                         </button>
@@ -56,6 +60,6 @@ function TopNavBar<T extends string>({ tabs, activeTab, onTabChange, language }:
             </nav>
         </div>
     );
-};
+}
 
 export default TopNavBar;
